@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Canvas_to_Paper</groupId>
+  <artifactId>Canvas_to_Paper</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Canvas to Paper</name>
+  <description>Converting Canvas tests to paper tests</description>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+<dependencies>
+<dependency>
+  <groupId>org.jooq</groupId>
+  <artifactId>jooq</artifactId>
+  <version>3.16.4</version>
+</dependency>
+<dependency>
+  <groupId>org.jooq</groupId>
+  <artifactId>jooq-meta</artifactId>
+  <version>3.16.4</version>
+</dependency>
+<dependency>
+  <groupId>org.jooq</groupId>
+  <artifactId>jooq-codegen</artifactId>
+  <version>3.16.4</version>
+</dependency>
+<dependency>
+  <groupId>org.xerial</groupId>
+  <artifactId>sqlite-jdbc</artifactId>
+  <version>3.28.0</version>
+</dependency>
+
+</dependencies>
+</project>
