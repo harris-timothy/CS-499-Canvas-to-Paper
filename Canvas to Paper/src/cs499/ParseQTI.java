@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.io.File;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -25,6 +25,8 @@ public class ParseQTI {
      * Size of the buffer to read/write data
      */
     private static final int BUFFER_SIZE = 4096;
+
+	private static ArrayList<Document> parsedFiles = new ArrayList<Document>();
     /**
      * Extracts a zip file specified by the zipFilePath to a directory specified by
      * destDirectory (will be created if does not exists)
@@ -74,7 +76,35 @@ public class ParseQTI {
         bos.close();
     }
     
-    public Document xmlParse(String filePath)
+    public ArrayList<Document> xmlLoop(String filePath)
+    {
+    	  File dir = new File(filePath);
+    	  File[] directoryListing = dir.listFiles();
+    	  for (File child : directoryListing) {
+    		  if(child.isDirectory())
+    		  {
+    			  xmlLoop(child.getPath());
+    		  }
+    		  else
+    		  {
+    			  String ext = "";
+        		  String fileName = child.getName();
+        		  int i = fileName.lastIndexOf('.');
+        		  if (i >= 0) { 
+        			  ext = fileName.substring(i+1); 
+        		  }
+        		  
+        		  if (ext.equals("xml"))
+        		  {
+        			  // CHANGE THIS TO THE DATABASE ONCE READY
+        			  parsedFiles.add(xmlParse(child.getPath()));
+        		  }
+    		  }
+    	  }
+    	  return(parsedFiles);
+    }
+    
+    private Document xmlParse(String filePath)
     {
     	Document doc = null;
         try {
@@ -121,7 +151,8 @@ public class ParseQTI {
          } catch (Exception e) {
             e.printStackTrace();
          }
-        System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+        
+        // System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		return doc;
     }
     
