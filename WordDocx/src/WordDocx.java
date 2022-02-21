@@ -97,7 +97,7 @@ run4.setColor("FF3333");
 run10.setColor("FF3333");
 run13.setColor("FF3333");
 
-// to add content to you document .write method is used
+// to add content to the document
 document.write(out);
 
 // close the document
