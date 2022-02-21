@@ -6,22 +6,22 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
  
-// to import the Apache library to create document file object import org.apache.poi.xwpf.usermodel.XWPFDocument;
+// To import the Apache library to create document file object import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 public class WordDocx
 {
 public static void main(String[] args) throws Exception
 {
-// make an empty document
+// Make an empty document
 XWPFDocument document = new XWPFDocument();
  
-// make a file by specifying path of the document
+// Make a file by specifying path of the document
 File newFile = new File("D:/word.docx");
 
-// file stream is used to write in the document
+// File stream is used to write in the document
 FileOutputStream out = new FileOutputStream(newFile);
 
-//create Question 1 
+//Create Question 1 
 XWPFParagraph paragraph = document.createParagraph();
 XWPFRun run = paragraph.createRun();
 run.setText("CS499 test word doc ");
@@ -48,7 +48,7 @@ XWPFRun run6= paragraph6.createRun();
 run6.setText("D. answer 4 ");
 run6.addBreak();
 
-//create Question 2
+//Create Question 2
 XWPFParagraph paragraph7 = document.createParagraph();
 XWPFRun run7 = paragraph7.createRun();
 run7.setText("2. bla bla bla bla bla  ");
@@ -70,7 +70,7 @@ XWPFRun run11 = paragraph11.createRun();
 run11.setText("D. answer 4 ");
 run11.addBreak();
 
-//create Question 3
+//Create Question 3
 XWPFParagraph paragraph12 = document.createParagraph();
 XWPFRun run12 = paragraph12.createRun();
 run12.setText("3. bla bla bla bla bla  ");
@@ -92,11 +92,10 @@ XWPFRun run16 = paragraph16.createRun();
 run16.setText("D. answer 4 ");
 run16.addBreak();
 
-// highlight the correct answer for each problem
+// Highlight the correct answer for each problem
 run4.setColor("FF3333");
 run10.setColor("FF3333");
 run13.setColor("FF3333");
-
 
 // to add content to you document .write method is used
 document.write(out);
