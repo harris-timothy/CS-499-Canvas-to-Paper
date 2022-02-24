@@ -16,11 +16,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 public class ParseQTI {
-	// Unzip QTI - Done :)
-	// Open folder
-	// Parse both XMLs (assessment_meta, assessment id)
-	// Iterate through each folder in the .zip
-	
     /**
      * Size of the buffer to read/write data
      */

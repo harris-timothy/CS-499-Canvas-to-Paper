@@ -10,6 +10,8 @@ public class Main {
 		// TODO Auto-generated method stub
 		ParseQTI qti = new ParseQTI();
 		ArrayList<Document> tempArray = new ArrayList<Document>();
+		CreateQTI newQTI = new CreateQTI();
+		newQTI.CreateQuiz();
 		
 		try {
 			qti.unzip("C:/Users/gamin/Desktop/499/cs-214-03-fa21-intro-discrete-structure-quiz-export.zip", "C:/Users/gamin/Desktop/499/QTITest");
