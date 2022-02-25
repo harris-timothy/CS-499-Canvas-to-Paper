@@ -1,5 +1,6 @@
 package cs499;
 
+
 import static cs499.data_classes.Tables.*;
 import static org.jooq.impl.DSL.*;
 
@@ -10,10 +11,16 @@ import org.jooq.Record;
 import org.jooq.impl.*;
 
 
+import java.io.IOException;
+import java.util.ArrayList;
+import org.w3c.dom.Document;
+
+
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+
         String url = "jdbc:sqlite:db/testdb.sqlite";
 
         // Connection is the only JDBC resource that we need
@@ -44,7 +51,23 @@ public class Main {
         }
 		
 		
-
+		ParseQTI qti = new ParseQTI();
+		ArrayList<Document> tempArray = new ArrayList<Document>();
+		CreateQTI newQTI = new CreateQTI();
+		newQTI.CreateQuiz();
+		
+		try {
+			qti.unzip("C:/Users/gamin/Desktop/499/cs-214-03-fa21-intro-discrete-structure-quiz-export.zip", "C:/Users/gamin/Desktop/499/QTITest");
+			tempArray = qti.xmlLoop("C:/Users/gamin/Desktop/499/QTITest");
+			System.out.println(tempArray.size());
+			for(Document doc : tempArray)
+			{
+				System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
