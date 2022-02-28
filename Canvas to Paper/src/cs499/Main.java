@@ -1,8 +1,6 @@
 package cs499;
 
 import static cs499.data_classes.Tables.*;
-import static org.jooq.impl.DSL.*;
-
 import java.sql.*;
 
 import org.jooq.*;
