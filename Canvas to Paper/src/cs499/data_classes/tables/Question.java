@@ -9,7 +9,6 @@ import cs499.data_classes.Indexes;
 import cs499.data_classes.Keys;
 import cs499.data_classes.tables.records.QuestionRecord;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row8;
+import org.jooq.Row11;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -56,16 +55,6 @@ public class Question extends TableImpl<QuestionRecord> {
     public final TableField<QuestionRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>question.type</code>.
-     */
-    public final TableField<QuestionRecord, String> TYPE = createField(DSL.name("type"), SQLDataType.CLOB.nullable(false), this, "");
-
-    /**
-     * The column <code>question.point_value</code>.
-     */
-    public final TableField<QuestionRecord, BigDecimal> POINT_VALUE = createField(DSL.name("point_value"), SQLDataType.NUMERIC.nullable(false), this, "");
-
-    /**
      * The column <code>question.name</code>.
      */
     public final TableField<QuestionRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB, this, "");
@@ -76,19 +65,44 @@ public class Question extends TableImpl<QuestionRecord> {
     public final TableField<QuestionRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>question.correct_answer</code>.
+     * The column <code>question.api_id</code>.
      */
-    public final TableField<QuestionRecord, String> CORRECT_ANSWER = createField(DSL.name("correct_answer"), SQLDataType.CLOB, this, "");
+    public final TableField<QuestionRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
 
     /**
-     * The column <code>question.alternate_answers</code>.
+     * The column <code>question.qti_id</code>.
      */
-    public final TableField<QuestionRecord, String> ALTERNATE_ANSWERS = createField(DSL.name("alternate_answers"), SQLDataType.CLOB, this, "");
+    public final TableField<QuestionRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>question.canvas_id</code>.
+     * The column <code>question.type</code>.
      */
-    public final TableField<QuestionRecord, String> CANVAS_ID = createField(DSL.name("canvas_id"), SQLDataType.CLOB, this, "");
+    public final TableField<QuestionRecord, String> TYPE = createField(DSL.name("type"), SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>question.points_possible</code>.
+     */
+    public final TableField<QuestionRecord, Float> POINTS_POSSIBLE = createField(DSL.name("points_possible"), SQLDataType.REAL, this, "");
+
+    /**
+     * The column <code>question.answers</code>.
+     */
+    public final TableField<QuestionRecord, String> ANSWERS = createField(DSL.name("answers"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>question.abet</code>.
+     */
+    public final TableField<QuestionRecord, Integer> ABET = createField(DSL.name("abet"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>question.grading_instructions</code>.
+     */
+    public final TableField<QuestionRecord, String> GRADING_INSTRUCTIONS = createField(DSL.name("grading_instructions"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>question.reference_id</code>.
+     */
+    public final TableField<QuestionRecord, Integer> REFERENCE_ID = createField(DSL.name("reference_id"), SQLDataType.INTEGER, this, "");
 
     private Question(Name alias, Table<QuestionRecord> aliased) {
         this(alias, aliased, null);
@@ -130,7 +144,7 @@ public class Question extends TableImpl<QuestionRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_QUESTION_CANVAS_ID);
+        return Arrays.asList(Indexes.IDX_QUESTION_API_ID, Indexes.IDX_QUESTION_QTI_ID);
     }
 
     @Override
@@ -165,11 +179,11 @@ public class Question extends TableImpl<QuestionRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, String, BigDecimal, String, String, String, String, String> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row11<Integer, String, String, Integer, String, String, Float, String, Integer, String, Integer> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 }

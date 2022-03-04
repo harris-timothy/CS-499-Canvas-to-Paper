@@ -1,8 +1,9 @@
 <configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.16.0.xsd">
   <!-- Configure the database connection here -->
+  <onError>LOG</onError>
   <jdbc>
     <driver>org.sqlite.JDBC</driver>
-    <url>jdbc:sqlite:db/testdb.sqlite</url>
+    <url>jdbc:sqlite:./db/canvas2paper.db</url>
     <user></user>
     <password></password>
     
@@ -94,7 +95,7 @@
 
            If left empty, jOOQ will generate all available schemata. See the
            manual's next section to learn how to generate several schemata -->
-      <inputSchema></inputSchema>
+        <inputSchema></inputSchema>
     </database>
 
     <!-- Generation flags: See advanced configuration properties -->

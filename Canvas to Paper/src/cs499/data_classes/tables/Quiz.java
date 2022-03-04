@@ -9,7 +9,6 @@ import cs499.data_classes.Indexes;
 import cs499.data_classes.Keys;
 import cs499.data_classes.tables.records.QuizRecord;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,49 +55,49 @@ public class Quiz extends TableImpl<QuizRecord> {
     public final TableField<QuizRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
+     * The column <code>quiz.name</code>.
+     */
+    public final TableField<QuizRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>quiz.description</code>.
+     */
+    public final TableField<QuizRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>quiz.api_id</code>.
+     */
+    public final TableField<QuizRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>quiz.qti_id</code>.
+     */
+    public final TableField<QuizRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>quiz.points_possible</code>.
+     */
+    public final TableField<QuizRecord, Float> POINTS_POSSIBLE = createField(DSL.name("points_possible"), SQLDataType.REAL, this, "");
+
+    /**
+     * The column <code>quiz.assignment_api_id</code>.
+     */
+    public final TableField<QuizRecord, Integer> ASSIGNMENT_API_ID = createField(DSL.name("assignment_api_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>quiz.assignment_qti_id</code>.
+     */
+    public final TableField<QuizRecord, String> ASSIGNMENT_QTI_ID = createField(DSL.name("assignment_qti_id"), SQLDataType.CLOB, this, "");
+
+    /**
      * The column <code>quiz.course_id</code>.
      */
-    public final TableField<QuizRecord, Integer> COURSE_ID = createField(DSL.name("course_id"), SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
-     * The column <code>quiz.options</code>.
-     */
-    public final TableField<QuizRecord, byte[]> OPTIONS = createField(DSL.name("options"), SQLDataType.BLOB, this, "");
-
-    /**
-     * The column <code>quiz.assign_to</code>.
-     */
-    public final TableField<QuizRecord, byte[]> ASSIGN_TO = createField(DSL.name("assign_to"), SQLDataType.BLOB, this, "");
+    public final TableField<QuizRecord, Integer> COURSE_ID = createField(DSL.name("course_id"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>quiz.due_date</code>.
      */
     public final TableField<QuizRecord, String> DUE_DATE = createField(DSL.name("due_date"), SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>quiz.available_from</code>.
-     */
-    public final TableField<QuizRecord, String> AVAILABLE_FROM = createField(DSL.name("available_from"), SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>quiz.until</code>.
-     */
-    public final TableField<QuizRecord, String> UNTIL = createField(DSL.name("until"), SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>quiz.rubric</code>.
-     */
-    public final TableField<QuizRecord, byte[]> RUBRIC = createField(DSL.name("rubric"), SQLDataType.BLOB, this, "");
-
-    /**
-     * The column <code>quiz.total_points</code>.
-     */
-    public final TableField<QuizRecord, BigDecimal> TOTAL_POINTS = createField(DSL.name("total_points"), SQLDataType.NUMERIC.nullable(false), this, "");
-
-    /**
-     * The column <code>quiz.canvas_id</code>.
-     */
-    public final TableField<QuizRecord, String> CANVAS_ID = createField(DSL.name("canvas_id"), SQLDataType.CLOB, this, "");
 
     private Quiz(Name alias, Table<QuizRecord> aliased) {
         this(alias, aliased, null);
@@ -140,7 +139,7 @@ public class Quiz extends TableImpl<QuizRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_QUIZ_CANVAS_ID);
+        return Arrays.asList(Indexes.IDX_QUIZ_API_ID, Indexes.IDX_QUIZ_QTI_ID);
     }
 
     @Override
@@ -179,7 +178,7 @@ public class Quiz extends TableImpl<QuizRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Integer, Integer, byte[], byte[], String, String, String, byte[], BigDecimal, String> fieldsRow() {
+    public Row10<Integer, String, String, Integer, String, Float, Integer, String, Integer, String> fieldsRow() {
         return (Row10) super.fieldsRow();
     }
 }

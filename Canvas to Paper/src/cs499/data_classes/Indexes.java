@@ -7,9 +7,7 @@ package cs499.data_classes;
 import cs499.data_classes.tables.Course;
 import cs499.data_classes.tables.Question;
 import cs499.data_classes.tables.QuestionBank;
-import cs499.data_classes.tables.QuestionGroup;
 import cs499.data_classes.tables.Quiz;
-import cs499.data_classes.tables.Section;
 
 import org.jooq.Index;
 import org.jooq.OrderField;
@@ -27,10 +25,12 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
-    public static final Index IDX_BANK_CANVAS_ID = Internal.createIndex(DSL.name("idx_bank_canvas_id"), QuestionBank.QUESTION_BANK, new OrderField[] { QuestionBank.QUESTION_BANK.CANVAS_ID }, true);
-    public static final Index IDX_COURSE_CANVAS_ID = Internal.createIndex(DSL.name("idx_course_canvas_id"), Course.COURSE, new OrderField[] { Course.COURSE.CANVAS_ID }, true);
-    public static final Index IDX_GROUP_CANVAS_ID = Internal.createIndex(DSL.name("idx_group_canvas_id"), QuestionGroup.QUESTION_GROUP, new OrderField[] { QuestionGroup.QUESTION_GROUP.CANVAS_ID }, true);
-    public static final Index IDX_QUESTION_CANVAS_ID = Internal.createIndex(DSL.name("idx_question_canvas_id"), Question.QUESTION, new OrderField[] { Question.QUESTION.CANVAS_ID }, true);
-    public static final Index IDX_QUIZ_CANVAS_ID = Internal.createIndex(DSL.name("idx_quiz_canvas_id"), Quiz.QUIZ, new OrderField[] { Quiz.QUIZ.CANVAS_ID }, true);
-    public static final Index IDX_SECTION_CANVAS_ID = Internal.createIndex(DSL.name("idx_section_canvas_id"), Section.SECTION, new OrderField[] { Section.SECTION.CANVAS_ID }, true);
+    public static final Index IDX_COURSE_API_ID = Internal.createIndex(DSL.name("idx_course_api_id"), Course.COURSE, new OrderField[] { Course.COURSE.API_ID }, true);
+    public static final Index IDX_COURSE_QTI_ID = Internal.createIndex(DSL.name("idx_course_qti_id"), Course.COURSE, new OrderField[] { Course.COURSE.QTI_ID }, true);
+    public static final Index IDX_QUESTION_API_ID = Internal.createIndex(DSL.name("idx_question_api_id"), Question.QUESTION, new OrderField[] { Question.QUESTION.API_ID }, true);
+    public static final Index IDX_QUESTION_BANK_API_ID = Internal.createIndex(DSL.name("idx_question_bank_api_id"), QuestionBank.QUESTION_BANK, new OrderField[] { QuestionBank.QUESTION_BANK.API_ID }, true);
+    public static final Index IDX_QUESTION_BANK_QTI_ID = Internal.createIndex(DSL.name("idx_question_bank_qti_id"), QuestionBank.QUESTION_BANK, new OrderField[] { QuestionBank.QUESTION_BANK.QTI_ID }, true);
+    public static final Index IDX_QUESTION_QTI_ID = Internal.createIndex(DSL.name("idx_question_qti_id"), Question.QUESTION, new OrderField[] { Question.QUESTION.QTI_ID }, true);
+    public static final Index IDX_QUIZ_API_ID = Internal.createIndex(DSL.name("idx_quiz_api_id"), Quiz.QUIZ, new OrderField[] { Quiz.QUIZ.API_ID }, true);
+    public static final Index IDX_QUIZ_QTI_ID = Internal.createIndex(DSL.name("idx_quiz_qti_id"), Quiz.QUIZ, new OrderField[] { Quiz.QUIZ.QTI_ID }, true);
 }
