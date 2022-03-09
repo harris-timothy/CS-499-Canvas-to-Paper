@@ -101,8 +101,9 @@ run13.setColor("FF3333");
 // to add content to the document
 document.write(out);
 
-// close the document
+// close the documents
 out.close();
+document.close();
 }
 
 }
