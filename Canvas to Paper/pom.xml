@@ -17,8 +17,6 @@
       </plugin>
     </plugins>
   </build>
-<<<<<<< HEAD
-=======
 <dependencies>
 <dependency>
   <groupId>org.jooq</groupId>
@@ -51,5 +49,4 @@
     <version>5.2.0</version>
 </dependency>
 </dependencies>
->>>>>>> origin/dev
 </project>

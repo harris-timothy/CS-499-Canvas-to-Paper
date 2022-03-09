@@ -1,13 +1,11 @@
 package cs499;
 
-<<<<<<< HEAD
 import javax.swing.JFrame;
 import java.awt.Image;
 import java.awt.Toolkit;
-=======
 
 import static cs499.data_classes.Tables.*;
-import static org.jooq.impl.DSL.*;
+// import static org.jooq.impl.DSL.*;
 
 import java.sql.*;
 
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.w3c.dom.Document;
 
->>>>>>> origin/dev
 
 public class Main {
 
@@ -29,7 +26,6 @@ public class Main {
 		String main_frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
 		String main_frame_icon_path = "Canvas to Paper/lib/images/main_frame_icon.png";
 
-<<<<<<< HEAD
 		//Initialize the main frame of the application
 		JFrame main_frame = new JFrame(main_frame_title);
 		main_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // EXIT_ON_CLOSE terminates the entire program, not just the window
@@ -40,8 +36,7 @@ public class Main {
 		main_frame.setIconImage(main_frame_icon);
 		
 		main_frame.setVisible(true);
-		
-=======
+
         String url = "jdbc:sqlite:db/testdb.sqlite";
 
         // Connection is the only JDBC resource that we need
@@ -86,10 +81,8 @@ public class Main {
 				System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
->>>>>>> origin/dev
 	}
 
 }
