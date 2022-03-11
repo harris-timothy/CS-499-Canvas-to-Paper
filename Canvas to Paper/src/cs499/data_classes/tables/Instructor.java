@@ -12,7 +12,7 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row3;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -50,14 +50,29 @@ public class Instructor extends TableImpl<InstructorRecord> {
     public final TableField<InstructorRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>instructor.email</code>.
+     * The column <code>instructor.fname</code>.
      */
-    public final TableField<InstructorRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.CLOB.nullable(false), this, "");
+    public final TableField<InstructorRecord, String> FNAME = createField(DSL.name("fname"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>instructor.name</code>.
+     * The column <code>instructor.lname</code>.
      */
-    public final TableField<InstructorRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB, this, "");
+    public final TableField<InstructorRecord, String> LNAME = createField(DSL.name("lname"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>instructor.title</code>.
+     */
+    public final TableField<InstructorRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>instructor.email</code>.
+     */
+    public final TableField<InstructorRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>instructor.token</code>.
+     */
+    public final TableField<InstructorRecord, String> TOKEN = createField(DSL.name("token"), SQLDataType.CLOB, this, "");
 
     private Instructor(Name alias, Table<InstructorRecord> aliased) {
         this(alias, aliased, null);
@@ -129,11 +144,11 @@ public class Instructor extends TableImpl<InstructorRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, String, String> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row6<Integer, String, String, String, String, String> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }

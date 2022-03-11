@@ -17,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -60,14 +60,19 @@ public class QuestionBank extends TableImpl<QuestionBankRecord> {
     public final TableField<QuestionBankRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB, this, "");
 
     /**
+     * The column <code>question_bank.api_id</code>.
+     */
+    public final TableField<QuestionBankRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>question_bank.qti_id</code>.
+     */
+    public final TableField<QuestionBankRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
+
+    /**
      * The column <code>question_bank.course_id</code>.
      */
     public final TableField<QuestionBankRecord, Integer> COURSE_ID = createField(DSL.name("course_id"), SQLDataType.INTEGER, this, "");
-
-    /**
-     * The column <code>question_bank.canvas_id</code>.
-     */
-    public final TableField<QuestionBankRecord, String> CANVAS_ID = createField(DSL.name("canvas_id"), SQLDataType.CLOB, this, "");
 
     private QuestionBank(Name alias, Table<QuestionBankRecord> aliased) {
         this(alias, aliased, null);
@@ -109,7 +114,7 @@ public class QuestionBank extends TableImpl<QuestionBankRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_BANK_CANVAS_ID);
+        return Arrays.asList(Indexes.IDX_QUESTION_BANK_API_ID, Indexes.IDX_QUESTION_BANK_QTI_ID);
     }
 
     @Override
@@ -144,11 +149,11 @@ public class QuestionBank extends TableImpl<QuestionBankRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, Integer, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, String, Integer, String, Integer> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

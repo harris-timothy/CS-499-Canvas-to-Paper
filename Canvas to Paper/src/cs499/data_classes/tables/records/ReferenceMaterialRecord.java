@@ -82,7 +82,7 @@ public class ReferenceMaterialRecord extends UpdatableRecordImpl<ReferenceMateri
     // -------------------------------------------------------------------------
 
     @Override
-    public Record2<Integer, Integer> key() {
+    public Record2<Integer, String> key() {
         return (Record2) super.key();
     }
 

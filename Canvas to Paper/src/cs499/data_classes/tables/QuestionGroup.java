@@ -5,19 +5,14 @@ package cs499.data_classes.tables;
 
 
 import cs499.data_classes.DefaultSchema;
-import cs499.data_classes.Indexes;
 import cs499.data_classes.Keys;
 import cs499.data_classes.tables.records.QuestionGroupRecord;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row7;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -55,24 +50,34 @@ public class QuestionGroup extends TableImpl<QuestionGroupRecord> {
     public final TableField<QuestionGroupRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>question_group.quiz_id</code>.
-     */
-    public final TableField<QuestionGroupRecord, Integer> QUIZ_ID = createField(DSL.name("quiz_id"), SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
      * The column <code>question_group.name</code>.
      */
     public final TableField<QuestionGroupRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>question_group.number</code>.
+     * The column <code>question_group.pick_count</code>.
      */
-    public final TableField<QuestionGroupRecord, Integer> NUMBER = createField(DSL.name("number"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<QuestionGroupRecord, Integer> PICK_COUNT = createField(DSL.name("pick_count"), SQLDataType.INTEGER, this, "");
 
     /**
-     * The column <code>question_group.canvas_id</code>.
+     * The column <code>question_group.question_points</code>.
      */
-    public final TableField<QuestionGroupRecord, String> CANVAS_ID = createField(DSL.name("canvas_id"), SQLDataType.CLOB, this, "");
+    public final TableField<QuestionGroupRecord, Integer> QUESTION_POINTS = createField(DSL.name("question_points"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>question_group.position</code>.
+     */
+    public final TableField<QuestionGroupRecord, Integer> POSITION = createField(DSL.name("position"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>question_group.quiz_id</code>.
+     */
+    public final TableField<QuestionGroupRecord, Integer> QUIZ_ID = createField(DSL.name("quiz_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>question_group.question_bank_id</code>.
+     */
+    public final TableField<QuestionGroupRecord, Integer> QUESTION_BANK_ID = createField(DSL.name("question_bank_id"), SQLDataType.INTEGER, this, "");
 
     private QuestionGroup(Name alias, Table<QuestionGroupRecord> aliased) {
         this(alias, aliased, null);
@@ -113,11 +118,6 @@ public class QuestionGroup extends TableImpl<QuestionGroupRecord> {
     }
 
     @Override
-    public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_GROUP_CANVAS_ID);
-    }
-
-    @Override
     public UniqueKey<QuestionGroupRecord> getPrimaryKey() {
         return Keys.QUESTION_GROUP__;
     }
@@ -149,11 +149,11 @@ public class QuestionGroup extends TableImpl<QuestionGroupRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, Integer, String, Integer, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row7<Integer, String, Integer, Integer, Integer, Integer, Integer> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }

@@ -4,19 +4,17 @@
 package cs499.data_classes;
 
 
-import cs499.data_classes.tables.BankQuestions;
 import cs499.data_classes.tables.Course;
-import cs499.data_classes.tables.GroupQuestions;
 import cs499.data_classes.tables.Instructor;
+import cs499.data_classes.tables.Metadata;
 import cs499.data_classes.tables.Question;
 import cs499.data_classes.tables.QuestionBank;
+import cs499.data_classes.tables.QuestionBankQuestion;
 import cs499.data_classes.tables.QuestionGroup;
-import cs499.data_classes.tables.QuestionReferences;
 import cs499.data_classes.tables.Quiz;
-import cs499.data_classes.tables.QuizQuestions;
-import cs499.data_classes.tables.QuizReferences;
+import cs499.data_classes.tables.QuizReference;
+import cs499.data_classes.tables.QuizToQuestion;
 import cs499.data_classes.tables.ReferenceMaterial;
-import cs499.data_classes.tables.Section;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,24 +38,19 @@ public class DefaultSchema extends SchemaImpl {
     public static final DefaultSchema DEFAULT_SCHEMA = new DefaultSchema();
 
     /**
-     * The table <code>bank_questions</code>.
-     */
-    public final BankQuestions BANK_QUESTIONS = BankQuestions.BANK_QUESTIONS;
-
-    /**
      * The table <code>course</code>.
      */
     public final Course COURSE = Course.COURSE;
 
     /**
-     * The table <code>group_questions</code>.
-     */
-    public final GroupQuestions GROUP_QUESTIONS = GroupQuestions.GROUP_QUESTIONS;
-
-    /**
      * The table <code>instructor</code>.
      */
     public final Instructor INSTRUCTOR = Instructor.INSTRUCTOR;
+
+    /**
+     * The table <code>metadata</code>.
+     */
+    public final Metadata METADATA = Metadata.METADATA;
 
     /**
      * The table <code>question</code>.
@@ -70,14 +63,14 @@ public class DefaultSchema extends SchemaImpl {
     public final QuestionBank QUESTION_BANK = QuestionBank.QUESTION_BANK;
 
     /**
+     * The table <code>question_bank_question</code>.
+     */
+    public final QuestionBankQuestion QUESTION_BANK_QUESTION = QuestionBankQuestion.QUESTION_BANK_QUESTION;
+
+    /**
      * The table <code>question_group</code>.
      */
     public final QuestionGroup QUESTION_GROUP = QuestionGroup.QUESTION_GROUP;
-
-    /**
-     * The table <code>question_references</code>.
-     */
-    public final QuestionReferences QUESTION_REFERENCES = QuestionReferences.QUESTION_REFERENCES;
 
     /**
      * The table <code>quiz</code>.
@@ -85,24 +78,19 @@ public class DefaultSchema extends SchemaImpl {
     public final Quiz QUIZ = Quiz.QUIZ;
 
     /**
-     * The table <code>quiz_questions</code>.
+     * The table <code>quiz_reference</code>.
      */
-    public final QuizQuestions QUIZ_QUESTIONS = QuizQuestions.QUIZ_QUESTIONS;
+    public final QuizReference QUIZ_REFERENCE = QuizReference.QUIZ_REFERENCE;
 
     /**
-     * The table <code>quiz_references</code>.
+     * The table <code>quiz_to_question</code>.
      */
-    public final QuizReferences QUIZ_REFERENCES = QuizReferences.QUIZ_REFERENCES;
+    public final QuizToQuestion QUIZ_TO_QUESTION = QuizToQuestion.QUIZ_TO_QUESTION;
 
     /**
      * The table <code>reference_material</code>.
      */
     public final ReferenceMaterial REFERENCE_MATERIAL = ReferenceMaterial.REFERENCE_MATERIAL;
-
-    /**
-     * The table <code>section</code>.
-     */
-    public final Section SECTION = Section.SECTION;
 
     /**
      * No further instances allowed
@@ -120,19 +108,17 @@ public class DefaultSchema extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            BankQuestions.BANK_QUESTIONS,
             Course.COURSE,
-            GroupQuestions.GROUP_QUESTIONS,
             Instructor.INSTRUCTOR,
+            Metadata.METADATA,
             Question.QUESTION,
             QuestionBank.QUESTION_BANK,
+            QuestionBankQuestion.QUESTION_BANK_QUESTION,
             QuestionGroup.QUESTION_GROUP,
-            QuestionReferences.QUESTION_REFERENCES,
             Quiz.QUIZ,
-            QuizQuestions.QUIZ_QUESTIONS,
-            QuizReferences.QUIZ_REFERENCES,
-            ReferenceMaterial.REFERENCE_MATERIAL,
-            Section.SECTION
+            QuizReference.QUIZ_REFERENCE,
+            QuizToQuestion.QUIZ_TO_QUESTION,
+            ReferenceMaterial.REFERENCE_MATERIAL
         );
     }
 }
