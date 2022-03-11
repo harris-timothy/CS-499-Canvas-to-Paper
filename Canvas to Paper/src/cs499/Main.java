@@ -8,12 +8,6 @@ import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.impl.*;
 
-
-import java.io.IOException;
-import java.util.ArrayList;
-import org.w3c.dom.Document;
-
-
 public class Main {
 
 	public static void main(String[] args) {

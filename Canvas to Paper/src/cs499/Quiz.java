@@ -1,9 +1,21 @@
 package cs499;
 
+import static cs499.data_classes.Tables.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class Quiz implements Reference{
+	
+	private Integer id;
 	
 	private String name;
 	
@@ -28,6 +40,14 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return this.name;
 	}
@@ -91,8 +111,42 @@ public class Quiz implements Reference{
 		Collections.shuffle(questions);
 	}
 	
+	private String questionJSON() {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			ObjectNode quiz = mapper.createObjectNode();
+			
+			for (Integer i = 0; i < questions.size(); i++) {
+				quiz.put(i.toString(), questions.get(i).getId().toString());
+			}
+			String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(quiz);
+			return json;
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			return "Error creating JSON String";
+		}
+	}
+	
 	public void saveMetadata() {
-		//TODO
+		String url = "jdbc:sqlite:db/canvas2paper.db";
+		
+		try (Connection conn = DriverManager.getConnection(url)) {
+            DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+            
+            create.insertInto(
+            		METADATA,
+            		METADATA.QUIZ_ID,
+            		METADATA.DATA)
+            .values(this.getId(), 
+            		this.questionJSON())
+            .execute();
+            
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -101,4 +155,5 @@ public class Quiz implements Reference{
 		
 	}
 
+	
 }

@@ -15,20 +15,21 @@ public class RestToDB {
 	
 	public static ObjectMapper mapper;
 	
+	private static final String url = "jdbc:sqlite:db/canvas2paper.db";
+	
 	
 	public void mapCourse(JSONObject course) {
-		String url = "jdbc:sqlite:db/testdb.sqlite";
 		
 		try (Connection conn = DriverManager.getConnection(url)) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
-            create.insertInto(
-            		COURSE,
-                    COURSE.ID, 
-                    COURSE.TITLE,
-                    COURSE.CANVAS_ID)
-                  .values(3, "Prof. John Smith", "jsmith@fakeemail.com")
-                  .execute();
+//            create.insertInto(
+//            		COURSE,
+//                    COURSE.ID, 
+//                    COURSE.TITLE,
+//                    COURSE.CANVAS_ID)
+//                  .values(3, "Prof. John Smith", "jsmith@fakeemail.com")
+//                  .execute();
             
 		}
 		catch(Exception e) {

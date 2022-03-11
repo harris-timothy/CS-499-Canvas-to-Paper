@@ -5,12 +5,12 @@ import java.io.File;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
+import org.jooq.tools.json.JSONObject;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.jooq.tools.json.JSONObject;
 
 
 public class CanvasRestClient implements RestClient{
@@ -18,7 +18,7 @@ public class CanvasRestClient implements RestClient{
 	private String canvas_ID;
 	private String canvas_token;
 	private String canvas_url;
-	private String sandbox_ID;
+	private String course_ID;
 	private final WebTarget webTarget;
 	
 	public void readDotENV() {
@@ -27,21 +27,32 @@ public class CanvasRestClient implements RestClient{
 		canvas_ID = dotenv.get("CANVAS_ID");
 		canvas_token = dotenv.get("CANVAS_TOKEN");
 		canvas_url = dotenv.get("CANVAS_URL");
-		sandbox_ID = dotenv.get("SANDBOX_ID");		
+		course_ID = dotenv.get("SANDBOX_ID");		
 	}
 	
 	public CanvasRestClient(String host) {
 		
-		Client client = ClientBuilder.newClient();
+		this.readDotENV();
 		
-		webTarget = client.target(host);
+		Client client = ClientBuilder.newBuilder()
+                .property("connection.timeout", 100)
+                .register(JacksonJsonProvider.class)
+                .build();
 		
+		webTarget = client.target(canvas_url)
+				.queryParam("access_token", canvas_token);
 	}
 	
 
 	@Override
 	public JSONObject getAllCourses() {
-		// TODO Auto-generated method stub
+		Response response = webTarget
+				.path("courses")
+				.request()
+				.get();
+		
+		System.out.println(response);
+		
 		return null;
 	}
 
