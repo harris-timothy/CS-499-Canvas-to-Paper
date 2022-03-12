@@ -20,21 +20,7 @@ public class RestToDB {
 	
 	public void mapCourse(JSONObject course) {
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
-            DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-            
-//            create.insertInto(
-//            		COURSE,
-//                    COURSE.ID, 
-//                    COURSE.TITLE,
-//                    COURSE.CANVAS_ID)
-//                  .values(3, "Prof. John Smith", "jsmith@fakeemail.com")
-//                  .execute();
-            
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+		
 		
 	}
 	
