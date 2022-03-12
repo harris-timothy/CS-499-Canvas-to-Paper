@@ -45,7 +45,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<CourseRecord> COURSE__ = Internal.createUniqueKey(Course.COURSE, DSL.name(""), new TableField[] { Course.COURSE.ID }, true);
-    public static final UniqueKey<InstructorRecord> INSTRUCTOR__ = Internal.createUniqueKey(Instructor.INSTRUCTOR, DSL.name(""), new TableField[] { Instructor.INSTRUCTOR.ID, Instructor.INSTRUCTOR.EMAIL, Instructor.INSTRUCTOR.TOKEN }, true);
+    public static final UniqueKey<InstructorRecord> INSTRUCTOR__ = Internal.createUniqueKey(Instructor.INSTRUCTOR, DSL.name(""), new TableField[] { Instructor.INSTRUCTOR.ID, Instructor.INSTRUCTOR.EMAIL, Instructor.INSTRUCTOR.TOKEN, Instructor.INSTRUCTOR.API_ID }, true);
     public static final UniqueKey<MetadataRecord> METADATA__ = Internal.createUniqueKey(Metadata.METADATA, DSL.name(""), new TableField[] { Metadata.METADATA.ID }, true);
     public static final UniqueKey<QuestionRecord> QUESTION__ = Internal.createUniqueKey(Question.QUESTION, DSL.name(""), new TableField[] { Question.QUESTION.ID }, true);
     public static final UniqueKey<QuestionBankRecord> QUESTION_BANK__ = Internal.createUniqueKey(QuestionBank.QUESTION_BANK, DSL.name(""), new TableField[] { QuestionBank.QUESTION_BANK.ID }, true);
