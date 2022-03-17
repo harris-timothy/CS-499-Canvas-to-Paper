@@ -21,13 +21,13 @@ public class CanvasRestClient implements RestClient{
 	private String course_ID;
 	private final WebTarget webTarget;
 	
-	public void readDotENV() {
+	private void readDotENV() {
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
 		
-		canvas_ID = dotenv.get("CANVAS_ID");
-		canvas_token = dotenv.get("CANVAS_TOKEN");
-		canvas_url = dotenv.get("CANVAS_URL");
-		course_ID = dotenv.get("SANDBOX_ID");		
+		this.canvas_ID = dotenv.get("CANVAS_ID");
+		this.canvas_token = dotenv.get("CANVAS_TOKEN");
+		this.canvas_url = dotenv.get("CANVAS_URL");
+		this.course_ID = dotenv.get("SANDBOX_ID");		
 	}
 	
 	public CanvasRestClient(String host) {
@@ -61,27 +61,8 @@ public class CanvasRestClient implements RestClient{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public JSONObject getCourseRubrics(int course) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public JSONObject getQuizQuestions(int course, int quiz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public JSONObject getOutcome(int outcome) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public JSONObject getRubric(int rubric) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -100,12 +81,6 @@ public class CanvasRestClient implements RestClient{
 
 	@Override
 	public String createCanvasQuiz(JSONObject quiz) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String associateRubric(JSONObject rubric) {
 		// TODO Auto-generated method stub
 		return null;
 	}

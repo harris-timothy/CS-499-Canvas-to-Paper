@@ -12,7 +12,7 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row6;
+import org.jooq.Row7;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -73,6 +73,11 @@ public class Instructor extends TableImpl<InstructorRecord> {
      * The column <code>instructor.token</code>.
      */
     public final TableField<InstructorRecord, String> TOKEN = createField(DSL.name("token"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>instructor.api_id</code>.
+     */
+    public final TableField<InstructorRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
 
     private Instructor(Name alias, Table<InstructorRecord> aliased) {
         this(alias, aliased, null);
@@ -144,11 +149,11 @@ public class Instructor extends TableImpl<InstructorRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Integer, String, String, String, String, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row7<Integer, String, String, String, String, String, Integer> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }
