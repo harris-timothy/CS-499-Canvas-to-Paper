@@ -1,17 +1,14 @@
 package cs499.api_client.data;
 
-import static cs499.data_classes.Tables.*;
+import static cs499.data_classes.Tables.COURSE;
+import static cs499.data_classes.Tables.INSTRUCTOR;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.jooq.DSLContext;
-import org.jooq.Result;
-import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-
-import cs499.data_classes.tables.records.InstructorRecord;
 
 public class Course {
 	
@@ -29,17 +26,13 @@ public class Course {
 	
 	public void storeCourseInfo() {
 		String url = "jdbc:sqlite:./db/canvas2paper.db";
-		int instructor_id;
 		try (Connection conn = DriverManager.getConnection(url)) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
-            instructor_id = create.select(INSTRUCTOR.ID)
+            int instructor_id = create.select(INSTRUCTOR.ID)
             		.from(INSTRUCTOR)
-            		.where(INSTRUCTOR.ID.eq(user_id)
-            		.fetch(InstructorRecord::getId);
-            
-            
-            
+            		.where(INSTRUCTOR.API_ID.eq(user_id))
+            		.fetchOne(INSTRUCTOR.ID, int.class);    
             
             create.insertInto(
             		COURSE, 

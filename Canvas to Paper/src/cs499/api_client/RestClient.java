@@ -12,13 +12,7 @@ public interface RestClient {
 	
 	JSONObject getCourseQuizzes(int course);
 	
-	JSONObject getCourseRubrics(int course);
-	
 	JSONObject getQuizQuestions(int course, int quiz);
-	
-	JSONObject getOutcome(int outcome);
-	
-	JSONObject getRubric(int rubric);
 	
 	JSONObject getQuestionGroup(int course, int quiz, int group);
 	
@@ -27,8 +21,6 @@ public interface RestClient {
 	String uploadFile(File file);
 	
 	String createCanvasQuiz(JSONObject quiz);
-	
-	String associateRubric(JSONObject rubric);
 	
 	String createQuestionGroup(JSONObject group);
 	
