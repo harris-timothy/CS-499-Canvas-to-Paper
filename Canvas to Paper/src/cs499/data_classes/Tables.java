@@ -4,19 +4,17 @@
 package cs499.data_classes;
 
 
-import cs499.data_classes.tables.BankQuestions;
 import cs499.data_classes.tables.Course;
-import cs499.data_classes.tables.GroupQuestions;
 import cs499.data_classes.tables.Instructor;
+import cs499.data_classes.tables.Metadata;
 import cs499.data_classes.tables.Question;
 import cs499.data_classes.tables.QuestionBank;
+import cs499.data_classes.tables.QuestionBankQuestion;
 import cs499.data_classes.tables.QuestionGroup;
-import cs499.data_classes.tables.QuestionReferences;
 import cs499.data_classes.tables.Quiz;
-import cs499.data_classes.tables.QuizQuestions;
-import cs499.data_classes.tables.QuizReferences;
+import cs499.data_classes.tables.QuizReference;
+import cs499.data_classes.tables.QuizToQuestion;
 import cs499.data_classes.tables.ReferenceMaterial;
-import cs499.data_classes.tables.Section;
 
 
 /**
@@ -26,24 +24,19 @@ import cs499.data_classes.tables.Section;
 public class Tables {
 
     /**
-     * The table <code>bank_questions</code>.
-     */
-    public static final BankQuestions BANK_QUESTIONS = BankQuestions.BANK_QUESTIONS;
-
-    /**
      * The table <code>course</code>.
      */
     public static final Course COURSE = Course.COURSE;
 
     /**
-     * The table <code>group_questions</code>.
-     */
-    public static final GroupQuestions GROUP_QUESTIONS = GroupQuestions.GROUP_QUESTIONS;
-
-    /**
      * The table <code>instructor</code>.
      */
     public static final Instructor INSTRUCTOR = Instructor.INSTRUCTOR;
+
+    /**
+     * The table <code>metadata</code>.
+     */
+    public static final Metadata METADATA = Metadata.METADATA;
 
     /**
      * The table <code>question</code>.
@@ -56,14 +49,14 @@ public class Tables {
     public static final QuestionBank QUESTION_BANK = QuestionBank.QUESTION_BANK;
 
     /**
+     * The table <code>question_bank_question</code>.
+     */
+    public static final QuestionBankQuestion QUESTION_BANK_QUESTION = QuestionBankQuestion.QUESTION_BANK_QUESTION;
+
+    /**
      * The table <code>question_group</code>.
      */
     public static final QuestionGroup QUESTION_GROUP = QuestionGroup.QUESTION_GROUP;
-
-    /**
-     * The table <code>question_references</code>.
-     */
-    public static final QuestionReferences QUESTION_REFERENCES = QuestionReferences.QUESTION_REFERENCES;
 
     /**
      * The table <code>quiz</code>.
@@ -71,22 +64,17 @@ public class Tables {
     public static final Quiz QUIZ = Quiz.QUIZ;
 
     /**
-     * The table <code>quiz_questions</code>.
+     * The table <code>quiz_reference</code>.
      */
-    public static final QuizQuestions QUIZ_QUESTIONS = QuizQuestions.QUIZ_QUESTIONS;
+    public static final QuizReference QUIZ_REFERENCE = QuizReference.QUIZ_REFERENCE;
 
     /**
-     * The table <code>quiz_references</code>.
+     * The table <code>quiz_to_question</code>.
      */
-    public static final QuizReferences QUIZ_REFERENCES = QuizReferences.QUIZ_REFERENCES;
+    public static final QuizToQuestion QUIZ_TO_QUESTION = QuizToQuestion.QUIZ_TO_QUESTION;
 
     /**
      * The table <code>reference_material</code>.
      */
     public static final ReferenceMaterial REFERENCE_MATERIAL = ReferenceMaterial.REFERENCE_MATERIAL;
-
-    /**
-     * The table <code>section</code>.
-     */
-    public static final Section SECTION = Section.SECTION;
 }

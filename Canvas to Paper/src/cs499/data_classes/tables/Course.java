@@ -17,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row3;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -55,14 +55,24 @@ public class Course extends TableImpl<CourseRecord> {
     public final TableField<CourseRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>course.title</code>.
+     * The column <code>course.name</code>.
      */
-    public final TableField<CourseRecord, String> TITLE = createField(DSL.name("title"), SQLDataType.CLOB, this, "");
+    public final TableField<CourseRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB, this, "");
 
     /**
-     * The column <code>course.canvas_id</code>.
+     * The column <code>course.api_id</code>.
      */
-    public final TableField<CourseRecord, String> CANVAS_ID = createField(DSL.name("canvas_id"), SQLDataType.CLOB, this, "");
+    public final TableField<CourseRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>course.qti_id</code>.
+     */
+    public final TableField<CourseRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>course.instructor_id</code>.
+     */
+    public final TableField<CourseRecord, Integer> INSTRUCTOR_ID = createField(DSL.name("instructor_id"), SQLDataType.INTEGER, this, "");
 
     private Course(Name alias, Table<CourseRecord> aliased) {
         this(alias, aliased, null);
@@ -104,7 +114,7 @@ public class Course extends TableImpl<CourseRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_COURSE_CANVAS_ID);
+        return Arrays.asList(Indexes.IDX_COURSE_API_ID, Indexes.IDX_COURSE_QTI_ID);
     }
 
     @Override
@@ -139,11 +149,11 @@ public class Course extends TableImpl<CourseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, String, String> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row5<Integer, String, Integer, String, Integer> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

@@ -12,11 +12,11 @@ public class Connect {
      /**
      * Connect to a sample database
      */
-    public static void connect() {
+	public static void connect ()  {
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:sqlite:/db/testdb.sqlite";
+            String url = "jdbc:sqlite:./db/canvas2paper.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             
@@ -34,4 +34,8 @@ public class Connect {
             }
         }
     }
+	
+	public static void main(String[] args) {
+		connect();
+	}
 }
