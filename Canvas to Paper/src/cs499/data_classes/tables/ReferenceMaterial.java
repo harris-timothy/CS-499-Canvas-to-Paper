@@ -62,7 +62,7 @@ public class ReferenceMaterial extends TableImpl<ReferenceMaterialRecord> {
     /**
      * The column <code>reference_material.content</code>.
      */
-    public final TableField<ReferenceMaterialRecord, byte[]> CONTENT = createField(DSL.name("content"), SQLDataType.BLOB, this, "");
+    public final TableField<ReferenceMaterialRecord, String> CONTENT = createField(DSL.name("content"), SQLDataType.CLOB, this, "");
 
     private ReferenceMaterial(Name alias, Table<ReferenceMaterialRecord> aliased) {
         this(alias, aliased, null);
@@ -138,7 +138,7 @@ public class ReferenceMaterial extends TableImpl<ReferenceMaterialRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, String, byte[]> fieldsRow() {
+    public Row4<Integer, String, String, String> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }
