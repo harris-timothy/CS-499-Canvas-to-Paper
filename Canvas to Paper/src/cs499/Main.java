@@ -12,11 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.FileDialog;
 
 import java.io.File;
-import java.io.IOException;
-
-import java.util.ArrayList;
-
-import org.w3c.dom.Document;
 
 public class Main {
 
@@ -51,25 +46,56 @@ public class Main {
 		welc_menu_bar.add(welc_file_menu);
 		welc_frame.setJMenuBar(welc_menu_bar);
 		
-		String Test = FileSelect();
+		String Test = FilesSelect()[0];
 		System.out.println(Test);
 
 		//View the Welcome Screen frame
 		welc_frame.setVisible(true);
 	}
 
+	/**
+	 * Opens a file explorer frame to cause the user to select a file
+	 * @return The file path that the user selected
+	 */
 	private static String FileSelect() {
-			try {
-				FileDialog browser = new FileDialog(new JFrame());
-				browser.setTitle("Please select a zipped quiz to export.");
-				browser.setVisible(true);
-				File[] f = browser.getFiles();
-				if(f.length > 0){
-    				return browser.getFiles()[0].getAbsolutePath();
-				}
-			} catch (Exception e) {
-				return e.toString();
+		try {
+			FileDialog browser = new FileDialog(new JFrame());
+			browser.setMultipleMode(false);
+			browser.setTitle("Please select a zipped quiz to export.");
+			browser.setVisible(true);
+			File[] f = browser.getFiles();
+			if(f.length > 0){
+				return browser.getFiles()[0].getAbsolutePath();
 			}
-			return "If you've encountered this, the program has logically not functioned. This should not be possible to encounter. Please cry.";
+		} catch (Exception e) {
+			return e.toString();
+		}
+		return "User did not select a file.";
+	}
+	/**
+	 * Opens a file explorer frame to cause the user to select multiple files
+	 * @return An array of all file paths that the user selected
+	 */
+	private static String[] FilesSelect() {
+		try {
+			FileDialog browser = new FileDialog(new JFrame(), "Please select a zipped quiz to export.");
+			browser.setMultipleMode(true);
+			browser.setVisible(true);
+			File[] f = browser.getFiles();
+			if(f.length > 0){
+				String[] filepaths = new String[f.length];
+				for (int i = 0; i < f.length; i++) {
+					filepaths[i] = browser.getFiles()[i].getAbsolutePath();
+				}
+				return filepaths;
+			}
+		} catch (Exception e) {
+			String[] errors = new String[1];
+			errors[0] = e.toString();
+			return errors;
+		}
+		String[] failures = new String[1];
+		failures[0] = "User did not select a file.";
+		return failures;
 	}
 }
