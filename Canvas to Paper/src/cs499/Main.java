@@ -10,6 +10,8 @@ import java.awt.Toolkit;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.FileDialog;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import java.io.File;
 
@@ -33,21 +35,38 @@ public class Main {
 		//Create the menu bar at the top of the Welcome Screen frame
 		final JMenuBar welc_menu_bar = new JMenuBar();
 
-		//Create the menus within the menu bar
-
 		//Create the File Menu
 		JMenu welc_file_menu = new JMenu("File");
+
+		//Create File -> Import QTI File
 		JMenuItem welc_import_mi = new JMenuItem("Import QTI File");
 		welc_import_mi.setMnemonic(KeyEvent.VK_I);
+		
+		//Create Import QTI File Action Handler
+		class ImportAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Import behavior
+				String Test = FilesSelect()[0];
+				System.out.println(Test);
+			}
+		}
+		welc_import_mi.addActionListener(new ImportAction());
 		welc_file_menu.add(welc_import_mi);
+
+		//Create File -> Export QTI File
 		JMenuItem welc_export_mi = new JMenuItem("Export QTI File");
 		welc_export_mi.setMnemonic(KeyEvent.VK_E);
+
+		//Create Export QTI File Action Handler
+		class ExportAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Export behavior
+				System.out.println("Export QTI File Button Pressed.");
+			}
+		}
 		welc_file_menu.add(welc_export_mi);
 		welc_menu_bar.add(welc_file_menu);
 		welc_frame.setJMenuBar(welc_menu_bar);
-		
-		String Test = FilesSelect()[0];
-		System.out.println(Test);
 
 		//View the Welcome Screen frame
 		welc_frame.setVisible(true);
