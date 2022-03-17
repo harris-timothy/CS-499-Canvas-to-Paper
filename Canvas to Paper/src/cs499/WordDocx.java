@@ -103,6 +103,7 @@ document.write(out);
 
 // close the documents
 out.close();
+// TODO: review document closing
 document.close();
 }
 

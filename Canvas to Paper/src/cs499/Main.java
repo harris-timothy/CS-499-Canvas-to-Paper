@@ -1,88 +1,75 @@
 package cs499;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.GridLayout;
+import java.awt.event.KeyEvent;
+import java.awt.FileDialog;
 
-import static cs499.data_classes.Tables.*;
-// import static org.jooq.impl.DSL.*;
-
-import java.sql.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.impl.*;
-
-
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import org.w3c.dom.Document;
 
+import java.util.ArrayList;
+
+import org.w3c.dom.Document;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		String main_frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
-		String main_frame_icon_path = "Canvas to Paper/lib/images/main_frame_icon.png";
-
-		//Initialize the main frame of the application
-		JFrame main_frame = new JFrame(main_frame_title);
-		main_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // EXIT_ON_CLOSE terminates the entire program, not just the window
-		main_frame.setSize(600, 400);
-
-		//Create an image of the icon path and set the icon of the main frame
-		Image main_frame_icon = Toolkit.getDefaultToolkit().createImage(main_frame_icon_path);
-		main_frame.setIconImage(main_frame_icon);
+		String welc_frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
+		String welc_frame_icon_path = "Canvas to Paper/lib/images/welc_frame_icon.png";
 		
-		main_frame.setVisible(true);
+		//Initialize the Welcome Screen frame of the application
+		JFrame welc_frame = new JFrame(welc_frame_title);
+		welc_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // EXIT_ON_CLOSE terminates the entire program, not just the window
+		welc_frame.setSize(600, 400);
 
-        String url = "jdbc:sqlite:db/testdb.sqlite";
+		//Create an image of the icon path and set the icon of the Welcome Screen frame
+		Image welc_frame_icon = Toolkit.getDefaultToolkit().createImage(welc_frame_icon_path);
+		welc_frame.setIconImage(welc_frame_icon);
+		welc_frame.setLayout(new GridLayout(3,2));
 
-        // Connection is the only JDBC resource that we need
-        // PreparedStatement and ResultSet are handled by jOOQ, internally
-        try (Connection conn = DriverManager.getConnection(url)) {
-            DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-            
-            /*create.insertInto(INSTRUCTOR,
-                    INSTRUCTOR.ID, INSTRUCTOR.NAME, INSTRUCTOR.EMAIL)
-                  .values(3, "Prof. John Smith", "jsmith@fakeemail.com")
-                  .execute();
-            */
-            
-            Result<Record> result = create.select().from(INSTRUCTOR).fetch();
+		//Create the menu bar at the top of the Welcome Screen frame
+		final JMenuBar welc_menu_bar = new JMenuBar();
 
-            for (Record r : result) {
-                Integer id = r.getValue(INSTRUCTOR.ID);
-                String name = r.getValue(INSTRUCTOR.NAME);
-                String email = r.getValue(INSTRUCTOR.EMAIL);
+		//Create the menus within the menu bar
 
-                System.out.println("ID: " + id + " name: " + name + " email: " + email);
-            }
-        } 
-
-        // exception handling
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+		//Create the File Menu
+		JMenu welc_file_menu = new JMenu("File");
+		JMenuItem welc_import_mi = new JMenuItem("Import QTI File");
+		welc_import_mi.setMnemonic(KeyEvent.VK_I);
+		welc_file_menu.add(welc_import_mi);
+		JMenuItem welc_export_mi = new JMenuItem("Export QTI File");
+		welc_export_mi.setMnemonic(KeyEvent.VK_E);
+		welc_file_menu.add(welc_export_mi);
+		welc_menu_bar.add(welc_file_menu);
+		welc_frame.setJMenuBar(welc_menu_bar);
 		
-		
-		ParseQTI qti = new ParseQTI();
-		ArrayList<Document> tempArray = new ArrayList<Document>();
-		CreateQTI newQTI = new CreateQTI();
-		newQTI.CreateQuiz();
-		
-		try {
-			qti.unzip("C:/Users/gamin/Desktop/499/cs-214-03-fa21-intro-discrete-structure-quiz-export.zip", "C:/Users/gamin/Desktop/499/QTITest");
-			tempArray = qti.xmlLoop("C:/Users/gamin/Desktop/499/QTITest");
-			System.out.println(tempArray.size());
-			for(Document doc : tempArray)
-			{
-				System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String Test = FileSelect();
+		System.out.println(Test);
+
+		//View the Welcome Screen frame
+		welc_frame.setVisible(true);
 	}
 
+	private static String FileSelect() {
+			try {
+				FileDialog browser = new FileDialog(new JFrame());
+				browser.setTitle("Please select a zipped quiz to export.");
+				browser.setVisible(true);
+				File[] f = browser.getFiles();
+				if(f.length > 0){
+    				return browser.getFiles()[0].getAbsolutePath();
+				}
+			} catch (Exception e) {
+				return e.toString();
+			}
+			return "If you've encountered this, the program has logically not functioned. This should not be possible to encounter. Please cry.";
+	}
 }
