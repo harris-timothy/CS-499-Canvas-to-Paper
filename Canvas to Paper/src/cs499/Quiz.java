@@ -13,11 +13,7 @@ import org.jooq.impl.DSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 public class Quiz implements Reference{
-	
-	private static Dotenv dotenv;
 	
 	private Integer id;
 	
@@ -135,7 +131,7 @@ public class Quiz implements Reference{
 	
 	public void saveMetadata() {
 		
-		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
             create.insertInto(

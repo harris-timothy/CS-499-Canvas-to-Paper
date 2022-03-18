@@ -117,7 +117,7 @@ public class MultipleChoiceQuestion extends Question {
 	@Override
 	public void loadQuestion() {
 
-		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record result = create.select()

@@ -5,14 +5,13 @@ import static cs499.data_classes.Tables.QUESTION;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+import org.json.JSONArray;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 public class QuestionFactory {
-	
-	private static final String delimiter = "@@@";
 
 	public static Question build(int id) {
 
@@ -25,21 +24,20 @@ public class QuestionFactory {
 					.from(QUESTION)
 					.where(QUESTION.ID.eq(id))
 					.fetchOne();
-
-			String allAnswers = result.getValue(QUESTION.ANSWERS);
-			String[] answerArray = allAnswers.split(delimiter, 10);
 			
-			if(answerArray.length == 1) {
+			String allAnswers = result.getValue(QUESTION.ANSWERS);
+			JSONArray answerArray = new JSONArray(allAnswers);
+			
+			if(answerArray.length() == 1) {
 				return new SingleAnswerQuestion(id);
 			}
-			else {
-				if(answerArray[0].contains("correct")) {
-					return new MultipleChoiceQuestion(id);
-				}
-				else {
-					return new MatchingQuestion(id);
-				}
+			else if(answerArray.getJSONObject(0).has("left")) {
+				return new MatchingQuestion(id);
 			}
+			else {
+				return new MultipleChoiceQuestion(id);
+			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

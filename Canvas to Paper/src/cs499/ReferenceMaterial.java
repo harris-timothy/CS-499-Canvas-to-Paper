@@ -10,11 +10,7 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
 public class ReferenceMaterial {
-	
-	private static Dotenv dotenv;
 	
 	private int id;
 	
@@ -63,7 +59,7 @@ public class ReferenceMaterial {
 
 	public void loadReferenceData() {
 		
-		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record result = create.select()
@@ -82,7 +78,7 @@ public class ReferenceMaterial {
 	
 	public void saveReference() {
 		
-		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record exists = create.select()
