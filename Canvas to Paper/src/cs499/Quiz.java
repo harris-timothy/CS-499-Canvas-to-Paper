@@ -96,11 +96,11 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
-	public void addQuestion(Question question) {
+	public void addQuestion(SingleAnswerQuestion question) {
 		this.questions.add(question);
 	}
 	
-	public void removeQuestion(Question question) {
+	public void removeQuestion(SingleAnswerQuestion question) {
 		for (int i = 0; i < questions.size(); i++) {
 			if(questions.get(i) == question)
 				questions.remove(i);			

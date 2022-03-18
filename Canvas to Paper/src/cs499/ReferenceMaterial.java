@@ -25,6 +25,14 @@ public class ReferenceMaterial {
 		loadReference();
 	}
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return this.name;
 	}
@@ -78,7 +86,10 @@ public class ReferenceMaterial {
 		try (Connection conn = DriverManager.getConnection(url)) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
-            Record exists = create.select().from(REFERENCE_MATERIAL).where(REFERENCE_MATERIAL.ID.eq(id)).fetchOne();
+            Record exists = create.select()
+            		.from(REFERENCE_MATERIAL)
+            		.where(REFERENCE_MATERIAL.ID.eq(id))
+            		.fetchOne();
             
             if(exists == null) {
             	create.insertInto(REFERENCE_MATERIAL,
