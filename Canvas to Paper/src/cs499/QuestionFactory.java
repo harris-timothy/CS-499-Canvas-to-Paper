@@ -11,6 +11,8 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 public class QuestionFactory {
+	
+	private static final String delimiter = "@@@";
 
 	public static Question build(int id) {
 
@@ -25,12 +27,20 @@ public class QuestionFactory {
 					.fetchOne();
 
 			String allAnswers = result.getValue(QUESTION.ANSWERS);
-			String[] answerArray = allAnswers.split("@@@", 10);
-
+			String[] answerArray = allAnswers.split(delimiter, 10);
 			
-
-
-
+			if(answerArray.length == 1) {
+				return new SingleAnswerQuestion(id);
+			}
+			else {
+				if(answerArray[0].contains("correct")) {
+					return new MultipleChoiceQuestion(id);
+				}
+				else {
+					return new MatchingQuestion(id);
+				}
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

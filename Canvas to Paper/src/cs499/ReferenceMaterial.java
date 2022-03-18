@@ -10,7 +10,11 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class ReferenceMaterial {
+	
+	private static Dotenv dotenv;
 	
 	private int id;
 	
@@ -22,7 +26,7 @@ public class ReferenceMaterial {
 	
 	public ReferenceMaterial(int id) {
 		this.id = id;
-		loadReference();
+		loadReferenceData();
 	}
 	
 	public int getId() {
@@ -57,11 +61,9 @@ public class ReferenceMaterial {
 		this.description = description;
 	}
 
-	public void loadReference() {
+	public void loadReferenceData() {
 		
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
-		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record result = create.select()
@@ -73,17 +75,14 @@ public class ReferenceMaterial {
             setDescription(result.getValue(REFERENCE_MATERIAL.DESCRIPTION));
             setFilepath(result.getValue(REFERENCE_MATERIAL.CONTENT));
 
-                System.out.println("Name: " + name + " description: " + description);
-                System.out.println("Content: " + filepath);
             } catch (Exception e) {
                 e.printStackTrace();
             }
        }
 	
 	public void saveReference() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record exists = create.select()

@@ -1,6 +1,10 @@
 package cs499;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public abstract class Question implements Reference{
+	
+	protected static Dotenv dotenv;
 	
 	public abstract int getId();
 	

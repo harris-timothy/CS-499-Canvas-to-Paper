@@ -3,7 +3,7 @@ package cs499;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Matching extends Question {
+public class MatchingQuestion extends Question {
 
 	private int id;
 
@@ -11,7 +11,7 @@ public class Matching extends Question {
 
 	private String description;
 
-	private Boolean abet;
+	private boolean abet;
 
 	private String gradingInstructions;
 
@@ -21,9 +21,9 @@ public class Matching extends Question {
 
 	private HashMap<String, String> right;
 
-	public Matching(int id) {
+	public MatchingQuestion(int id) {
 		this.id = id;
-	
+		
 	}
 
 	public ArrayList<String> getLeft(){

@@ -13,7 +13,11 @@ import org.jooq.impl.DSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class Quiz implements Reference{
+	
+	private static Dotenv dotenv;
 	
 	private Integer id;
 	
@@ -130,9 +134,8 @@ public class Quiz implements Reference{
 	}
 	
 	public void saveMetadata() {
-		String url = "jdbc:sqlite:db/canvas2paper.db";
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
             create.insertInto(

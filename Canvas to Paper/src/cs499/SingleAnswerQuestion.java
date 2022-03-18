@@ -1,6 +1,7 @@
 package cs499;
 
 import static cs499.data_classes.Tables.QUESTION;
+import static cs499.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +21,7 @@ public class SingleAnswerQuestion extends Question {
 
 	private String answer;
 
-	private Boolean abet;
+	private boolean abet;
 
 	private String gradingInstructions;
 
@@ -81,14 +82,15 @@ public class SingleAnswerQuestion extends Question {
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, reference.getId())
 			.execute();
+			
+			//create reference object
 
 		}
 		catch(Exception e) {
@@ -100,9 +102,8 @@ public class SingleAnswerQuestion extends Question {
 	}
 
 	public void loadQuestion() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record result = create.select()
@@ -113,13 +114,11 @@ public class SingleAnswerQuestion extends Question {
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
-				setAbet(result.getValue(QUESTION.ABET));
+				setAbet(result.getValue(QUESTION.ABET) == 1);
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(result.getValue(QUESTION.ANSWERS));
 
 			}
-
-
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,9 +126,8 @@ public class SingleAnswerQuestion extends Question {
 	}
 
 	public void saveQuestion() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record exists = create.select()
@@ -146,7 +144,7 @@ public class SingleAnswerQuestion extends Question {
 						QUESTION.GRADING_INSTRUCTIONS,
 						QUESTION.ANSWERS,
 						QUESTION.ABET)
-				.values(id, name, description, "general", gradingInstructions, answer, abet)
+				.values(id, name, description, SINGLE_ANSWER.toString(), gradingInstructions, answer, (abet ? 1 : 0))
 				.execute();
 
 			}
@@ -155,14 +153,12 @@ public class SingleAnswerQuestion extends Question {
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
 				.set(QUESTION.TYPE, "general")
-				.set(QUESTION.ABET, abet)
+				.set(QUESTION.ABET, (abet ? 1 : 0))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, answer)
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
-
-
 
 		} catch (Exception e) {
 			e.printStackTrace();

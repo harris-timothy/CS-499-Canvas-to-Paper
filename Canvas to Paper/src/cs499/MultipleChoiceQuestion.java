@@ -11,7 +11,7 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-public class MultipleChoice extends Question {
+public class MultipleChoiceQuestion extends Question {
 
 	private int id;
 
@@ -21,7 +21,7 @@ public class MultipleChoice extends Question {
 
 	private String answer;
 
-	private Boolean abet;
+	private boolean abet;
 
 	private String gradingInstructions;
 
@@ -29,7 +29,7 @@ public class MultipleChoice extends Question {
 	
 	private ArrayList<String> choices;
 
-	public MultipleChoice(int id) {
+	public MultipleChoiceQuestion(int id) {
 		this.id = id;
 		
 	}
@@ -116,9 +116,8 @@ public class MultipleChoice extends Question {
 	
 	@Override
 	public void loadQuestion() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(dotenv.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record result = create.select()
@@ -129,7 +128,7 @@ public class MultipleChoice extends Question {
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
-				setAbet(result.getValue(QUESTION.ABET));
+				//setAbet(result.getValue(QUESTION.ABET));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(result.getValue(QUESTION.ANSWERS));
 
