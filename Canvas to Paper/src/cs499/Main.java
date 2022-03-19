@@ -48,7 +48,6 @@ public class Main {
 		//Create Import QTI File Action Handler
 		class ImportAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: Import behavior
 				String[] ImportZip = FilesSelect();
 				for (String filepath : ImportZip) {
 					if (!filepath.contains(".zip")) {
@@ -63,7 +62,6 @@ public class Main {
 						}
 					}
 				}
-				System.out.println("Out Zip");
 				ParseQTI qti = new ParseQTI();
 				ArrayList<Document> tempArray = new ArrayList<Document>();
 				try {
