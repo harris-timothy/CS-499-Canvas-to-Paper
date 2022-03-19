@@ -14,6 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import java.io.File;
+import java.util.ArrayList;
+
+import org.w3c.dom.Document;
 
 public class Main {
 
@@ -46,17 +49,44 @@ public class Main {
 		class ImportAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				//TODO: Import behavior
-				String Test = FilesSelect()[0];
-				System.out.println(Test);
+				String[] ImportZip = FilesSelect();
+				for (String filepath : ImportZip) {
+					if (!filepath.contains(".zip")) {
+						ImportZip = new String[0];
+					}
+				}
+				while (ImportZip.length <= 0) {
+					ImportZip = FilesSelect();
+					for (String filepath : ImportZip) {
+						if (!filepath.contains(".zip")) {
+							ImportZip = new String[0];
+						}
+					}
+				}
+				System.out.println("Out Zip");
+				ParseQTI qti = new ParseQTI();
+				ArrayList<Document> tempArray = new ArrayList<Document>();
+				try {
+					for (String filepath : ImportZip) {
+						qti.unzip(filepath, "QTITest");
+					}
+					tempArray = qti.xmlLoop("QTITest");
+					System.out.println(tempArray.size());
+					for(Document doc : tempArray)
+					{
+						System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		welc_import_mi.addActionListener(new ImportAction());
-		welc_file_menu.add(welc_import_mi);
-
+		
 		//Create File -> Export QTI File
 		JMenuItem welc_export_mi = new JMenuItem("Export QTI File");
 		welc_export_mi.setMnemonic(KeyEvent.VK_E);
-
+		
 		//Create Export QTI File Action Handler
 		class ExportAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
@@ -64,8 +94,16 @@ public class Main {
 				System.out.println("Export QTI File Button Pressed.");
 			}
 		}
+		welc_export_mi.addActionListener(new ExportAction());
+		
+		//Add File Menu Menu Items to File Menu 
+		welc_file_menu.add(welc_import_mi);
 		welc_file_menu.add(welc_export_mi);
+
+		//Add Menus to Menu Bar
 		welc_menu_bar.add(welc_file_menu);
+
+		//Set Menu Bar as Menu Bar
 		welc_frame.setJMenuBar(welc_menu_bar);
 
 		//View the Welcome Screen frame
