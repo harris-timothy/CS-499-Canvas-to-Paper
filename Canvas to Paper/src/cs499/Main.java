@@ -24,11 +24,6 @@ public class Main {
 		String welc_frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
 		String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
 		
-		//Initialize the Welcome Screen frame of the application
-		FrameMaker maker = new FrameMaker();
-		JFrame welc_frame = maker.frameMake(welc_frame_title, JFrame.EXIT_ON_CLOSE, 1000, 800, logo_icon_path);
-		welc_frame.setLayout(new GridLayout(3,2));
-
 		//Create the menu bar at the top of the Welcome Screen frame
 		final JMenuBar welc_menu_bar = new JMenuBar();
 
@@ -96,8 +91,16 @@ public class Main {
 		//Add Menus to Menu Bar
 		welc_menu_bar.add(welc_file_menu);
 
-		//Set Menu Bar as Menu Bar
-		welc_frame.setJMenuBar(welc_menu_bar);
+		//Initialize the Welcome Screen frame of the application
+		FrameMaker maker = new FrameMaker();
+		JFrame welc_frame = maker.frameMake(
+			welc_frame_title, 
+			JFrame.EXIT_ON_CLOSE, 
+			1000, 800, 
+			welc_menu_bar, 
+			logo_icon_path
+		);
+		welc_frame.setLayout(new GridLayout(3,2));
 
 		//View the Welcome Screen frame
 		welc_frame.setVisible(true);
