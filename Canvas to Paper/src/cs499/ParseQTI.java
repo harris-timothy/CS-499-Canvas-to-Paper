@@ -22,6 +22,7 @@ public class ParseQTI {
     private static final int BUFFER_SIZE = 4096;
 
 	private static ArrayList<Document> parsedFiles = new ArrayList<Document>();
+
     /**
      * Extracts a zip file specified by the zipFilePath to a directory specified by
      * destDirectory (will be created if does not exists)
@@ -55,6 +56,7 @@ public class ParseQTI {
         }
         zipIn.close();
     }
+
     /**
      * Extracts a zip entry (file entry)
      * @param zipIn
@@ -150,5 +152,4 @@ public class ParseQTI {
         // System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		return doc;
     }
-    
 }

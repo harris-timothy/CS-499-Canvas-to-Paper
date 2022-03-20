@@ -6,8 +6,8 @@ import javax.swing.JMenuBar;
 import java.awt.Image;
 import java.awt.Toolkit;
 
-public class FrameMaker {
-    public JFrame frameMake(String title, int close_behavior, int width, int height, JMenuBar menu_bar, String icon_path) {
+public class FrameBuilder {
+    public JFrame buildFrame(String title, int close_behavior, int width, int height, JMenuBar menu_bar, String icon_path) {
         //Initialize the frame
 		JFrame frame = new JFrame(title);
 		frame.setDefaultCloseOperation(close_behavior);
