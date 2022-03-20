@@ -1,6 +1,7 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
+import static cs499.question.QuestionType.SINGLE_ANSWER;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,8 +12,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
-
 import cs499.DataHelper;
 import cs499.ReferenceMaterial;
 
@@ -36,6 +35,7 @@ public class MatchingQuestion extends Question {
 
 	public MatchingQuestion(int id) {
 		this.id = id;
+		loadQuestion();
 		
 	}
 
@@ -53,8 +53,128 @@ public class MatchingQuestion extends Question {
 
 	public void setRight(HashMap<String, String> right) {
 		this.right = right;
+	}	
+
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
+	@Override
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String getGradingInstructions() {
+		return this.gradingInstructions;
+	}
+	
+	public void setGradingInstructions(String gradingInstructions) {
+		this.gradingInstructions = gradingInstructions;
+	}
+
+	@Override
+	public boolean getAbet() {
+		return this.abet;
+	}
+	
+	public void setAbet(boolean abet) {
+		this.abet = abet;
+		
+	}
+
+	@Override
+	public void loadQuestion() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			Record result = create.select()
+					.from(QUESTION)
+					.where(QUESTION.ID.eq(id))
+					.fetchOne();
+
+			if(result != null) {
+				setName(result.getValue(QUESTION.NAME));
+				setDescription(result.getValue(QUESTION.DESCRIPTION));
+				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
+				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
+				String answer = result.getValue(QUESTION.ANSWERS);
+				setLeft(AnswerFormatter.keyArray(answer));
+				setRight(AnswerFormatter.answerMap(answer));
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}	
+
+	@Override
+	public void saveQuestion() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			Record exists = create.select()
+					.from(QUESTION)
+					.where(QUESTION.ID.eq(id))
+					.fetchOne();
+
+			if(exists == null) {
+				create.insertInto(QUESTION,
+						QUESTION.ID,
+						QUESTION.NAME,
+						QUESTION.DESCRIPTION,
+						QUESTION.TYPE,
+						QUESTION.GRADING_INSTRUCTIONS,
+						QUESTION.ANSWERS,
+						QUESTION.ABET)
+				.values(id,
+						name,
+						description,
+						SINGLE_ANSWER.toString(),
+						gradingInstructions,
+						AnswerFormatter.answerJSONString(left, right),
+						DataHelper.boolToInt(abet))
+				.execute();
+
+			}
+			else {
+				create.update(QUESTION)
+				.set(QUESTION.NAME, name)
+				.set(QUESTION.DESCRIPTION, description)
+				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
+				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
+				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(left, right))
+				.where(QUESTION.ID.eq(id))
+				.execute();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
 		this.reference = reference;
@@ -71,59 +191,6 @@ public class MatchingQuestion extends Question {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public int getId() {
-		return this.id;
-	}
-
-	@Override
-	public String getName() {
-		return this.name;
-	}
-
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
-
-	@Override
-	public String getGradingInstructions() {
-		return this.gradingInstructions;
-	}
-
-	@Override
-	public boolean getAbet() {
-		return this.abet;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setGradingInstructions(String gradingInstructions) {
-		this.gradingInstructions = gradingInstructions;
-	}
-	
-	@Override
-	public void loadQuestion() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void saveQuestion() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

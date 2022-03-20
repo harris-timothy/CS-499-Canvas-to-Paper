@@ -1,6 +1,7 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
+import static cs499.question.QuestionType.SINGLE_ANSWER;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,8 +11,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
-
 import cs499.DataHelper;
 import cs499.ReferenceMaterial;
 
@@ -35,6 +34,7 @@ public class MultipleChoiceQuestion extends Question {
 
 	public MultipleChoiceQuestion(int id) {
 		this.id = id;
+		loadQuestion();
 		
 	}
 
@@ -109,7 +109,49 @@ public class MultipleChoiceQuestion extends Question {
 
 	@Override
 	public void saveQuestion() {
-		// TODO Auto-generated method stub
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			Record exists = create.select()
+					.from(QUESTION)
+					.where(QUESTION.ID.eq(id))
+					.fetchOne();
+
+			if(exists == null) {
+				create.insertInto(QUESTION,
+						QUESTION.ID,
+						QUESTION.NAME,
+						QUESTION.DESCRIPTION,
+						QUESTION.TYPE,
+						QUESTION.GRADING_INSTRUCTIONS,
+						QUESTION.ANSWERS,
+						QUESTION.ABET)
+				.values(id,
+						name,
+						description,
+						SINGLE_ANSWER.toString(),
+						gradingInstructions,
+						AnswerFormatter.answerJSONString(answer, choices),
+						DataHelper.boolToInt(abet))
+				.execute();
+
+			}
+			else {
+				create.update(QUESTION)
+				.set(QUESTION.NAME, name)
+				.set(QUESTION.DESCRIPTION, description)
+				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
+				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
+				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer, choices))
+				.where(QUESTION.ID.eq(id))
+				.execute();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		
 	}
 	
@@ -129,7 +171,8 @@ public class MultipleChoiceQuestion extends Question {
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
-				setAnswer(result.getValue(QUESTION.ANSWERS));
+				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
+				setChoices(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
 
 			}
 
