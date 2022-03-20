@@ -10,8 +10,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
-
 import cs499.DataHelper;
 import cs499.ReferenceMaterial;
 
