@@ -1,4 +1,4 @@
-package cs499;
+package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
 
@@ -6,6 +6,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.json.JSONArray;
+
+import cs499.DataHelper;
+
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
@@ -15,9 +18,7 @@ public class QuestionFactory {
 
 	public static Question build(int id) {
 
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
-
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record result = create.select()

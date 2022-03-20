@@ -1,4 +1,6 @@
-package cs499;
+package cs499.question;
+
+import cs499.Reference;
 
 public abstract class Question implements Reference{
 	
@@ -10,11 +12,10 @@ public abstract class Question implements Reference{
 	
 	public abstract String getGradingInstructions();
 	
-	public abstract Boolean getAbet();
+	public abstract boolean getAbet();
 	
 	public abstract void loadQuestion();
 	
-	public abstract void saveQuestion();
-	
+	public abstract void saveQuestion();	
 
 }

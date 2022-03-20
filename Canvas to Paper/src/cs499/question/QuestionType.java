@@ -1,4 +1,4 @@
-package cs499;
+package cs499.question;
 
 public enum QuestionType {
 	SINGLE_ANSWER {

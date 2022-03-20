@@ -13,9 +13,12 @@ import org.jooq.impl.DSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import cs499.question.Question;
+import cs499.question.SingleAnswerQuestion;
+
 public class Quiz implements Reference{
 	
-	private Integer id;
+	private int id;
 	
 	private String name;
 	
@@ -40,7 +43,7 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -150,6 +153,12 @@ public class Quiz implements Reference{
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createReference(int id) {
 		// TODO Auto-generated method stub
 		
 	}

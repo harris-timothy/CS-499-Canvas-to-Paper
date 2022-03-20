@@ -1,7 +1,7 @@
-package cs499;
+package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
-import static cs499.QuestionType.*;
+import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +10,10 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
+
+import cs499.DataHelper;
+import cs499.ReferenceMaterial;
 
 public class SingleAnswerQuestion extends Question {
 
@@ -64,7 +68,7 @@ public class SingleAnswerQuestion extends Question {
 		this.answer = answer;
 	}
 
-	public Boolean getAbet() {
+	public boolean getAbet() {
 		return this.abet;
 	}
 
@@ -82,24 +86,60 @@ public class SingleAnswerQuestion extends Question {
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
-
+		this.reference = reference;
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, reference.getId())
+			.where(QUESTION.ID.eq(this.id))
 			.execute();
 			
-			//create reference object
 
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-
-		this.reference = reference;
-
 	}
+	
+	@Override
+	public void createReference(int id) {
+		this.reference = new ReferenceMaterial(id);
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			create.update(QUESTION)
+			.set(QUESTION.REFERENCE_ID, id)
+			.where(QUESTION.ID.eq(this.id))
+			.execute();
+			
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Override
+	public void loadReference() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			int reference_id = create.select(QUESTION.REFERENCE_ID)
+			.from(QUESTION)
+			.where(QUESTION.ID.eq(id))
+			.fetchOne(QUESTION.REFERENCE_ID);
+			
+			this.reference = new ReferenceMaterial(reference_id);			
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 
 	public void loadQuestion() {
 
@@ -114,9 +154,9 @@ public class SingleAnswerQuestion extends Question {
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
-				setAbet(result.getValue(QUESTION.ABET) == 1);
+				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
-				setAnswer(result.getValue(QUESTION.ANSWERS));
+				setAnswer(AnswerFormatter.answerString(result.getValue(QUESTION.ANSWERS)));
 
 			}
 
@@ -144,7 +184,13 @@ public class SingleAnswerQuestion extends Question {
 						QUESTION.GRADING_INSTRUCTIONS,
 						QUESTION.ANSWERS,
 						QUESTION.ABET)
-				.values(id, name, description, SINGLE_ANSWER.toString(), gradingInstructions, answer, (abet ? 1 : 0))
+				.values(id,
+						name,
+						description,
+						SINGLE_ANSWER.toString(),
+						gradingInstructions,
+						AnswerFormatter.answerJSONString(answer),
+						DataHelper.boolToInt(abet))
 				.execute();
 
 			}
@@ -153,9 +199,9 @@ public class SingleAnswerQuestion extends Question {
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
 				.set(QUESTION.TYPE, "general")
-				.set(QUESTION.ABET, (abet ? 1 : 0))
+				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
-				.set(QUESTION.ANSWERS, answer)
+				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer))
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
@@ -165,5 +211,9 @@ public class SingleAnswerQuestion extends Question {
 		}
 
 	}
+		
+
+
+	
 
 }
