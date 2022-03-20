@@ -13,9 +13,12 @@ import org.jooq.impl.DSL;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import cs499.question.Question;
+import cs499.question.SingleAnswerQuestion;
+
 public class Quiz implements Reference{
 	
-	private Integer id;
+	private int id;
 	
 	private String name;
 	
@@ -40,7 +43,7 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -96,11 +99,11 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
-	public void addQuestion(Question question) {
+	public void addQuestion(SingleAnswerQuestion question) {
 		this.questions.add(question);
 	}
 	
-	public void removeQuestion(Question question) {
+	public void removeQuestion(SingleAnswerQuestion question) {
 		for (int i = 0; i < questions.size(); i++) {
 			if(questions.get(i) == question)
 				questions.remove(i);			
@@ -130,9 +133,8 @@ public class Quiz implements Reference{
 	}
 	
 	public void saveMetadata() {
-		String url = "jdbc:sqlite:db/canvas2paper.db";
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
             create.insertInto(
@@ -151,6 +153,12 @@ public class Quiz implements Reference{
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createReference(int id) {
 		// TODO Auto-generated method stub
 		
 	}
