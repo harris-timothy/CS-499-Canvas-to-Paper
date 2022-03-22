@@ -6,8 +6,6 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
- 
-// To import the Apache library to create document file object import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 public class WordDocx
 {
