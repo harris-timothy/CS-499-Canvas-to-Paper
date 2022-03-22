@@ -1,4 +1,4 @@
-package cs499;
+package cs499.qti;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

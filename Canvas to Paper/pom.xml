@@ -37,6 +37,7 @@
 				<xjbSources>
 					<xjbSource>${basedir}/schema/xjb</xjbSource>
 				</xjbSources>
+				<clearOutputDir>false</clearOutputDir>
             </configuration>
         </plugin>
     </plugins>
