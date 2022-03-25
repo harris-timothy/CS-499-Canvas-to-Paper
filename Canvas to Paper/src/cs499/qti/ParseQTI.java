@@ -6,14 +6,20 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
+
+import cs499.qti.data_mapping.AssessmentType;
+import cs499.qti.data_mapping.QuestestinteropType;
+import cs499.qti.data_mapping.SectionType;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 public class ParseQTI {
     /**
@@ -91,15 +97,21 @@ public class ParseQTI {
         		  
         		  if (ext.equals("xml"))
         		  {
+        			  try {
+						xmlParse(child.getPath());
+					} catch (JAXBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
         			  // CHANGE THIS TO THE DATABASE ONCE READY
-        			  parsedFiles.add(xmlParse(child.getPath()));
+        			  //parsedFiles.add(xmlParse(child.getPath()));
         		  }
     		  }
     	  }
     	  return(parsedFiles);
     }
     
-    private Document xmlParse(String filePath)
+    private Document xmlParseOld(String filePath)
     {
     	Document doc = null;
         try {
@@ -149,6 +161,55 @@ public class ParseQTI {
         
         // System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 		return doc;
+    }
+    
+    public void xmlParse(String filepath) throws JAXBException {
+    	
+    	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
+    	Unmarshaller unmarshaller = jc.createUnmarshaller();
+    	
+    	QuestestinteropType questestinterop = (QuestestinteropType) unmarshaller.unmarshal(new File(filepath));
+    	
+    	AssessmentType assessment = questestinterop.getAssessment();
+    	System.out.println(assessment);
+    	//get assessment QTI id + title and store in quiz table
+    	
+    	//SectionType section = (SectionType) assessment.getSectionrefOrSection().get(0);
+    	// add option for sectionref type
+    	
+    	//List<Object> items = section.getItemrefOrItemOrSectionref();
+    	
+    	//selectionordering could also be here instead of item
+    	//selection->sourcebankref + selection_number + selection_extension->points_per_item
+    	
+    	
+    	
+    	//for(int i = 0; i < items.size(); i++) {
+    		//items.get(i);
+    		//check item type
+    		//get ident(qti_id) and title and store in question table
+    		
+    		//get item metadata
+    		//get question type, points possible, assessment_question_identifierref(assessment_qti_id)
+    		//get presentation
+    		//get material
+    		//store in question table
+    		//get responses
+    		//get response material
+    		//render_choice -> material = answer
+    		//resprocessing -> respcondition -> conditionvar -> varequal value = correct answer for multiple choice
+    		//}
+    		
+    		
+    		
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
     }
     
 }

@@ -1,4 +1,4 @@
-package cs499.qti;
+package cs499;
 
 import java.io.File;
 
