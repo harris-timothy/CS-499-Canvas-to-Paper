@@ -2,7 +2,7 @@ package cs499;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import cs499.qti.ParseQTI;
 
@@ -25,7 +25,7 @@ public class Main {
 //		}
 		
 		try {
-			parser.xmlParse("./qti/gd360ceb1d866eef9962487e2be79b4b8.xml");
+			parser.xmlParse("D:/black/Documents/GitHub/CS499-Canvas-to-Paper/qti/gd360ceb1d866eef9962487e2be79b4b8.xml");
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

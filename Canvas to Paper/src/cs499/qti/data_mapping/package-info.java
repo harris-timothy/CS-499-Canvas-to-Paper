@@ -5,5 +5,5 @@
 // Generated on: 2022.03.21 at 06:58:23 PM CDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.imsglobal.org/xsd/ims_qtiasiv1p2", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.imsglobal.org/xsd/ims_qtiasiv1p2", elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package cs499.qti.data_mapping;

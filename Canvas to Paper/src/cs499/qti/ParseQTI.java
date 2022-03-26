@@ -5,27 +5,42 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.AssessmentType;
+import cs499.qti.data_mapping.ItemType;
+import cs499.qti.data_mapping.MaterialType;
+import cs499.qti.data_mapping.MatimageType;
+import cs499.qti.data_mapping.MattextType;
+import cs499.qti.data_mapping.ObjectbankType;
+import cs499.qti.data_mapping.QtimetadatafieldType;
 import cs499.qti.data_mapping.QuestestinteropType;
+import cs499.qti.data_mapping.RenderChoiceType;
+import cs499.qti.data_mapping.ResponseLabelType;
+import cs499.qti.data_mapping.ResponseLidType;
+import cs499.qti.data_mapping.ResprocessingType;
 import cs499.qti.data_mapping.SectionType;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import cs499.qti.data_mapping.SelectionType;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 public class ParseQTI {
     /**
      * Size of the buffer to read/write data
      */
     private static final int BUFFER_SIZE = 4096;
+    private static final int FIRST = 0;
 
 	private static ArrayList<Document> parsedFiles = new ArrayList<Document>();
     /**
@@ -163,24 +178,27 @@ public class ParseQTI {
 		return doc;
     }
     
-    public void xmlParse(String filepath) throws JAXBException {
+    @SuppressWarnings("unchecked")
+	public void xmlParse(String filepath) throws JAXBException {
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
+    	
+    	File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\g9ab9e81e56ff24bf6f9562fc60c25d80\\g9ab9e81e56ff24bf6f9562fc60c25d80.xml");
+    	
     	Unmarshaller unmarshaller = jc.createUnmarshaller();
     	
-    	QuestestinteropType questestinterop = (QuestestinteropType) unmarshaller.unmarshal(new File(filepath));
+		JAXBElement<QuestestinteropType> root = (JAXBElement<QuestestinteropType>) unmarshaller.unmarshal(testfile);
     	
-    	AssessmentType assessment = questestinterop.getAssessment();
-    	System.out.println(assessment);
+    	QuestestinteropType qti = (QuestestinteropType) root.getValue();
+    	
+    	if(qti.getAssessment() != null) {
+    		parseAssessment(qti.getAssessment());
+    		
+    	}
+    	else if(qti.getObjectbank() != null) {
+    		
+    	}    	    			
     	//get assessment QTI id + title and store in quiz table
-    	
-    	//SectionType section = (SectionType) assessment.getSectionrefOrSection().get(0);
-    	// add option for sectionref type
-    	
-    	//List<Object> items = section.getItemrefOrItemOrSectionref();
-    	
-    	//selectionordering could also be here instead of item
-    	//selection->sourcebankref + selection_number + selection_extension->points_per_item
     	
     	
     	
@@ -200,16 +218,123 @@ public class ParseQTI {
     		//resprocessing -> respcondition -> conditionvar -> varequal value = correct answer for multiple choice
     		//}
     		
-    		
-    		
-    	
-    	
-    	
-    	
-    	
-    	
-    	
+       }
+    
+    private void parseAssessment(AssessmentType assessment) {
+    	SectionType rootSection = (SectionType) assessment.getSectionrefOrSection().get(FIRST);
+
+    	for(Object a: rootSection.getItemrefOrItemOrSectionref()) {
+    		if (a instanceof SectionType) {
+    			System.out.println(((SectionType)a).getTitle());
+    			SelectionType selection = ((SectionType)a).getSelectionOrdering().getSelection().get(FIRST);
+    			System.out.println(selection.getSelectionNumber());
+    			System.out.println(selection.getSourcebankRef());
+
+    			Element test = (Element) removeNull(selection.getSelectionExtension().getContent()).get(FIRST);
+    			System.out.println(test.getFirstChild().getTextContent());
+    		}
+    		else if (a instanceof ItemType) {
+    			ItemType item = (ItemType) a;
+    			parseItem(item);			
+
+    		}
+    	}
+
+
+    }
+    
+    private void parseBank(ObjectbankType bank) {
     	
     }
     
+    private void parseItem(ItemType item) {
+    	
+    	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(0).getQtimetadatafield();
+		for(Object f: fields) {
+			System.out.println(((QtimetadatafieldType) f).getFieldlabel());
+			System.out.println(((QtimetadatafieldType) f).getFieldentry());  	
+		}
+		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
+			if(o instanceof MaterialType) {
+				parseMaterial((MaterialType) o);
+			}
+			else if (o instanceof ResponseLidType) {
+				parseResponseLid((ResponseLidType) o);
+			}						
+		}
+		for(Object r: item.getResprocessing()) {
+			parseResprocessing((ResprocessingType) r);
+		}
+		
+    	
+    }
+    
+    @SuppressWarnings("rawtypes")
+	private void parseResponseLid(ResponseLidType responseLid) {
+    	
+		List<JAXBElement<?>> list = removeNull(responseLid.getContent());
+		
+		for(JAXBElement<?> e: list) {
+								
+			if(e.getValue() instanceof MaterialType) {
+				parseMaterial((MaterialType) e.getValue());
+			}
+			else if (e.getValue() instanceof RenderChoiceType) {
+				RenderChoiceType render = (RenderChoiceType) e.getValue();
+				for(Object val: render.getMaterialOrMaterialRefOrResponseLabel()) {
+					if(val instanceof MaterialType) {
+						parseMaterial((MaterialType) val);
+					}
+					else if (val instanceof ResponseLabelType) {
+						List<Serializable> label = removeNull(((ResponseLabelType) val).getContent());
+						for(Object t: label) {
+							JAXBElement element = (JAXBElement) t;
+							if(element.getValue() instanceof MaterialType) {
+								parseMaterial((MaterialType) element.getValue());
+							}
+						}								
+					}
+				}
+			}
+		}
+    	
+    }
+	
+	private void parseMaterial(MaterialType material) {
+		for(Object mat: material.getMattextOrMatemtextOrMatimage()) {
+			if(mat instanceof MattextType) {
+				MattextType text = (MattextType) mat;
+				System.out.println(text.getValue());
+			}
+			else if (mat instanceof MatimageType) {
+				System.out.println("image");
+				//save as reference material?
+			}					
+		}
+	}
+	
+	private void parseResprocessing(ResprocessingType resprocessing) {
+		//outcomes->decvar - maxvalue
+		//respcondition->conditionvar->varequal - value
+		//setvar - value
+		//for storage - if maxvalue = 100, value = percentage of question points
+		
+	}
+	
+	private <T> List<T> removeNull(List<T> list) {
+		
+		for(int i = 0; i < list.size(); i++) {
+			if(list.get(i) instanceof String) {
+				if(((String) list.get(i)).trim().isEmpty()) {
+					list.remove(i);
+				}
+			}
+		}
+		list.removeAll(Collections.singletonList(null));
+		list.removeAll(Collections.singletonList(""));
+		return list;
+	}
+	
 }
+
+
