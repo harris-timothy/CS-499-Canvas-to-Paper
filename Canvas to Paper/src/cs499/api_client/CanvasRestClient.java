@@ -10,8 +10,7 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJsonProvider;
 import org.jooq.tools.json.JSONObject;
 
-import io.github.cdimascio.dotenv.Dotenv;
-
+import cs499.DataHelper;
 
 public class CanvasRestClient implements RestClient{
 		
@@ -22,12 +21,11 @@ public class CanvasRestClient implements RestClient{
 	private final WebTarget webTarget;
 	
 	private void readDotENV() {
-		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().ignoreIfMalformed().load();
 		
-		this.canvas_ID = dotenv.get("CANVAS_ID");
-		this.canvas_token = dotenv.get("CANVAS_TOKEN");
-		this.canvas_url = dotenv.get("CANVAS_URL");
-		this.course_ID = dotenv.get("SANDBOX_ID");		
+		this.canvas_ID = DataHelper.ENV.get("CANVAS_ID");
+		this.canvas_token = DataHelper.ENV.get("CANVAS_TOKEN");
+		this.canvas_url = DataHelper.ENV.get("CANVAS_URL");
+		this.course_ID = DataHelper.ENV.get("SANDBOX_ID");		
 	}
 	
 	public CanvasRestClient(String host) {

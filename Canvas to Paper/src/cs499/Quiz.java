@@ -10,12 +10,14 @@ import java.util.Collections;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import cs499.question.Question;
 
 public class Quiz implements Reference{
 	
-	private Integer id;
+	private int id;
 	
 	private String name;
 	
@@ -31,6 +33,8 @@ public class Quiz implements Reference{
 	
 	private ArrayList<Question> questions;
 	
+	private ArrayList<ReferenceMaterial> references;
+	
 	public Quiz(String name, String date, String instructor, String course, String section, String instructions) {
 		this.name = name;
 		this.date = date;
@@ -40,7 +44,7 @@ public class Quiz implements Reference{
 		this.instructions = instructions;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -112,27 +116,21 @@ public class Quiz implements Reference{
 	}
 	
 	private String questionJSON() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			
-			ObjectNode quiz = mapper.createObjectNode();
-			
-			for (Integer i = 0; i < questions.size(); i++) {
-				quiz.put(i.toString(), questions.get(i).getId().toString());
-			}
-			String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(quiz);
-			return json;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-			return "Error creating JSON String";
+		JSONArray questionList = new JSONArray();
+		
+		for(int i = 0; i < this.questions.size(); i++) {
+			JSONObject question = new JSONObject();
+			question.put("id", this.questions.get(i).getId());
+			questionList.put(question);
 		}
+		
+		return questionList.toString();
+		
 	}
 	
 	public void saveMetadata() {
-		String url = "jdbc:sqlite:db/canvas2paper.db";
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
             
             create.insertInto(
@@ -151,7 +149,67 @@ public class Quiz implements Reference{
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
-		// TODO Auto-generated method stub
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			create.insertInto(
+					QUIZ_REFERENCE,
+					QUIZ_REFERENCE.QUIZ_ID,
+					QUIZ_REFERENCE.REFERENCE_ID)
+			.values(this.getId(),
+					reference.getId())
+			.execute();		
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		this.references.add(reference);
+		
+	}
+
+	@Override
+	public void createReference(int id) {
+		ReferenceMaterial reference = new ReferenceMaterial(id);
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			create.insertInto(
+					QUIZ_REFERENCE,
+					QUIZ_REFERENCE.QUIZ_ID,
+					QUIZ_REFERENCE.REFERENCE_ID)
+			.values(this.getId(),
+					reference.getId())
+			.execute();		
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		this.references.add(reference);
+		
+	}
+
+	@Override
+	public void loadReference() {
+		
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Integer[] reference_ids = create.select(QUIZ_REFERENCE.REFERENCE_ID)
+					.from(QUIZ_REFERENCE)
+					.where(QUIZ_REFERENCE.QUIZ_ID.eq(id))
+					.fetchArray(QUIZ_REFERENCE.REFERENCE_ID);
+			
+			for(Integer i: reference_ids) {
+				ReferenceMaterial reference = new ReferenceMaterial(i);
+				this.references.add(reference);
+			}
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 

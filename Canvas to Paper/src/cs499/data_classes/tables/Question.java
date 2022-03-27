@@ -12,6 +12,7 @@ import cs499.data_classes.tables.records.QuestionRecord;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Index;
@@ -33,6 +34,8 @@ import org.jooq.impl.TableImpl;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Question extends TableImpl<QuestionRecord> {
+	
+	public Condition abet = QUESTION.ABET.eq(1);
 
     private static final long serialVersionUID = 1L;
 
