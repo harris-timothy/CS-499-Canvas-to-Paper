@@ -29,14 +29,14 @@ public class QuestionFactory {
 			String allAnswers = result.getValue(QUESTION.ANSWERS);
 			JSONArray answerArray = new JSONArray(allAnswers);
 			
-			if(answerArray.length() == 1) {
-				return new SingleAnswerQuestion(id);
+			if(answerArray.getJSONObject(0).has("correct")) {
+				return new MultipleChoiceQuestion(id);
 			}
 			else if(answerArray.getJSONObject(0).has("left")) {
 				return new MatchingQuestion(id);
 			}
 			else {
-				return new MultipleChoiceQuestion(id);
+				return new SingleAnswerQuestion(id);
 			}
 			
 			

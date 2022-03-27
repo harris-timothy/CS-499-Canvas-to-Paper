@@ -8,13 +8,15 @@ import org.json.JSONObject;
 
 public class AnswerFormatter {
 	
-	public static String answerJSONString(String answerString) {
+	public static String answerJSONString(ArrayList<String> answers) {
 		
 		JSONArray answerArray = new JSONArray();
 		
-		JSONObject answer = new JSONObject();
-		answer.put("answer", answerString);
-		answerArray.put(answer);
+		for(String a: answers) {
+			JSONObject answer = new JSONObject();
+			answer.put("answer", a);
+			answerArray.put(answer);		
+		}
 		
 		return answerArray.toString();
 		
@@ -53,11 +55,16 @@ public class AnswerFormatter {
 		return answerArray.toString();
 	}
 	
-	public static String answerString(String answerJSONString) {
+	public static ArrayList<String> answerArray(String answerJSONString) {
 		
 		JSONArray answerJSON = new JSONArray(answerJSONString);
-		String answer = answerJSON.getJSONObject(0).getString("answer");
-		return answer;
+		ArrayList<String> answers = new ArrayList<String>();
+		
+		for(int i = 0; i < answerJSON.length(); i++) {
+			answers.add(answerJSON.getJSONObject(i).getString("answer"));	
+		}
+		
+		return answers;
 	}
 	
 	public static String correctAnswer(String answerJSONString) {
@@ -74,15 +81,15 @@ public class AnswerFormatter {
 		return correct;
 	}
 	
-	public static ArrayList<String> answerArray(String answerJSONString) {
+	public static ArrayList<String> choicesArray(String answerJSONString) {
 		
 		JSONArray answerJSON = new JSONArray(answerJSONString);
-		ArrayList<String> answers = new ArrayList<String>();
+		ArrayList<String> choices = new ArrayList<String>();
 		for(int i = 0; i < answerJSON.length(); i++) {
-			answers.add(answerJSON.getJSONObject(i).getString("answer"));
+			choices.add(answerJSON.getJSONObject(i).getString("answer"));
 		}
 				
-		return answers;
+		return choices;
 	}
 	
 	public static ArrayList<String> keyArray(String answerJSONString) {

@@ -8,28 +8,17 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
+
+import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import cs499.qti.data_mapping.AssessmentType;
-import cs499.qti.data_mapping.ItemType;
-import cs499.qti.data_mapping.MaterialType;
-import cs499.qti.data_mapping.MatimageType;
-import cs499.qti.data_mapping.MattextType;
-import cs499.qti.data_mapping.ObjectbankType;
-import cs499.qti.data_mapping.QtimetadatafieldType;
-import cs499.qti.data_mapping.QuestestinteropType;
-import cs499.qti.data_mapping.RenderChoiceType;
-import cs499.qti.data_mapping.ResponseLabelType;
-import cs499.qti.data_mapping.ResponseLidType;
-import cs499.qti.data_mapping.ResprocessingType;
-import cs499.qti.data_mapping.SectionType;
-import cs499.qti.data_mapping.SelectionType;
+import cs499.qti.data_mapping.*;
+import cs499.question.AnswerFormatter;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -41,8 +30,6 @@ public class ParseQTI {
      */
     private static final int BUFFER_SIZE = 4096;
     private static final int FIRST = 0;
-
-	private static ArrayList<Document> parsedFiles = new ArrayList<Document>();
     /**
      * Extracts a zip file specified by the zipFilePath to a directory specified by
      * destDirectory (will be created if does not exists)
@@ -92,6 +79,10 @@ public class ParseQTI {
         bos.close();
     }
     
+    /**
+     * @param filePath
+     * @return
+     */
     public ArrayList<Document> xmlLoop(String filePath)
     {
     	  File dir = new File(filePath);
@@ -110,7 +101,7 @@ public class ParseQTI {
         			  ext = fileName.substring(i+1); 
         		  }
         		  
-        		  if (ext.equals("xml"))
+        		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
         			  try {
 						xmlParse(child.getPath());
@@ -123,67 +114,19 @@ public class ParseQTI {
         		  }
     		  }
     	  }
-    	  return(parsedFiles);
+    	  return null;
     }
-    
-    private Document xmlParseOld(String filePath)
-    {
-    	Document doc = null;
-        try {
-            File inputFile = new File(filePath);
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(inputFile);
-            doc.getDocumentElement().normalize();
-            // Combine with XPath? Look into later
-            // Might want to look at this later:
-            /*NodeList nList = doc.getElementsByTagName("student");
-            System.out.println("----------------------------");
-            
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-               Node nNode = nList.item(temp);
-               System.out.println("\nCurrent Element :" + nNode.getNodeName());
-               
-               if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                  Element eElement = (Element) nNode;
-                  System.out.println("Student roll no : " 
-                     + eElement.getAttribute("rollno"));
-                  System.out.println("First Name : " 
-                     + eElement
-                     .getElementsByTagName("firstname")
-                     .item(0)
-                     .getTextContent());
-                  System.out.println("Last Name : " 
-                     + eElement
-                     .getElementsByTagName("lastname")
-                     .item(0)
-                     .getTextContent());
-                  System.out.println("Nick Name : " 
-                     + eElement
-                     .getElementsByTagName("nickname")
-                     .item(0)
-                     .getTextContent());
-                  System.out.println("Marks : " 
-                     + eElement
-                     .getElementsByTagName("marks")
-                     .item(0)
-                     .getTextContent());
-               }
-            }*/
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
         
-        // System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-		return doc;
-    }
-    
+    /**
+     * @param filepath
+     * @throws JAXBException
+     */
     @SuppressWarnings("unchecked")
 	public void xmlParse(String filepath) throws JAXBException {
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
     	
-    	File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\g9ab9e81e56ff24bf6f9562fc60c25d80\\g9ab9e81e56ff24bf6f9562fc60c25d80.xml");
+    	File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\gd360ceb1d866eef9962487e2be79b4b8\\gd360ceb1d866eef9962487e2be79b4b8.xml");
     	
     	Unmarshaller unmarshaller = jc.createUnmarshaller();
     	
@@ -196,131 +139,209 @@ public class ParseQTI {
     		
     	}
     	else if(qti.getObjectbank() != null) {
-    		
+    		parseBank(qti.getObjectbank());
     	}    	    			
-    	//get assessment QTI id + title and store in quiz table
-    	
-    	
-    	
-    	//for(int i = 0; i < items.size(); i++) {
-    		//items.get(i);
-    		//check item type
-    		//get ident(qti_id) and title and store in question table
-    		
-    		//get item metadata
-    		//get question type, points possible, assessment_question_identifierref(assessment_qti_id)
-    		//get presentation
-    		//get material
-    		//store in question table
-    		//get responses
-    		//get response material
-    		//render_choice -> material = answer
-    		//resprocessing -> respcondition -> conditionvar -> varequal value = correct answer for multiple choice
-    		//}
     		
        }
     
+    /**
+     * @param assessment
+     */
     private void parseAssessment(AssessmentType assessment) {
+    	
+    	//store quiz has to go in this function somewhere, so we need all the quiz info to populate to here
+    	// arraylist questionIds stores ids to add to quiz_questions table
+    	ArrayList<Integer> questionIds = new ArrayList<Integer>();
+    	
     	SectionType rootSection = (SectionType) assessment.getSectionrefOrSection().get(FIRST);
 
     	for(Object a: rootSection.getItemrefOrItemOrSectionref()) {
     		if (a instanceof SectionType) {
-    			System.out.println(((SectionType)a).getTitle());
+    			//this is where all of the quiz to bank information comes from
+    			System.out.println(((SectionType)a).getTitle()); // quiz title
+    			System.out.println(((SectionType)a).getIdent()); // assessment_qti_id
     			SelectionType selection = ((SectionType)a).getSelectionOrdering().getSelection().get(FIRST);
-    			System.out.println(selection.getSelectionNumber());
-    			System.out.println(selection.getSourcebankRef());
+    			System.out.println(selection.getSelectionNumber()); // number to choose from bank
+    			System.out.println(selection.getSourcebankRef()); // bank qti_id
 
     			Element test = (Element) removeNull(selection.getSelectionExtension().getContent()).get(FIRST);
-    			System.out.println(test.getFirstChild().getTextContent());
+    			System.out.println(test.getFirstChild().getTextContent()); // points per item
+    			
+    			//data from here goes into question group table
     		}
     		else if (a instanceof ItemType) {
     			ItemType item = (ItemType) a;
-    			parseItem(item);			
+    			questionIds.add(parseItem(item));			
 
     		}
     	}
-
-
     }
     
+    /**
+     * @param bank
+     */
     private void parseBank(ObjectbankType bank) {
+    	//store bank has to happen in this function somewhere, so all bank info has to populate up
+    	//Arraylist of question ids to insert into bank questions table
+    	
+    	ArrayList<Integer> questionIds = new ArrayList<Integer>();
+    	
+    	System.out.println(bank.getIdent()); //bank qti_id
+    	List<QtimetadatafieldType> fields = bank.getQtimetadata().get(FIRST).getQtimetadatafield();
+    	for(Object f: fields) {
+			System.out.println(((QtimetadatafieldType) f).getFieldlabel()); //attributes - bank_title
+			System.out.println(((QtimetadatafieldType) f).getFieldentry()); //values - bank_title 	
+		}
+    	for(Object s: bank.getSectionOrItem()) {
+    		if(s instanceof ItemType) {
+    			questionIds.add(parseItem((ItemType) s));
+    		}
+    	}
+    	//function for question to bank association goes here
     	
     }
     
-    private void parseItem(ItemType item) {
+    
+    /**
+     * @param item
+     * @return
+     */
+    private int parseItem(ItemType item) {
+    	//store question has to happen in here somewhere
+    	//maybe return question id after storing question?
+    	//insert ids into quiz_to_question or bank_questions as applicable
+    	int questionId = 0;
     	
-    	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(0).getQtimetadatafield();
-		for(Object f: fields) {
-			System.out.println(((QtimetadatafieldType) f).getFieldlabel());
-			System.out.println(((QtimetadatafieldType) f).getFieldentry());  	
+    	HashMap<String, String> values = new HashMap<String, String>();
+    	values.put("name", item.getTitle());
+    	
+    	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(FIRST).getQtimetadatafield();
+    	for(Object f: fields) {
+			String label = ((QtimetadatafieldType) f).getFieldlabel();
+			if(label == "question_type") {
+				values.put("question_type", ((QtimetadatafieldType) f).getFieldentry());
+			}
+			else if (label == "points_possible") {
+				values.put("points_possible", ((QtimetadatafieldType) f).getFieldentry());
+			}			
 		}
+    	
 		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
 			if(o instanceof MaterialType) {
-				parseMaterial((MaterialType) o);
+				values.put("description", parseMaterial((MaterialType) o));
 			}
 			else if (o instanceof ResponseLidType) {
-				parseResponseLid((ResponseLidType) o);
+				parseResponseLid((ResponseLidType) o, values.get("question_type"));
 			}						
 		}
+		
 		for(Object r: item.getResprocessing()) {
 			parseResprocessing((ResprocessingType) r);
 		}
 		
+		//use hashmap to store question
+		//get id from stored question
+		return questionId;
+		
     	
     }
     
+    /**
+     * @param responseLid
+     */
     @SuppressWarnings("rawtypes")
-	private void parseResponseLid(ResponseLidType responseLid) {
+	private HashMap<String, String> parseResponseLid(ResponseLidType responseLid, String type) {
     	
-		List<JAXBElement<?>> list = removeNull(responseLid.getContent());
+    	List<JAXBElement<?>> list = removeNull(responseLid.getContent());
 		
+    	if(type == "multiple_choice_question" || 
+    			 
+    			type == "true_false_question" ||
+    			type == "multiple_dropdowns_question") {
+    		//do stuff
+    	}
+    	else if(type == "matching_question") {
+    		//do stuff
+    	}
+    	else if(type == "short_answer_question" || 
+    			type == "essay_question" ||
+    			type == "numerical_question" ||
+    			type == "fill_in_multiple_blanks_question") {
+    		//do stuff
+    	}
+    	else {
+    		//do stuff
+    	}
+    	
 		for(JAXBElement<?> e: list) {
 								
 			if(e.getValue() instanceof MaterialType) {
+				
 				parseMaterial((MaterialType) e.getValue());
+				//returns string
 			}
 			else if (e.getValue() instanceof RenderChoiceType) {
 				RenderChoiceType render = (RenderChoiceType) e.getValue();
 				for(Object val: render.getMaterialOrMaterialRefOrResponseLabel()) {
 					if(val instanceof MaterialType) {
 						parseMaterial((MaterialType) val);
+						//returns string
 					}
 					else if (val instanceof ResponseLabelType) {
+						System.out.println(((ResponseLabelType) val).getIdent()); 
 						List<Serializable> label = removeNull(((ResponseLabelType) val).getContent());
 						for(Object t: label) {
 							JAXBElement element = (JAXBElement) t;
 							if(element.getValue() instanceof MaterialType) {
 								parseMaterial((MaterialType) element.getValue());
+								//returns string
 							}
 						}								
 					}
 				}
 			}
 		}
+		return null;
     	
     }
 	
-	private void parseMaterial(MaterialType material) {
+	/**
+	 * @param material
+	 * @return
+	 */
+	private String parseMaterial(MaterialType material) {
+		String text = "";
 		for(Object mat: material.getMattextOrMatemtextOrMatimage()) {
 			if(mat instanceof MattextType) {
-				MattextType text = (MattextType) mat;
-				System.out.println(text.getValue());
-			}
-			else if (mat instanceof MatimageType) {
-				System.out.println("image");
-				//save as reference material?
+				MattextType mattext = (MattextType) mat;
+				text = mattext.getValue(); //question or answer text
 			}					
 		}
+		return Jsoup.parse(text).text();
 	}
 	
+	/**
+	 * @param resprocessing
+	 */
 	private void parseResprocessing(ResprocessingType resprocessing) {
-		//outcomes->decvar - maxvalue
-		//respcondition->conditionvar->varequal - value
-		//setvar - value
-		//for storage - if maxvalue = 100, value = percentage of question points
+		DecvarType decvar = (DecvarType) resprocessing.getOutcomes().getDecvarAndInterpretvar().get(FIRST);
+		System.out.println(decvar.getMaxvalue());
+		List<Object> respconditions = resprocessing.getRespconditionOrItemprocExtension();
+		for(Object o: respconditions) {
+			if(o instanceof RespconditionType) {
+				VarequalType var = (VarequalType) ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
+				System.out.println(var.getValue());
+				System.out.println(((RespconditionType) o).getSetvar().get(FIRST).getValue());
+			}
+		}
 		
 	}
 	
+	/**
+	 * @param <T>
+	 * @param list
+	 * @return
+	 */
 	private <T> List<T> removeNull(List<T> list) {
 		
 		for(int i = 0; i < list.size(); i++) {
@@ -336,5 +357,3 @@ public class ParseQTI {
 	}
 	
 }
-
-

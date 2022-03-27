@@ -172,7 +172,7 @@ public class MultipleChoiceQuestion extends Question {
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
-				setChoices(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
+				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
 
 			}
 

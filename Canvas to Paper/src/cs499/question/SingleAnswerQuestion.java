@@ -5,6 +5,7 @@ import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -21,7 +22,7 @@ public class SingleAnswerQuestion extends Question {
 
 	private String description;
 
-	private String answer;
+	private ArrayList<String> answers;
 
 	private boolean abet;
 
@@ -58,12 +59,12 @@ public class SingleAnswerQuestion extends Question {
 		this.description = description;
 	}
 
-	public String getAnswer() {
-		return this.answer;
+	public ArrayList<String> getAnswers() {
+		return this.answers;
 	}
 
-	public void setAnswer(String answer) {
-		this.answer = answer;
+	public void setAnswers(ArrayList<String> answers) {
+		this.answers = answers;
 	}
 
 	public boolean getAbet() {
@@ -154,7 +155,7 @@ public class SingleAnswerQuestion extends Question {
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
-				setAnswer(AnswerFormatter.answerString(result.getValue(QUESTION.ANSWERS)));
+				setAnswers(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
 
 			}
 
@@ -187,7 +188,7 @@ public class SingleAnswerQuestion extends Question {
 						description,
 						SINGLE_ANSWER.toString(),
 						gradingInstructions,
-						AnswerFormatter.answerJSONString(answer),
+						AnswerFormatter.answerJSONString(answers),
 						DataHelper.boolToInt(abet))
 				.execute();
 
@@ -199,7 +200,7 @@ public class SingleAnswerQuestion extends Question {
 				.set(QUESTION.TYPE, "general")
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
-				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer))
+				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answers))
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}

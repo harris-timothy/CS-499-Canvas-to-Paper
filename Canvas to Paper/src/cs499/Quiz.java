@@ -12,6 +12,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jooq.Record;
 
 import cs499.question.Question;
 
@@ -111,6 +112,14 @@ public class Quiz implements Reference{
 		}
 	}
 	
+	public void removeQuestion(int id) {
+		for (int i = 0; i < questions.size(); i++) {
+			if(questions.get(i).getId() == id) {
+				questions.remove(i);
+			}
+		}
+	}
+	
 	public void shuffleQuestions() {
 		Collections.shuffle(questions);
 	}
@@ -205,6 +214,31 @@ public class Quiz implements Reference{
 				ReferenceMaterial reference = new ReferenceMaterial(i);
 				this.references.add(reference);
 			}
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void load() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			String courseName = create.select(COURSE.NAME)
+					.from(COURSE)
+					.where(COURSE.ID.eq(QUIZ.COURSE_ID))
+					.fetchOne(COURSE.NAME);
+			
+			Record instructor =create.select()
+				.from(INSTRUCTOR.join(COURSE).on(INSTRUCTOR.ID.eq(COURSE.INSTRUCTOR_ID)))
+						.where(COURSE.ID.eq(QUIZ.COURSE_ID))
+						.fetchOne();
+						
+				
+			
+	
 
 		}
 		catch(Exception e) {
