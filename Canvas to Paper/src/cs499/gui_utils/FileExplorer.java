@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 public class FileExplorer {
     /**
 	 * Opens a file explorer frame to cause the user to select a file
-	 * @return The file path that the user selected
+	 * @return The file path that the user selected; "Blank" if no selection; "Error" if error;
 	 */
 	public String FileSelect() {
 		try {
@@ -16,17 +16,18 @@ public class FileExplorer {
 			browser.setTitle("Please select a zipped quiz to export.");
 			browser.setVisible(true);
 			File[] f = browser.getFiles();
-			if(f.length > 0){
+			if(f.length <= 0){
+				return "Blank";	
+			} else {
 				return browser.getFiles()[0].getAbsolutePath();
 			}
 		} catch (Exception e) {
-			return e.toString();
+			return "Error";
 		}
-		return "User did not select a file.";
 	}
 	/**
 	 * Opens a file explorer frame to cause the user to select multiple files
-	 * @return An array of all file paths that the user selected
+	 * @return An array of all file paths that the user selected; Null array if no selection; Array with single value "" if error;
 	 */
 	public String[] FilesSelect() {
 		try {
@@ -34,7 +35,9 @@ public class FileExplorer {
 			browser.setMultipleMode(true);
 			browser.setVisible(true);
 			File[] f = browser.getFiles();
-			if(f.length > 0){
+			if(f.length <= 0){
+				return null; 
+			} else {
 				String[] filepaths = new String[f.length];
 				for (int i = 0; i < f.length; i++) {
 					filepaths[i] = browser.getFiles()[i].getAbsolutePath();
@@ -42,12 +45,8 @@ public class FileExplorer {
 				return filepaths;
 			}
 		} catch (Exception e) {
-			String[] errors = new String[1];
-			errors[0] = e.toString();
-			return errors;
+			String[] error = {"Error"};
+			return error;
 		}
-		String[] failures = new String[1];
-		failures[0] = "User did not select a file.";
-		return failures;
 	}
 }
