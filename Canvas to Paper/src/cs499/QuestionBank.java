@@ -41,6 +41,7 @@ public class QuestionBank {
 	
 	public void addQuestion(Question question) {
 		this.questions.add(question);
+		associateQuestion(question.getId());
 	}
 	
 	public void removeQuestion(Question question) {
@@ -125,6 +126,37 @@ public class QuestionBank {
 		}
 		return questionIds;		
 		
+	}
+	
+	public void associateQuestion(int questionId) {
+		
+
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.insertInto(QUESTION_BANK_QUESTION,
+					QUESTION_BANK_QUESTION.QUESTION_BANK_ID,
+					QUESTION_BANK_QUESTION.QUESTION_ID)
+			.values(id, questionId)
+			.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public void removeQuestionAssociation(int questionId) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.delete(QUESTION_BANK_QUESTION)
+			.where(QUESTION_BANK_QUESTION.QUESTION_BANK_ID.eq(id))
+			.and(QUESTION_BANK_QUESTION.QUESTION_ID.eq(questionId))
+			.execute();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

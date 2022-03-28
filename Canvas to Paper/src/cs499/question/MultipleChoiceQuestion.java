@@ -1,7 +1,7 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
-import static cs499.question.QuestionType.SINGLE_ANSWER;
+import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,6 +23,8 @@ public class MultipleChoiceQuestion extends Question {
 	private String description;
 
 	private String answer;
+	
+	private QuestionType type;
 
 	private boolean abet;
 
@@ -106,6 +108,14 @@ public class MultipleChoiceQuestion extends Question {
 	public boolean getAbet() {
 		return this.abet;
 	}
+	
+	public QuestionType getType() {
+		return type;
+	}
+
+	public void setType(QuestionType type) {
+		this.type = type;
+	}
 
 	@Override
 	public void saveQuestion() {
@@ -129,7 +139,7 @@ public class MultipleChoiceQuestion extends Question {
 				.values(id,
 						name,
 						description,
-						SINGLE_ANSWER.toString(),
+						type.toString(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(answer, choices),
 						DataHelper.boolToInt(abet))
@@ -140,7 +150,7 @@ public class MultipleChoiceQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.TYPE, type.toString())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer, choices))
@@ -173,6 +183,7 @@ public class MultipleChoiceQuestion extends Question {
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
 				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
+				setType(valueOf(result.getValue(QUESTION.TYPE)));
 
 			}
 

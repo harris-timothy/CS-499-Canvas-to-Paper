@@ -26,7 +26,6 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index IDX_COURSE_API_ID = Internal.createIndex(DSL.name("idx_course_api_id"), Course.COURSE, new OrderField[] { Course.COURSE.API_ID }, true);
-    public static final Index IDX_COURSE_QTI_ID = Internal.createIndex(DSL.name("idx_course_qti_id"), Course.COURSE, new OrderField[] { Course.COURSE.QTI_ID }, true);
     public static final Index IDX_QUESTION_API_ID = Internal.createIndex(DSL.name("idx_question_api_id"), Question.QUESTION, new OrderField[] { Question.QUESTION.API_ID }, true);
     public static final Index IDX_QUESTION_BANK_API_ID = Internal.createIndex(DSL.name("idx_question_bank_api_id"), QuestionBank.QUESTION_BANK, new OrderField[] { QuestionBank.QUESTION_BANK.API_ID }, true);
     public static final Index IDX_QUESTION_BANK_QTI_ID = Internal.createIndex(DSL.name("idx_question_bank_qti_id"), QuestionBank.QUESTION_BANK, new OrderField[] { QuestionBank.QUESTION_BANK.QTI_ID }, true);

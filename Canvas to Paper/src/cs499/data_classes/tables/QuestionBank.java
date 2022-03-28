@@ -17,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row4;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -68,11 +68,6 @@ public class QuestionBank extends TableImpl<QuestionBankRecord> {
      * The column <code>question_bank.qti_id</code>.
      */
     public final TableField<QuestionBankRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
-
-    /**
-     * The column <code>question_bank.course_id</code>.
-     */
-    public final TableField<QuestionBankRecord, Integer> COURSE_ID = createField(DSL.name("course_id"), SQLDataType.INTEGER, this, "");
 
     private QuestionBank(Name alias, Table<QuestionBankRecord> aliased) {
         this(alias, aliased, null);
@@ -149,11 +144,11 @@ public class QuestionBank extends TableImpl<QuestionBankRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row4 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, String, Integer, String, Integer> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row4<Integer, String, Integer, String> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 }

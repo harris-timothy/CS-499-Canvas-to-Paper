@@ -83,7 +83,7 @@ public class ParseQTI {
      * @param filePath
      * @return
      */
-    public ArrayList<Document> xmlLoop(String filePath)
+    public void xmlLoop(String filePath)
     {
     	  File dir = new File(filePath);
     	  File[] directoryListing = dir.listFiles();
@@ -114,7 +114,6 @@ public class ParseQTI {
         		  }
     		  }
     	  }
-    	  return null;
     }
         
     /**
@@ -208,12 +207,13 @@ public class ParseQTI {
      */
     private int parseItem(ItemType item) {
     	//store question has to happen in here somewhere
-    	//maybe return question id after storing question?
+    	//return question id after storing question to associate with quiz or bank
     	//insert ids into quiz_to_question or bank_questions as applicable
     	int questionId = 0;
     	
     	HashMap<String, String> values = new HashMap<String, String>();
     	values.put("name", item.getTitle());
+    	
     	
     	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(FIRST).getQtimetadatafield();
     	for(Object f: fields) {
@@ -225,18 +225,27 @@ public class ParseQTI {
 				values.put("points_possible", ((QtimetadatafieldType) f).getFieldentry());
 			}			
 		}
-    	
+    	ArrayList<Object> responseList;
 		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
 			if(o instanceof MaterialType) {
 				values.put("description", parseMaterial((MaterialType) o));
 			}
 			else if (o instanceof ResponseLidType) {
-				parseResponseLid((ResponseLidType) o, values.get("question_type"));
+				responseList = parseResponseLid((ResponseLidType) o);
+				//returns arraylist of hashmaps
 			}						
 		}
-		
+		ArrayList<Object> processingList;
 		for(Object r: item.getResprocessing()) {
-			parseResprocessing((ResprocessingType) r);
+			processingList = parseResprocessing((ResprocessingType) r);
+			//returns arraylist of hashmaps
+		}
+		HashMap<String, String> feedback;
+		for(Object f: item.getItemfeedback()) {
+			((ItemfeedbackType) f).getIdent(); //itemfeedback ident
+			//if conditionvar other
+			//displayfeedback linkrefid = ident
+			feedback = parseItemFeedback((ItemfeedbackType) f);
 		}
 		
 		//use hashmap to store question
@@ -246,62 +255,57 @@ public class ParseQTI {
     	
     }
     
+    private HashMap<String, String> parseItemFeedback(ItemfeedbackType feedback) {
+    	
+    	HashMap<String, String> answer = new HashMap<String, String>();
+    	for(Object o: feedback.getFlowMatOrMaterialOrSolution()) {
+    		if(o instanceof FlowMatType) {
+    			for(Object k: ((FlowMatType) o).getFlowMatOrMaterialOrMaterialRef()) {
+    				if(k instanceof MaterialType) {
+    					answer.put("",parseMaterial((MaterialType) o));
+    				}
+    			}    			   			
+    		}
+    	}
+    	return answer;
+    }
+    
     /**
      * @param responseLid
      */
     @SuppressWarnings("rawtypes")
-	private HashMap<String, String> parseResponseLid(ResponseLidType responseLid, String type) {
+	private ArrayList<Object> parseResponseLid(ResponseLidType responseLid) {
     	
-    	List<JAXBElement<?>> list = removeNull(responseLid.getContent());
-		
-    	if(type == "multiple_choice_question" || 
-    			 
-    			type == "true_false_question" ||
-    			type == "multiple_dropdowns_question") {
-    		//do stuff
-    	}
-    	else if(type == "matching_question") {
-    		//do stuff
-    	}
-    	else if(type == "short_answer_question" || 
-    			type == "essay_question" ||
-    			type == "numerical_question" ||
-    			type == "fill_in_multiple_blanks_question") {
-    		//do stuff
-    	}
-    	else {
-    		//do stuff
-    	}
+    	ArrayList<Object> data = new ArrayList<Object>();
+    	List<JAXBElement<?>> list = removeNull(responseLid.getContent());    	
     	
 		for(JAXBElement<?> e: list) {
+			HashMap<String, String> map = new HashMap<String, String>();
 								
 			if(e.getValue() instanceof MaterialType) {
 				
-				parseMaterial((MaterialType) e.getValue());
-				//returns string
+				map.put("answer_name",parseMaterial((MaterialType) e.getValue()));
+				
 			}
 			else if (e.getValue() instanceof RenderChoiceType) {
 				RenderChoiceType render = (RenderChoiceType) e.getValue();
 				for(Object val: render.getMaterialOrMaterialRefOrResponseLabel()) {
-					if(val instanceof MaterialType) {
-						parseMaterial((MaterialType) val);
-						//returns string
-					}
-					else if (val instanceof ResponseLabelType) {
-						System.out.println(((ResponseLabelType) val).getIdent()); 
+					if (val instanceof ResponseLabelType) {
+						
+						map.put("answer_ident", ((ResponseLabelType) val).getIdent());
+					 
 						List<Serializable> label = removeNull(((ResponseLabelType) val).getContent());
 						for(Object t: label) {
-							JAXBElement element = (JAXBElement) t;
-							if(element.getValue() instanceof MaterialType) {
-								parseMaterial((MaterialType) element.getValue());
-								//returns string
+							if(((JAXBElement)t).getValue() instanceof MaterialType) {
+								map.put("answer_value", parseMaterial((MaterialType) ((JAXBElement)t).getValue())); 
 							}
 						}								
 					}
 				}
 			}
+			data.add(map);
 		}
-		return null;
+		return data;
     	
     }
 	
@@ -323,19 +327,27 @@ public class ParseQTI {
 	/**
 	 * @param resprocessing
 	 */
-	private void parseResprocessing(ResprocessingType resprocessing) {
-		DecvarType decvar = (DecvarType) resprocessing.getOutcomes().getDecvarAndInterpretvar().get(FIRST);
-		System.out.println(decvar.getMaxvalue());
+	private ArrayList<Object> parseResprocessing(ResprocessingType resprocessing) {
+		ArrayList<Object> list = new ArrayList<Object>();
 		List<Object> respconditions = resprocessing.getRespconditionOrItemprocExtension();
 		for(Object o: respconditions) {
 			if(o instanceof RespconditionType) {
-				VarequalType var = (VarequalType) ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
-				System.out.println(var.getValue());
-				System.out.println(((RespconditionType) o).getSetvar().get(FIRST).getValue());
+				HashMap<String, String> data = new HashMap<String, String>();
+				Object var = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
+				if(var instanceof VarequalType) {
+					data.put("answer_ident", ((VarequalType)var).getRespident()); //answer ident - matches response_lid ident
+					data.put("answer_value", ((VarequalType)var).getValue()); //answer value - matches response_label ident
+					list.add(data);	
+				}
+				else {
+					data.put("answer_ident",((RespconditionType) o).getDisplayfeedback().get(FIRST).getLinkrefid());
+					list.add(data);
+				}				
 			}
 		}
-		
+		return list;
 	}
+	
 	
 	/**
 	 * @param <T>

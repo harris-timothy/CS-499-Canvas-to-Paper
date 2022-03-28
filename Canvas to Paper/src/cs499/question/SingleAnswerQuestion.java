@@ -28,6 +28,8 @@ public class SingleAnswerQuestion extends Question {
 
 	private String gradingInstructions;
 
+	private QuestionType type;
+	
 	private ReferenceMaterial reference;
 
 	public SingleAnswerQuestion(int id) {
@@ -82,6 +84,14 @@ public class SingleAnswerQuestion extends Question {
 	public void setGradingInstructions(String gradingInstructions) {
 		this.gradingInstructions = gradingInstructions;
 	}
+	
+	public QuestionType getType() {
+		return type;
+	}
+
+	public void setType(QuestionType type) {
+		this.type = type;
+	}
 
 	@Override
 	public void attachReference(ReferenceMaterial reference) {
@@ -110,8 +120,7 @@ public class SingleAnswerQuestion extends Question {
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
-			.execute();
-			
+			.execute();			
 
 		}
 		catch(Exception e) {
@@ -156,6 +165,7 @@ public class SingleAnswerQuestion extends Question {
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswers(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
+				setType(valueOf(result.getValue(QUESTION.TYPE)));
 
 			}
 
@@ -163,6 +173,8 @@ public class SingleAnswerQuestion extends Question {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 	public void saveQuestion() {
 
@@ -186,7 +198,7 @@ public class SingleAnswerQuestion extends Question {
 				.values(id,
 						name,
 						description,
-						SINGLE_ANSWER.toString(),
+						type.toString(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(answers),
 						DataHelper.boolToInt(abet))
@@ -197,7 +209,7 @@ public class SingleAnswerQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.TYPE, type.toString())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answers))
@@ -210,9 +222,4 @@ public class SingleAnswerQuestion extends Question {
 		}
 
 	}
-		
-
-
-	
-
 }
