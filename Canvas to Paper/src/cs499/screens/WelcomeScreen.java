@@ -1,5 +1,6 @@
 package cs499.screens;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,13 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.GridBagConstraints;
-
-import java.util.ArrayList;
-
-import org.apache.xmlbeans.impl.xb.xsdschema.ImportDocument.Import;
-import org.w3c.dom.Document;
 
 import cs499.ParseQTI;
 import cs499.gui_utils.FileExplorer;
@@ -50,7 +45,6 @@ public class WelcomeScreen {
 				String[] ImportZip;
 				String[] ErrorArray = {"Error"};
 				ParseQTI qti = new ParseQTI();
-				ArrayList<Document> tempArray = new ArrayList<Document>();
 
 				//Loop to ensure proper selection or cancel selection
 				do {
@@ -78,7 +72,8 @@ public class WelcomeScreen {
 					}
 
 					//Loop through QTITest directory, handling all xml files
-					tempArray = qti.xmlLoop("QTITest");
+					//TODO: Ensure functionality
+					qti.xmlLoop("QTITest");
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -98,6 +93,17 @@ public class WelcomeScreen {
 		}
 		export_mi.addActionListener(new ExportAction());
 
+		//Create File -> Select Test
+		JMenuItem select_mi = menu.buildMenuItem("Select Test", KeyEvent.VK_S, file_menu);
+
+		//Create Select Test Action Handler
+		class SelectAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Open Select test dialog
+			}
+		}
+		select_mi.addActionListener(new SelectAction());
+
 		//Add File Menu to Menu Bar
 		menu_bar.add(file_menu);
 
@@ -111,6 +117,15 @@ public class WelcomeScreen {
 			logo_icon_path
 		);
 		frame.setLayout(new GridBagLayout());
+		
+		//Create Profile Picture Image
+		String pfp_path = "";
+		pfp_path = logo_icon_path;
+		//TODO: Set pfp_path to username's profile picture
+
+		String username = "";
+		username = "USERNAME";
+		//TODO: Get the username somehow
 
 		//Create Import QTI File Button
 		JButton import_btn = new JButton("Import QTI Files");
@@ -120,34 +135,66 @@ public class WelcomeScreen {
 		JButton export_btn = new JButton("Export QTI File");
 		export_btn.addActionListener(new ExportAction());
 
+		//Create Create New Test Button
+		JButton new_test_btn = new JButton("Create New Test");
+
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		//Add elements to frame
-		constraints.weightx = 0.25;
-		constraints.weighty = 0.25;
 		constraints.fill = GridBagConstraints.BOTH;
-
+		
+		//Use a 5x2 content area, divider between, with padding around it for a 7x5
+		
+		//Add padding around of 10% top, 10% left, 20% bottom, 10% right, and a middle divider of 10%
 		constraints.gridx = 0;
 		constraints.gridy = 0;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
 		frame.add(new JLabel(), constraints);
 
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.insets = new Insets(30,30,0,30);
-		frame.add(import_btn, constraints);
-		
-		constraints.gridx = 1;
-		constraints.gridy = 2;
-		constraints.insets = new Insets(0,30,30,30);
-		frame.add(export_btn, constraints);
-
 		constraints.gridx = 2;
-		constraints.gridy = 3;
+		constraints.weightx = 0.1;
 		frame.add(new JLabel(), constraints);
 
 		constraints.gridx = 3;
-		constraints.gridy = 3;
+		constraints.gridy = 6;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.2;
 		frame.add(new JLabel(), constraints);
+		
+		//Set table weights
+		constraints.weightx = 0.6 / 2;
+		constraints.weighty = 0.7 / 5;
+
+		//Column 1:
+		constraints.gridx = 1;
+
+		//Add PFP
+		constraints.gridy = 1;
+		frame.add(new JLabel(new ImageIcon(pfp_path)), constraints);
+
+		//Add Username display
+		constraints.gridy = 2;
+		frame.add(new JLabel("Welcome, " + username + "!"), constraints);
+
+		//Add Create New Test Button
+		constraints.gridy = 3;
+		frame.add(new_test_btn, constraints);
+
+		//Add Import Button
+		constraints.gridy = 4;
+		frame.add(import_btn, constraints);
+
+		//Add Export Button
+		constraints.gridy = 5;
+		frame.add(export_btn, constraints);
+
+		//Column 2:
+		constraints.gridx = 3;
+
+		//TODO: Add document information
+		constraints.gridy = 2;
+		frame.add(new JLabel("Recent Documents:"), constraints);
 
 		//View the Welcome Screen frame
 		frame.setVisible(true);
