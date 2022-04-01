@@ -81,7 +81,6 @@ public class WordDocx
 		// Add questions with points and question number
 		// Page numbers
 		// User-set font, font-size, etc (accessible through GUI somehow)
-
 		
 		//Create Question 1 
 		/*XWPFParagraph paragraph = document.createParagraph();
@@ -203,6 +202,7 @@ public class WordDocx
 		
 		// close the document
 		out.close();
+    document.close();
 	}
 
 }
