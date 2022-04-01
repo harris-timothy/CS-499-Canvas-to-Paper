@@ -24,6 +24,7 @@ public class Instructor {
 	
 	public Instructor(int id) {
 		this.id = id;
+		loadInstructor();
 	}
 
 	public String getFname() {
