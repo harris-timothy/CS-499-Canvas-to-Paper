@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -24,7 +25,8 @@ public class WelcomeScreen {
     public WelcomeScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
 		String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
-		
+		JFrame frame;
+
 		//Initialize gui helper classes
 		MenuBuilder menu = new MenuBuilder();
 		FileExplorer explorer = new FileExplorer();
@@ -96,28 +98,29 @@ public class WelcomeScreen {
 		//Create File -> Select Test
 		JMenuItem select_mi = menu.buildMenuItem("Select Test", KeyEvent.VK_S, file_menu);
 
-		//Create Select Test Action Handler
-		class SelectAction implements ActionListener {
-			public void actionPerformed(ActionEvent e) {
-				//TODO: Open Select test dialog
-			}
-		}
-		select_mi.addActionListener(new SelectAction());
-
 		//Add File Menu to Menu Bar
 		menu_bar.add(file_menu);
 
 		//Initialize the Welcome Screen frame of the application
 		FrameBuilder maker = new FrameBuilder();
-		JFrame frame = maker.buildFrame(
+		frame = maker.buildFrame(
 			frame_title, 
-			JFrame.EXIT_ON_CLOSE, 
+			JFrame.DISPOSE_ON_CLOSE, 
 			1000, 800, 
 			menu_bar, 
 			logo_icon_path
 		);
 		frame.setLayout(new GridBagLayout());
 		
+		//Create Select Test Action Handler
+		class SelectAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new SelectQuizScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
+			}
+		}
+		select_mi.addActionListener(new SelectAction());
+
 		//Create Profile Picture Image
 		String pfp_path = "";
 		pfp_path = logo_icon_path;
@@ -138,6 +141,7 @@ public class WelcomeScreen {
 		//Create Create New Test Button
 		JButton new_test_btn = new JButton("Create New Test");
 
+		//Create Constraints Guide
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		//Add elements to frame
