@@ -3,16 +3,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import cs499.question.Question;
 import java.util.Collections;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-
-import cs499.question.Question;
- 
-// To import the Apache library to create document file object import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 public class WordDocx
 {
