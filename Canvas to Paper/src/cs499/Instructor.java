@@ -67,10 +67,8 @@ public class Instructor {
 		this.id = id;
 	}
 	
-	public void loadInstructor() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
-		
-		try (Connection conn = DriverManager.getConnection(url)) {
+	public void loadInstructor() {		
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record result = create.select()
@@ -89,9 +87,8 @@ public class Instructor {
 	}
 	
 	public void saveInstructor() {
-		String url = "jdbc:sqlite:./db/canvas2paper.db";
 		
-		try (Connection conn = DriverManager.getConnection(url)) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
             DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
             
             Record exists = create.select()

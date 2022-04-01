@@ -1,7 +1,7 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
-import static cs499.question.QuestionType.SINGLE_ANSWER;
+import static cs499.question.QuestionType.MATCHING;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -150,7 +150,7 @@ public class MatchingQuestion extends Question {
 				.values(id,
 						name,
 						description,
-						SINGLE_ANSWER.toString(),
+						MATCHING.toString(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(left, right),
 						DataHelper.boolToInt(abet))
@@ -161,7 +161,7 @@ public class MatchingQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.TYPE, MATCHING.toString())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(left, right))
@@ -202,8 +202,7 @@ public class MatchingQuestion extends Question {
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
-			.execute();
-			
+			.execute();			
 
 		}
 		catch(Exception e) {

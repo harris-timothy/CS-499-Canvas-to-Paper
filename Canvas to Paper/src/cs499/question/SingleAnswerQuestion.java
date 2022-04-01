@@ -5,6 +5,7 @@ import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -21,12 +22,14 @@ public class SingleAnswerQuestion extends Question {
 
 	private String description;
 
-	private String answer;
+	private ArrayList<String> answers;
 
 	private boolean abet;
 
 	private String gradingInstructions;
 
+	private QuestionType type;
+	
 	private ReferenceMaterial reference;
 
 	public SingleAnswerQuestion(int id) {
@@ -58,12 +61,12 @@ public class SingleAnswerQuestion extends Question {
 		this.description = description;
 	}
 
-	public String getAnswer() {
-		return this.answer;
+	public ArrayList<String> getAnswers() {
+		return this.answers;
 	}
 
-	public void setAnswer(String answer) {
-		this.answer = answer;
+	public void setAnswers(ArrayList<String> answers) {
+		this.answers = answers;
 	}
 
 	public boolean getAbet() {
@@ -80,6 +83,14 @@ public class SingleAnswerQuestion extends Question {
 
 	public void setGradingInstructions(String gradingInstructions) {
 		this.gradingInstructions = gradingInstructions;
+	}
+	
+	public QuestionType getType() {
+		return type;
+	}
+
+	public void setType(QuestionType type) {
+		this.type = type;
 	}
 
 	@Override
@@ -109,8 +120,7 @@ public class SingleAnswerQuestion extends Question {
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
-			.execute();
-			
+			.execute();			
 
 		}
 		catch(Exception e) {
@@ -154,7 +164,8 @@ public class SingleAnswerQuestion extends Question {
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
-				setAnswer(AnswerFormatter.answerString(result.getValue(QUESTION.ANSWERS)));
+				setAnswers(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
+				setType(valueOf(result.getValue(QUESTION.TYPE)));
 
 			}
 
@@ -162,6 +173,8 @@ public class SingleAnswerQuestion extends Question {
 			e.printStackTrace();
 		}
 	}
+
+	
 
 	public void saveQuestion() {
 
@@ -185,9 +198,9 @@ public class SingleAnswerQuestion extends Question {
 				.values(id,
 						name,
 						description,
-						SINGLE_ANSWER.toString(),
+						type.toString(),
 						gradingInstructions,
-						AnswerFormatter.answerJSONString(answer),
+						AnswerFormatter.answerJSONString(answers),
 						DataHelper.boolToInt(abet))
 				.execute();
 
@@ -196,10 +209,10 @@ public class SingleAnswerQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, "general")
+				.set(QUESTION.TYPE, type.toString())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
-				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer))
+				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answers))
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
@@ -209,9 +222,4 @@ public class SingleAnswerQuestion extends Question {
 		}
 
 	}
-		
-
-
-	
-
 }
