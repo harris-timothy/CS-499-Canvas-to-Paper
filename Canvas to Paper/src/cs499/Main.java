@@ -1,6 +1,9 @@
 package cs499;
 
+
 import java.io.*;
+
+import cs499.screens.WelcomeScreen;
 
 import java.util.*;
 
@@ -13,7 +16,9 @@ public class Main {
 static Scanner cin = new Scanner(System.in);
 
 public static void main(String[] args){
-
+  
+new WelcomeScreen();
+  
 int correct = 0;
 
 int incorrect=0;
