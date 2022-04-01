@@ -17,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row4;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -65,11 +65,6 @@ public class Course extends TableImpl<CourseRecord> {
     public final TableField<CourseRecord, Integer> API_ID = createField(DSL.name("api_id"), SQLDataType.INTEGER, this, "");
 
     /**
-     * The column <code>course.qti_id</code>.
-     */
-    public final TableField<CourseRecord, String> QTI_ID = createField(DSL.name("qti_id"), SQLDataType.CLOB, this, "");
-
-    /**
      * The column <code>course.instructor_id</code>.
      */
     public final TableField<CourseRecord, Integer> INSTRUCTOR_ID = createField(DSL.name("instructor_id"), SQLDataType.INTEGER, this, "");
@@ -114,7 +109,7 @@ public class Course extends TableImpl<CourseRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_COURSE_API_ID, Indexes.IDX_COURSE_QTI_ID);
+        return Arrays.asList(Indexes.IDX_COURSE_API_ID);
     }
 
     @Override
@@ -149,11 +144,11 @@ public class Course extends TableImpl<CourseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row4 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, String, Integer, String, Integer> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row4<Integer, String, Integer, Integer> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 }

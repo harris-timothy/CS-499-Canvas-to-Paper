@@ -17,7 +17,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row10;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -83,11 +83,6 @@ public class Quiz extends TableImpl<QuizRecord> {
      * The column <code>quiz.assignment_api_id</code>.
      */
     public final TableField<QuizRecord, Integer> ASSIGNMENT_API_ID = createField(DSL.name("assignment_api_id"), SQLDataType.INTEGER, this, "");
-
-    /**
-     * The column <code>quiz.assignment_qti_id</code>.
-     */
-    public final TableField<QuizRecord, String> ASSIGNMENT_QTI_ID = createField(DSL.name("assignment_qti_id"), SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>quiz.course_id</code>.
@@ -174,11 +169,11 @@ public class Quiz extends TableImpl<QuizRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Integer, String, String, Integer, String, Float, Integer, String, Integer, String> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row9<Integer, String, String, Integer, String, Float, Integer, Integer, String> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 }

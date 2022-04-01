@@ -12,7 +12,7 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -62,12 +62,7 @@ public class QuestionGroup extends TableImpl<QuestionGroupRecord> {
     /**
      * The column <code>question_group.question_points</code>.
      */
-    public final TableField<QuestionGroupRecord, Integer> QUESTION_POINTS = createField(DSL.name("question_points"), SQLDataType.INTEGER, this, "");
-
-    /**
-     * The column <code>question_group.position</code>.
-     */
-    public final TableField<QuestionGroupRecord, Integer> POSITION = createField(DSL.name("position"), SQLDataType.INTEGER, this, "");
+    public final TableField<QuestionGroupRecord, Float> QUESTION_POINTS = createField(DSL.name("question_points"), SQLDataType.REAL, this, "");
 
     /**
      * The column <code>question_group.quiz_id</code>.
@@ -149,11 +144,11 @@ public class QuestionGroup extends TableImpl<QuestionGroupRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Integer, String, Integer, Integer, Integer, Integer, Integer> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row6<Integer, String, Integer, Float, Integer, Integer> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }
