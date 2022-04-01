@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jooq.Record;
 
+import cs499.question.AnswerFormatter;
 import cs499.question.Question;
 
 public class Quiz implements Reference{
@@ -24,25 +25,21 @@ public class Quiz implements Reference{
 	
 	private String date;
 	
-	private String instructor;
+	private Instructor instructor;
 	
 	private String course;
 	
-	private String section;
+	private String description;
 	
-	private String instructions;
+	private float pointsPossible;
 	
 	private ArrayList<Question> questions;
 	
 	private ArrayList<ReferenceMaterial> references;
 	
-	public Quiz(String name, String date, String instructor, String course, String section, String instructions) {
-		this.name = name;
-		this.date = date;
-		this.instructor = instructor;
-		this.course = course;
-		this.section = section;
-		this.instructions = instructions;
+	public Quiz(int id) {
+		this.id = id;
+		loadQuiz();
 	}
 	
 	public int getId() {
@@ -69,36 +66,32 @@ public class Quiz implements Reference{
 		this.date = date;
 	}
 	
-	public String getInstructor() {
+	public Instructor getInstructor() {
 		return this.instructor;
 	}
 	
-	public void setInstructor(String instructor) {
-		this.instructor = instructor;
-	}
-	
-	public String getCourse() {
+	public String getCourse() { 
 		return this.course;
 	}
 	
-	public void setCourse(String course) {
+	public void setCourse(String course) { // Different table
 		this.course = course;
 	}
 	
-	public String getSection() {
-		return this.section;
+	public String getDescription() {
+		return this.description;
 	}
 	
-	public void setSection(String section) {
-		this.section = section;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
-	public String getInstructions() {
-		return this.instructions;
+	public float getPointsPossible() {
+		return this.pointsPossible;
 	}
 	
-	public void setInstructions(String instructions) {
-		this.instructions = instructions;
+	public void setPointsPossible(float pointsPossible) {
+		this.pointsPossible = pointsPossible;
 	}
 	
 	public void addQuestion(Question question) {
@@ -112,16 +105,12 @@ public class Quiz implements Reference{
 		}
 	}
 	
-	public void removeQuestion(int id) {
-		for (int i = 0; i < questions.size(); i++) {
-			if(questions.get(i).getId() == id) {
-				questions.remove(i);
-			}
-		}
-	}
-	
 	public void shuffleQuestions() {
 		Collections.shuffle(questions);
+	}
+	
+	public ArrayList<Question> getQuestions() {
+		return this.questions;
 	}
 	
 	private String questionJSON() {
@@ -222,30 +211,43 @@ public class Quiz implements Reference{
 		
 	}
 	
-	public void load() {
+	public void loadQuiz() {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
-			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			Record result = create.select()
+					.from(QUIZ)
+					.where(QUIZ.ID.eq(id))
+					.fetchOne();
 			
 			String courseName = create.select(COURSE.NAME)
-					.from(COURSE)
-					.where(COURSE.ID.eq(QUIZ.COURSE_ID))
-					.fetchOne(COURSE.NAME);
+                    .from(COURSE)
+                    .where(COURSE.ID.eq(QUIZ.COURSE_ID))
+                    .fetchOne(COURSE.NAME);
 			
-			Record instructor =create.select()
-				.from(INSTRUCTOR.join(COURSE).on(INSTRUCTOR.ID.eq(COURSE.INSTRUCTOR_ID)))
-						.where(COURSE.ID.eq(QUIZ.COURSE_ID))
-						.fetchOne();
-						
-				
-			
-	
+			Integer instructorId =create.select(COURSE.INSTRUCTOR_ID)
+                    .from(COURSE)
+                    .where(COURSE.ID.eq(QUIZ.COURSE_ID))
+                    .fetchOne(COURSE.INSTRUCTOR_ID);
 
-		}
-		catch(Exception e) {
+			if(result != null) {
+				setName(result.getValue(QUIZ.NAME));
+				setId(result.getValue(QUIZ.ID));
+				setDate(result.getValue(QUIZ.DUE_DATE));
+				setDescription(result.getValue(QUIZ.DESCRIPTION));
+				setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
+
+			}
+			
+			this.instructor = new Instructor(instructorId);
+			
+			setCourse(courseName);
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-	}
+	}	
 
 	
 }
