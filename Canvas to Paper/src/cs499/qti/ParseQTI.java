@@ -9,7 +9,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -244,41 +246,38 @@ public class ParseQTI {
 			}			
 		}
     	ArrayList<Object> responseList = new ArrayList<Object>();
+    	//list that will contain all possible responses
 		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
 			if(o instanceof MaterialType) {
 				questionValues.put("description", parseMaterial((MaterialType) o));
 			}
 			else if (o instanceof ResponseLidType) {
 				responseList.addAll(parseResponseLid((ResponseLidType) o));
-				//returns arraylist of hashmaps
-				//response ident
-				//choices
+				//returns arraylist of hashmaps with matching_ident, answer_name, answer_ident, and answer_value
+				//adds all of them to existing list
+				
 			}
 			else if (o instanceof ResponseStrType) {
 				HashMap<String,String> responseInfo = new HashMap<String,String>();
 				responseInfo.put("answer_ident",((ResponseStrType) o).getIdent());
 				responseList.add(responseInfo);
-				//returns ident for correct answer
+				//returns single hashmap with answer_ident and answer_value
+				//adds to existing list
 			}
 		}
 		
-		ArrayList<Object> correctAnswers = new ArrayList<Object>();
+		ArrayList<Object> resultsList = new ArrayList<Object>();
+		//list that will contain all correct responses
 		for(Object r: item.getResprocessing()) {
-			correctAnswers.addAll(parseResprocessing((ResprocessingType) r));
-			//returns arraylist of hashmaps
-			//response ident to match responselist
-			//response value to match choice value of correct answer
-		}		
+			resultsList.addAll(parseResprocessing((ResprocessingType) r));
+			//returns arraylist of hashmaps with response_ident and answer_ident
+		}			
 		for(Object f: item.getItemfeedback()) {
-			HashMap<String, String> feedback;
-			((ItemfeedbackType) f).getIdent(); //itemfeedback ident
-			//if conditionvar other
-			//displayfeedback linkrefid = ident
-			feedback = parseItemFeedback((ItemfeedbackType) f);
-			correctAnswers.add(feedback);
+			//returns single hashmap with answer_ident and answer_value
+			resultsList.add(parseItemFeedback((ItemfeedbackType) f));
 		}
 		
-		String answers = QtiToDB.parseAnswers(correctAnswers, responseList, questionValues);
+		String answers = QtiToDB.parseAnswers(resultsList, responseList, questionValues);
 		questionValues.put("answers", answers);
 		questionId = QtiToDB.storeQuestion(questionValues);
 		//use hashmap to store question
@@ -319,13 +318,13 @@ public class ParseQTI {
     	
     	ArrayList<Object> data = new ArrayList<Object>();
     	
-    	responseLid.getIdent();
+    	
     	
     	List<JAXBElement<?>> list = removeNull(responseLid.getContent());    	
     	
 		for(JAXBElement<?> e: list) {
 			HashMap<String, String> map = new HashMap<String, String>();
-								
+			map.put("matching_ident", responseLid.getIdent());					
 			if(e.getValue() instanceof MaterialType) {
 				
 				map.put("answer_name",parseMaterial((MaterialType) e.getValue()));
@@ -351,7 +350,7 @@ public class ParseQTI {
 			}
 			data.add(map);
 		}
-		return data;
+		return removeDuplicates(data);
     	
     }
 	
@@ -384,8 +383,8 @@ public class ParseQTI {
 				HashMap<String, String> data = new HashMap<String, String>();
 				Object var = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
 				if(var instanceof VarequalType) {
-					data.put("answer_ident", ((VarequalType)var).getRespident()); //answer ident - matches response_lid ident
-					data.put("answer_value", ((VarequalType)var).getValue()); //answer value - matches response_label ident
+					data.put("response_ident", ((VarequalType)var).getRespident()); //response ident - matches response_lid ident
+					data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
 					list.add(data);	
 				}
 				else {
@@ -415,6 +414,14 @@ public class ParseQTI {
 		}
 		list.removeAll(Collections.singletonList(null));
 		list.removeAll(Collections.singletonList(""));
+		return list;
+	}
+	
+	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list){
+		Set<T> set = new LinkedHashSet<>();
+		set.addAll(list);
+		list.clear();
+		list.addAll(set);		
 		return list;
 	}
 	
