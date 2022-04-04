@@ -16,29 +16,47 @@
         </configuration>
       </plugin>
 		<plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>jaxb2-maven-plugin</artifactId>
-            <version>2.5.0</version>
+            <groupId>com.evolvedbinary.maven.mojohaus</groupId>
+            <artifactId>jaxb-maven-plugin</artifactId>
+            <version>3.0.0</version>
             <executions>
                 <execution>
-                    <id>xjc</id>
+                    <id>xjc-schema1</id>
                     <goals>
                         <goal>xjc</goal>
                     </goals>
+					<configuration>
+                		<!-- The package of your generated sources -->
+                		<packageName>cs499.qti.data_mapping</packageName>
+						<outputDirectory>${basedir}/src/</outputDirectory>
+						<sources>
+							<source>${basedir}/schema/xsd/ims_qtiasiv1p2p1.xsd</source>
+						</sources>
+						<xjbSources>
+							<xjbSource>${basedir}/schema/xjb/data_bindings.xjb</xjbSource>
+						</xjbSources>
+						<clearOutputDir>false</clearOutputDir>
+            		</configuration>
                 </execution>
+				<execution>
+					<id>xjc-2</id>
+					<goals>
+						<goal>xjc</goal>
+					</goals>
+					<configuration>
+						<packageName>cs499.qti.metadata_mapping</packageName>
+						<sources>
+							<source>${basedir}/schema/xsd/cccv1p0.xsd</source>
+						</sources>
+						<outputDirectory>${basedir}/src/</outputDirectory>
+						<xjbSources>
+							<xjbSource>${basedir}/schema/xjb/metadata_bindings.xjb</xjbSource>
+						</xjbSources>
+						<clearOutputDir>false</clearOutputDir>
+					</configuration>
+				</execution>
             </executions>
-            <configuration>
-                <!-- The package of your generated sources -->
-                <packageName>cs499.qti.data_mapping</packageName>
-				<outputDirectory>${basedir}/src/</outputDirectory>
-				<sources>
-					<source>${basedir}/schema/xsd</source>
-				</sources>
-				<xjbSources>
-					<xjbSource>${basedir}/schema/xjb</xjbSource>
-				</xjbSources>
-				<clearOutputDir>false</clearOutputDir>
-            </configuration>
+            
         </plugin>
     </plugins>
   </build>

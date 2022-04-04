@@ -16,7 +16,7 @@ import java.awt.event.WindowEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
-import cs499.ParseQTI;
+import cs499.qti.ParseQTI;
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
 import cs499.gui_utils.MenuBuilder;
