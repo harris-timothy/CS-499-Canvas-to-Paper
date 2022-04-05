@@ -63,6 +63,46 @@ public class QtiToDB {
 		
 	}
 	
+	public static void storeQuizMeta(HashMap<String,String> data) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Record exists = create.select()
+					.from(QUIZ)
+					.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+					.fetchOne();
+			
+			if(exists == null) {
+				create.insertInto(QUIZ,
+						QUIZ.QTI_ID,
+						QUIZ.NAME,
+						QUIZ.DESCRIPTION,
+						QUIZ.POINTS_POSSIBLE,
+						QUIZ.DUE_DATE)
+				.values(data.get("qti_id"),
+						data.get("name"),
+						data.get("description"),
+						Float.parseFloat(data.get("points_possible")),
+						data.get("due_date"))
+				.execute();				
+			}
+			else {
+				create.update(QUIZ)
+				.set(QUIZ.NAME, data.get("name"))
+				.set(QUIZ.DESCRIPTION, data.get("description"))
+				.set(QUIZ.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
+				.set(QUIZ.DUE_DATE, data.get("due_date"))
+				.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+				.execute();
+			}
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public static int storeQuestion(HashMap<String, String> data) {
 		int questionId = 0;
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {

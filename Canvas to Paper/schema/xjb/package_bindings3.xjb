@@ -1,0 +1,18 @@
+<jxb:bindings version="3.0"
+                   xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
+                   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+        <!--
+            Change since version 2.0 of the j-m-p:
+
+            Note that the schemaLocation path must point to the XSD file
+            relative to *this* file, rather than the basedir.
+        -->
+
+	<jxb:bindings schemaLocation="../xsd/ccv1p1_lomresource_v1p0.xsd" node="//xsd:schema">
+          <jxb:schemaBindings>
+             <jxb:package name="cs499.qti.package_mapping.lomresource"/>
+          </jxb:schemaBindings>
+      </jxb:bindings>
+
+</jxb:bindings>

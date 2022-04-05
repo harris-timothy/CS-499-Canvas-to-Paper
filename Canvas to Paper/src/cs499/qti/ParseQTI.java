@@ -20,6 +20,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.*;
+import cs499.qti.data_mapping.ItemType;
+import cs499.qti.metadata_mapping.*;
+import cs499.qti.package_mapping.*;
 import cs499.question.AnswerFormatter;
 import cs499.qti.QtiToDB.*;
 import jakarta.xml.bind.JAXBContext;
@@ -129,11 +132,11 @@ public class ParseQTI {
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
     	
-    	File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\gd360ceb1d866eef9962487e2be79b4b8\\gd360ceb1d866eef9962487e2be79b4b8.xml");
+    	File xmlfile = new File(filepath);
     	
     	Unmarshaller unmarshaller = jc.createUnmarshaller();
     	
-		JAXBElement<QuestestinteropType> root = (JAXBElement<QuestestinteropType>) unmarshaller.unmarshal(testfile);
+		JAXBElement<QuestestinteropType> root = (JAXBElement<QuestestinteropType>) unmarshaller.unmarshal(xmlfile);
     	
     	QuestestinteropType qti = (QuestestinteropType) root.getValue();
     	
@@ -396,6 +399,47 @@ public class ParseQTI {
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void parseMeta(String filepath) throws JAXBException {
+		JAXBContext jc = JAXBContext.newInstance("cs499.qti.metadata_mapping");
+		
+		File xmlFile = new File(filepath);
+		
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		
+		JAXBElement<Quiz> root = (JAXBElement<Quiz>) unmarshaller.unmarshal(xmlFile);
+		
+		Quiz quiz = root.getValue();
+		
+		HashMap<String,String> data = new HashMap<String,String>();
+		data.put("name", quiz.getTitle());
+		data.put("description",quiz.getDescription());
+		data.put("qti_id",quiz.getIdentifier());
+		data.put("points_possible",quiz.getPointsPossible());
+		data.put("due_date",quiz.getDueAt());
+		QtiToDB.storeQuizMeta(data);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void parseManifest(String filepath) throws JAXBException {
+		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping");
+		
+		File xmlFile = new File(filepath);
+		File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\imsmanifest.xml");
+		
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		
+		JAXBElement<ManifestType> root = (JAXBElement<ManifestType>) unmarshaller.unmarshal(testfile);
+		System.out.println(root);
+		
+//		ManifestType manifest = root.getValue();
+//		
+//		for(Object o: manifest.getAny()) {
+//			System.out.println(o);
+//		}
+		
+	}
+	
 	
 	/**
 	 * Helper method to remove null or whitespace only entries from lists
@@ -417,6 +461,12 @@ public class ParseQTI {
 		return list;
 	}
 	
+	/**
+	 * Helper method to remove duplicate items from an arraylist
+	 * @param <T>
+	 * @param list
+	 * @return
+	 */
 	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list){
 		Set<T> set = new LinkedHashSet<>();
 		set.addAll(list);
