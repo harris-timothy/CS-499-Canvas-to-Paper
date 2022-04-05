@@ -72,9 +72,7 @@ public class WelcomeScreen {
 					for (String filepath : ImportZip) {
 						qti.unzip(filepath, "QTITest");
 					}
-
 					//Loop through QTITest directory, handling all xml files
-					//TODO: Ensure functionality
 					qti.xmlLoop("QTITest");
 				} catch (Exception ex) {
 					ex.printStackTrace();
