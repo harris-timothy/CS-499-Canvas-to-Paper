@@ -23,6 +23,7 @@ import cs499.qti.data_mapping.*;
 import cs499.qti.data_mapping.ItemType;
 import cs499.qti.metadata_mapping.*;
 import cs499.qti.package_mapping.*;
+import cs499.qti.package_mapping.imsmd.*;
 import cs499.question.AnswerFormatter;
 import cs499.qti.QtiToDB.*;
 import jakarta.xml.bind.JAXBContext;
@@ -420,23 +421,35 @@ public class ParseQTI {
 		QtiToDB.storeQuizMeta(data);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void parseManifest(String filepath) throws JAXBException {
-		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping");
+		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping:cs499.qti.package_mapping.imsmd");
 		
 		File xmlFile = new File(filepath);
+		//need to add code here to edit namespace of file and remove imsccv1p1
+		//have to edit the source file to turn string into langstring
 		File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\imsmanifest.xml");
 		
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		
 		JAXBElement<ManifestType> root = (JAXBElement<ManifestType>) unmarshaller.unmarshal(testfile);
-		System.out.println(root);
 		
-//		ManifestType manifest = root.getValue();
-//		
-//		for(Object o: manifest.getAny()) {
-//			System.out.println(o);
-//		}
+		
+		ManifestType manifest = root.getValue();
+		System.out.println(manifest);
+		
+		MetadataType metadata = manifest.getMetadata();
+		
+		List<Object> elements = metadata.getAny();
+		JAXBElement element = (JAXBElement) elements.get(FIRST);
+		LomType lom = (LomType) element.getValue();
+		
+		JAXBElement el = (JAXBElement) removeNull(lom.getGeneral().getContent()).get(FIRST);
+		TitleType title = (TitleType) el.getValue();
+		
+		
+		System.out.println(title.getLangstring().get(FIRST).getValue());
+		//get text between double quotes for course title
 		
 	}
 	

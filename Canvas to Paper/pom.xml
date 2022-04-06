@@ -22,6 +22,7 @@
 				<executions>
 					<execution>
 						<id>xjc-schema1</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
@@ -40,6 +41,7 @@
 					</execution>
 					<execution>
 						<id>xjc-2</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
@@ -57,13 +59,14 @@
 					</execution>
 					<execution>
 						<id>xjc-3</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
 							<packageName>cs499.qti.package_mapping</packageName>
 							<sources>
-								<source>${basedir}/schema/xsd/ccv1p1_imscp_v1p2_v1p0.xsd</source>
+								<source>${basedir}/schema/xsd/imscp_v1p1.xsd</source>
 							</sources>
 							<outputDirectory>${basedir}/src/</outputDirectory>
 							<xjbSources>
@@ -74,13 +77,14 @@
 					</execution>
 					<execution>
 						<id>xjc-4</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
 						<configuration>
 							<packageName>cs499.qti.package_mapping.imsmd</packageName>
 							<sources>
-								<source>${basedir}/schema/xsd/imsmd_v1p2.xsd</source>
+								<source>${basedir}/schema/xsd/imsmd_v1p2p2.xsd</source>
 							</sources>
 							<outputDirectory>${basedir}/src/</outputDirectory>
 							<xjbSources>
@@ -89,24 +93,6 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<execution>
-						<id>xjc-5</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<packageName>cs499.qti.package_mapping.lomresource</packageName>
-							<sources>
-								<source>${basedir}/schema/xsd/ccv1p1_lomresource_v1p0.xsd</source>
-							</sources>
-							<outputDirectory>${basedir}/src/</outputDirectory>
-							<xjbSources>
-								<xjbSource>${basedir}/schema/xjb/package_bindings3.xjb</xjbSource>
-							</xjbSources>
-							<clearOutputDir>false</clearOutputDir>
-						</configuration>
-					</execution>
-
 				</executions>
 
 			</plugin>

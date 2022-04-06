@@ -9,10 +9,11 @@
             relative to *this* file, rather than the basedir.
         -->
 	
- 	<jxb:bindings schemaLocation="../xsd/ccv1p1_imscp_v1p2_v1p0.xsd" node="//xsd:schema">
+ 	<jxb:bindings schemaLocation="../xsd/imscp_v1p1.xsd" node="//xsd:schema">
           <jxb:schemaBindings>
              <jxb:package name="cs499.qti.package_mapping"/>
           </jxb:schemaBindings>
       </jxb:bindings>
+	
 	
 </jxb:bindings>
