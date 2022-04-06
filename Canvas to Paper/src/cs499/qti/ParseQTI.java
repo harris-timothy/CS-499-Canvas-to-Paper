@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,6 +26,7 @@ import cs499.qti.data_mapping.*;
 import cs499.qti.data_mapping.ItemType;
 import cs499.qti.metadata_mapping.*;
 import cs499.qti.package_mapping.*;
+import cs499.qti.package_mapping.ResourceType;
 import cs499.qti.package_mapping.imsmd.*;
 import cs499.question.AnswerFormatter;
 import cs499.qti.QtiToDB.*;
@@ -58,11 +62,9 @@ public class ParseQTI {
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
                 extractFile(zipIn, filePath);
-                System.out.println(filePath);
             } else {
                 // if the entry is a directory, make the directory
                 File dir = new File(filePath);
-                System.out.println(filePath);
                 dir.mkdir();
             }
             zipIn.closeEntry();
@@ -87,10 +89,12 @@ public class ParseQTI {
     }
     
     /**
+     * Loops through files in directory and performs parsing as appropriate
      * @param filePath
      * @return
+     * @throws JAXBException 
      */
-    public void xmlLoop(String filePath)
+    public void xmlLoop(String filePath) throws JAXBException
     {
     	  File dir = new File(filePath);
     	  File[] directoryListing = dir.listFiles();
@@ -108,16 +112,19 @@ public class ParseQTI {
         			  ext = fileName.substring(i+1); 
         		  }
         		  
+        		  
         		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
-        			  try {
-						xmlParse(child.getPath());
-					} catch (JAXBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-        			  // CHANGE THIS TO THE DATABASE ONCE READY
-        			  //parsedFiles.add(xmlParse(child.getPath()));
+        			  if(fileName.equals("imsmanifest.xml")) {
+        				  			  
+        				  parseManifest(child.getPath());
+        			  }
+        			  else if(fileName.equals("assessment_meta.xml")) {
+        				  parseMeta(child.getPath());
+        			  }
+        			  else { 
+      						xmlParse(child.getPath());        				  
+        			  }       			  
         		  }
     		  }
     	  }
@@ -208,7 +215,7 @@ public class ParseQTI {
     	List<QtimetadatafieldType> fields = bank.getQtimetadata().get(FIRST).getQtimetadatafield();
     	for(Object f: fields) {
     		String label = ((QtimetadatafieldType) f).getFieldlabel();
-    		if(label == "bank_title") {
+    		if(label.equals("bank_title")) {
     			values.put("bank_title", ((QtimetadatafieldType) f).getFieldentry());
     		}	
 		}
@@ -242,10 +249,10 @@ public class ParseQTI {
     	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(FIRST).getQtimetadatafield();
     	for(Object f: fields) {
 			String label = ((QtimetadatafieldType) f).getFieldlabel();
-			if(label == "question_type") {
+			if(label.equals("question_type")) {
 				questionValues.put("question_type", ((QtimetadatafieldType) f).getFieldentry());
 			}
-			else if (label == "points_possible") {
+			else if (label.equals("points_possible")) {
 				questionValues.put("points_possible", ((QtimetadatafieldType) f).getFieldentry());
 			}			
 		}
@@ -280,7 +287,6 @@ public class ParseQTI {
 			//returns single hashmap with answer_ident and answer_value
 			resultsList.add(parseItemFeedback((ItemfeedbackType) f));
 		}
-		
 		String answers = QtiToDB.parseAnswers(resultsList, responseList, questionValues);
 		questionValues.put("answers", answers);
 		questionId = QtiToDB.storeQuestion(questionValues);
@@ -385,16 +391,22 @@ public class ParseQTI {
 		for(Object o: respconditions) {
 			if(o instanceof RespconditionType) {
 				HashMap<String, String> data = new HashMap<String, String>();
-				Object var = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
-				if(var instanceof VarequalType) {
-					data.put("response_ident", ((VarequalType)var).getRespident()); //response ident - matches response_lid ident
-					data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
-					list.add(data);	
+
+				List<Object> varlist = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr();
+				for(Object var: varlist) {
+					if(var instanceof VarequalType) {
+						data.put("response_ident", ((VarequalType)var).getRespident()); //response ident - matches response_lid ident
+						data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
+						list.add(data);	
+					}
+					else {
+						List<DisplayfeedbackType> disp = ((RespconditionType) o).getDisplayfeedback();
+						for(DisplayfeedbackType d: disp) {
+							data.put("answer_ident", d.getLinkrefid());
+							list.add(data);
+						}
+					}
 				}
-				else {
-					data.put("answer_ident",((RespconditionType) o).getDisplayfeedback().get(FIRST).getLinkrefid());
-					list.add(data);
-				}				
 			}
 		}
 		return list;
@@ -408,16 +420,15 @@ public class ParseQTI {
 		
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		
-		JAXBElement<Quiz> root = (JAXBElement<Quiz>) unmarshaller.unmarshal(xmlFile);
-		
-		Quiz quiz = root.getValue();
+		Quiz quiz = (Quiz) unmarshaller.unmarshal(xmlFile);
 		
 		HashMap<String,String> data = new HashMap<String,String>();
 		data.put("name", quiz.getTitle());
-		data.put("description",quiz.getDescription());
+		data.put("description",Jsoup.parse(quiz.getDescription()).text());
 		data.put("qti_id",quiz.getIdentifier());
 		data.put("points_possible",quiz.getPointsPossible());
 		data.put("due_date",quiz.getDueAt());
+
 		QtiToDB.storeQuizMeta(data);
 	}
 	
@@ -426,17 +437,13 @@ public class ParseQTI {
 		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping:cs499.qti.package_mapping.imsmd");
 		
 		File xmlFile = new File(filepath);
-		//need to add code here to edit namespace of file and remove imsccv1p1
-		//have to edit the source file to turn string into langstring
-		File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\imsmanifest.xml");
+		fixManifest(xmlFile);
 		
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		
-		JAXBElement<ManifestType> root = (JAXBElement<ManifestType>) unmarshaller.unmarshal(testfile);
-		
+		JAXBElement<ManifestType> root = (JAXBElement<ManifestType>) unmarshaller.unmarshal(xmlFile);
 		
 		ManifestType manifest = root.getValue();
-		System.out.println(manifest);
 		
 		MetadataType metadata = manifest.getMetadata();
 		
@@ -446,10 +453,20 @@ public class ParseQTI {
 		
 		JAXBElement el = (JAXBElement) removeNull(lom.getGeneral().getContent()).get(FIRST);
 		TitleType title = (TitleType) el.getValue();
+		String course = StringUtils.substringBetween(title.getLangstring().get(FIRST).getValue(),"\"","\"");
 		
+		Integer courseId = QtiToDB.storeCourse(course);
 		
-		System.out.println(title.getLangstring().get(FIRST).getValue());
-		//get text between double quotes for course title
+		ArrayList<String> courseQuizzes = new ArrayList<String>();
+		for(Object o: manifest.getResources().getResource()) {
+			ResourceType resource = (ResourceType) o;
+			if(resource.getType().equals("imsqti_xmlv1p2")) {
+				courseQuizzes.add(resource.getIdentifier());
+			}
+		}
+		
+		QtiToDB.associateCourse(courseId, courseQuizzes);
+				
 		
 	}
 	
@@ -486,6 +503,23 @@ public class ParseQTI {
 		list.clear();
 		list.addAll(set);		
 		return list;
+	}
+	
+	/**
+	 * Helper method to fix namespace and schema validation errors in Canvas provided manifest files
+	 * @param file
+	 */
+	private void fixManifest(File file) {
+		try {
+			String content = FileUtils.readFileToString(file, "UTF-8");
+			content = content.replaceAll("imsccv1p1//imscp_v1p1","imscp_v1p1");
+			content = content.replaceAll("imsmd:string", "imsmd:langstring");
+			FileUtils.writeStringToFile(file, content, "UTF-8");
+			
+		}catch (IOException e) {
+			
+		}
+		
 	}
 	
 }

@@ -6,6 +6,7 @@ import static cs499.data_classes.Tables.QUESTION_BANK_QUESTION;
 import static cs499.data_classes.Tables.QUIZ_TO_QUESTION;
 import static cs499.data_classes.Tables.QUESTION_GROUP;
 import static cs499.data_classes.Tables.QUESTION_BANK;
+import static cs499.data_classes.Tables.COURSE;
 import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
@@ -33,7 +35,7 @@ public class QtiToDB {
 			
 			Record exists = create.select()
 					.from(QUIZ)
-					.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+					.where(QUIZ.QTI_ID.eq(data.get("quiz_qti_id")))
 					.fetchOne();
 			
 			if(exists == null) {
@@ -42,12 +44,13 @@ public class QtiToDB {
 						QUIZ.NAME)
 				.values(data.get("quiz_qti_id"),
 						data.get("quiz_title"))
+				.onDuplicateKeyIgnore()
 				.execute();				
 			}
 			else {
 				create.update(QUIZ)
-				.set(QUIZ.NAME, data.get("name"))
-				.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+				.set(QUIZ.NAME, data.get("quiz_title"))
+				.where(QUIZ.QTI_ID.eq(data.get("quiz_qti_id")))
 				.execute();
 			}
 			
@@ -237,11 +240,15 @@ public class QtiToDB {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
-			int bankId = create.select(QUESTION_BANK.ID)
+			Record bank = create.select(QUESTION_BANK.ID)
 					.from(QUESTION_BANK)
 					.where(QUESTION_BANK.QTI_ID.eq(data.get("bank_qti_id")))
-					.fetchOne(QUESTION_BANK.ID);
-
+					.fetchOne();
+			int bankId = 0;
+			if(bank!=null) {
+				bankId = bank.getValue(QUESTION_BANK.ID);
+			}
+			
 			Record exists = create.select()
 					.from(QUESTION_GROUP)
 					.where(QUESTION_GROUP.QUIZ_ID.eq(Integer.parseInt(data.get("quiz_id"))))
@@ -272,7 +279,7 @@ public class QtiToDB {
 	@SuppressWarnings("unchecked")
 	public static String parseAnswers(ArrayList<Object> correctAnswers, ArrayList<Object> allChoices, HashMap<String, String> questionInfo) {
 		
-		QuestionType type = valueOf(questionInfo.get("question_type"));
+		QuestionType type = QuestionType.valueOfType(questionInfo.get("question_type"));
 		
 		switch(type) {
 		case MATCHING:
@@ -356,4 +363,59 @@ public class QtiToDB {
 		return AnswerFormatter.answerJSONString(keys,matches);
 	}
 
+	public static int storeCourse(String courseName) {
+		int courseId = 0;
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Record exists = create.select()
+					.from(COURSE)
+					.where(COURSE.NAME.eq(courseName))
+					.fetchOne();
+			
+			
+			
+			if(exists == null) {
+				create.insertInto(COURSE, 
+						COURSE.NAME)
+				.values(courseName)
+				.execute();
+			}
+			
+			courseId = create.select(COURSE.ID)
+					.from(COURSE)
+					.where(COURSE.NAME.eq(courseName))
+					.fetchOne(COURSE.ID);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return courseId;
+	}
+	
+	public static void associateCourse(int courseId, ArrayList<String> quizList) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			Record exists = create.select()
+					.from(COURSE)
+					.where(COURSE.ID.eq(courseId))
+					.fetchOne();
+			
+			if (exists != null) {
+				for (String s : quizList) {
+					create.update(QUIZ)
+					.set(QUIZ.COURSE_ID, courseId)
+					.where(QUIZ.QTI_ID.eq(s))
+					.execute();
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }
