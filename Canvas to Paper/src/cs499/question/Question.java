@@ -16,6 +16,8 @@ public abstract class Question implements Reference{
 	
 	public abstract void loadQuestion();
 	
-	public abstract void saveQuestion();	
+	public abstract void saveQuestion();
+	
+	public abstract float getPoints();
 
 }
