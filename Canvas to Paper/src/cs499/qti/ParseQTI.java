@@ -6,18 +6,28 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.*;
+import cs499.qti.data_mapping.ItemType;
+import cs499.qti.metadata_mapping.*;
+import cs499.qti.package_mapping.*;
+import cs499.qti.package_mapping.ResourceType;
+import cs499.qti.package_mapping.imsmd.*;
 import cs499.question.AnswerFormatter;
 import cs499.qti.QtiToDB.*;
 import jakarta.xml.bind.JAXBContext;
@@ -52,11 +62,9 @@ public class ParseQTI {
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
                 extractFile(zipIn, filePath);
-                System.out.println(filePath);
             } else {
                 // if the entry is a directory, make the directory
                 File dir = new File(filePath);
-                System.out.println(filePath);
                 dir.mkdir();
             }
             zipIn.closeEntry();
@@ -81,10 +89,12 @@ public class ParseQTI {
     }
     
     /**
+     * Loops through files in directory and performs parsing as appropriate
      * @param filePath
      * @return
+     * @throws JAXBException 
      */
-    public void xmlLoop(String filePath)
+    public void xmlLoop(String filePath) throws JAXBException
     {
     	  File dir = new File(filePath);
     	  File[] directoryListing = dir.listFiles();
@@ -102,16 +112,19 @@ public class ParseQTI {
         			  ext = fileName.substring(i+1); 
         		  }
         		  
+        		  
         		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
-        			  try {
-						xmlParse(child.getPath());
-					} catch (JAXBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-        			  // CHANGE THIS TO THE DATABASE ONCE READY
-        			  //parsedFiles.add(xmlParse(child.getPath()));
+        			  if(fileName.equals("imsmanifest.xml")) {
+        				  			  
+        				  parseManifest(child.getPath());
+        			  }
+        			  else if(fileName.equals("assessment_meta.xml")) {
+        				  parseMeta(child.getPath());
+        			  }
+        			  else { 
+      						xmlParse(child.getPath());        				  
+        			  }       			  
         		  }
     		  }
     	  }
@@ -127,11 +140,11 @@ public class ParseQTI {
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
     	
-    	File testfile = new File("D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\qti\\gd360ceb1d866eef9962487e2be79b4b8\\gd360ceb1d866eef9962487e2be79b4b8.xml");
+    	File xmlfile = new File(filepath);
     	
     	Unmarshaller unmarshaller = jc.createUnmarshaller();
     	
-		JAXBElement<QuestestinteropType> root = (JAXBElement<QuestestinteropType>) unmarshaller.unmarshal(testfile);
+		JAXBElement<QuestestinteropType> root = (JAXBElement<QuestestinteropType>) unmarshaller.unmarshal(xmlfile);
     	
     	QuestestinteropType qti = (QuestestinteropType) root.getValue();
     	
@@ -202,7 +215,7 @@ public class ParseQTI {
     	List<QtimetadatafieldType> fields = bank.getQtimetadata().get(FIRST).getQtimetadatafield();
     	for(Object f: fields) {
     		String label = ((QtimetadatafieldType) f).getFieldlabel();
-    		if(label == "bank_title") {
+    		if(label.equals("bank_title")) {
     			values.put("bank_title", ((QtimetadatafieldType) f).getFieldentry());
     		}	
 		}
@@ -236,49 +249,45 @@ public class ParseQTI {
     	List<QtimetadatafieldType> fields = item.getItemmetadata().getQtimetadata().get(FIRST).getQtimetadatafield();
     	for(Object f: fields) {
 			String label = ((QtimetadatafieldType) f).getFieldlabel();
-			if(label == "question_type") {
+			if(label.equals("question_type")) {
 				questionValues.put("question_type", ((QtimetadatafieldType) f).getFieldentry());
 			}
-			else if (label == "points_possible") {
+			else if (label.equals("points_possible")) {
 				questionValues.put("points_possible", ((QtimetadatafieldType) f).getFieldentry());
 			}			
 		}
     	ArrayList<Object> responseList = new ArrayList<Object>();
+    	//list that will contain all possible responses
 		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
 			if(o instanceof MaterialType) {
 				questionValues.put("description", parseMaterial((MaterialType) o));
 			}
 			else if (o instanceof ResponseLidType) {
 				responseList.addAll(parseResponseLid((ResponseLidType) o));
-				//returns arraylist of hashmaps
-				//response ident
-				//choices
+				//returns arraylist of hashmaps with matching_ident, answer_name, answer_ident, and answer_value
+				//adds all of them to existing list
+				
 			}
 			else if (o instanceof ResponseStrType) {
 				HashMap<String,String> responseInfo = new HashMap<String,String>();
 				responseInfo.put("answer_ident",((ResponseStrType) o).getIdent());
 				responseList.add(responseInfo);
-				//returns ident for correct answer
+				//returns single hashmap with answer_ident and answer_value
+				//adds to existing list
 			}
 		}
 		
-		ArrayList<Object> correctAnswers = new ArrayList<Object>();
+		ArrayList<Object> resultsList = new ArrayList<Object>();
+		//list that will contain all correct responses
 		for(Object r: item.getResprocessing()) {
-			correctAnswers.addAll(parseResprocessing((ResprocessingType) r));
-			//returns arraylist of hashmaps
-			//response ident to match responselist
-			//response value to match choice value of correct answer
-		}		
+			resultsList.addAll(parseResprocessing((ResprocessingType) r));
+			//returns arraylist of hashmaps with response_ident and answer_ident
+		}			
 		for(Object f: item.getItemfeedback()) {
-			HashMap<String, String> feedback;
-			((ItemfeedbackType) f).getIdent(); //itemfeedback ident
-			//if conditionvar other
-			//displayfeedback linkrefid = ident
-			feedback = parseItemFeedback((ItemfeedbackType) f);
-			correctAnswers.add(feedback);
+			//returns single hashmap with answer_ident and answer_value
+			resultsList.add(parseItemFeedback((ItemfeedbackType) f));
 		}
-		
-		String answers = QtiToDB.parseAnswers(correctAnswers, responseList, questionValues);
+		String answers = QtiToDB.parseAnswers(resultsList, responseList, questionValues);
 		questionValues.put("answers", answers);
 		questionId = QtiToDB.storeQuestion(questionValues);
 		//use hashmap to store question
@@ -319,13 +328,13 @@ public class ParseQTI {
     	
     	ArrayList<Object> data = new ArrayList<Object>();
     	
-    	responseLid.getIdent();
+    	
     	
     	List<JAXBElement<?>> list = removeNull(responseLid.getContent());    	
     	
 		for(JAXBElement<?> e: list) {
 			HashMap<String, String> map = new HashMap<String, String>();
-								
+			map.put("matching_ident", responseLid.getIdent());					
 			if(e.getValue() instanceof MaterialType) {
 				
 				map.put("answer_name",parseMaterial((MaterialType) e.getValue()));
@@ -351,7 +360,7 @@ public class ParseQTI {
 			}
 			data.add(map);
 		}
-		return data;
+		return removeDuplicates(data);
     	
     }
 	
@@ -382,19 +391,83 @@ public class ParseQTI {
 		for(Object o: respconditions) {
 			if(o instanceof RespconditionType) {
 				HashMap<String, String> data = new HashMap<String, String>();
-				Object var = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr().get(FIRST);
-				if(var instanceof VarequalType) {
-					data.put("answer_ident", ((VarequalType)var).getRespident()); //answer ident - matches response_lid ident
-					data.put("answer_value", ((VarequalType)var).getValue()); //answer value - matches response_label ident
-					list.add(data);	
+
+				List<Object> varlist = ((RespconditionType) o).getConditionvar().getNotOrAndOrOr();
+				for(Object var: varlist) {
+					if(var instanceof VarequalType) {
+						data.put("response_ident", ((VarequalType)var).getRespident()); //response ident - matches response_lid ident
+						data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
+						list.add(data);	
+					}
+					else {
+						List<DisplayfeedbackType> disp = ((RespconditionType) o).getDisplayfeedback();
+						for(DisplayfeedbackType d: disp) {
+							data.put("answer_ident", d.getLinkrefid());
+							list.add(data);
+						}
+					}
 				}
-				else {
-					data.put("answer_ident",((RespconditionType) o).getDisplayfeedback().get(FIRST).getLinkrefid());
-					list.add(data);
-				}				
 			}
 		}
 		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void parseMeta(String filepath) throws JAXBException {
+		JAXBContext jc = JAXBContext.newInstance("cs499.qti.metadata_mapping");
+		
+		File xmlFile = new File(filepath);
+		
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		
+		Quiz quiz = (Quiz) unmarshaller.unmarshal(xmlFile);
+		
+		HashMap<String,String> data = new HashMap<String,String>();
+		data.put("name", quiz.getTitle());
+		data.put("description",Jsoup.parse(quiz.getDescription()).text());
+		data.put("qti_id",quiz.getIdentifier());
+		data.put("points_possible",quiz.getPointsPossible());
+		data.put("due_date",quiz.getDueAt());
+
+		QtiToDB.storeQuizMeta(data);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void parseManifest(String filepath) throws JAXBException {
+		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping:cs499.qti.package_mapping.imsmd");
+		
+		File xmlFile = new File(filepath);
+		fixManifest(xmlFile);
+		
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		
+		JAXBElement<ManifestType> root = (JAXBElement<ManifestType>) unmarshaller.unmarshal(xmlFile);
+		
+		ManifestType manifest = root.getValue();
+		
+		MetadataType metadata = manifest.getMetadata();
+		
+		List<Object> elements = metadata.getAny();
+		JAXBElement element = (JAXBElement) elements.get(FIRST);
+		LomType lom = (LomType) element.getValue();
+		
+		JAXBElement el = (JAXBElement) removeNull(lom.getGeneral().getContent()).get(FIRST);
+		TitleType title = (TitleType) el.getValue();
+		String course = StringUtils.substringBetween(title.getLangstring().get(FIRST).getValue(),"\"","\"");
+		
+		Integer courseId = QtiToDB.storeCourse(course);
+		
+		ArrayList<String> courseQuizzes = new ArrayList<String>();
+		for(Object o: manifest.getResources().getResource()) {
+			ResourceType resource = (ResourceType) o;
+			if(resource.getType().equals("imsqti_xmlv1p2")) {
+				courseQuizzes.add(resource.getIdentifier());
+			}
+		}
+		
+		QtiToDB.associateCourse(courseId, courseQuizzes);
+				
+		
 	}
 	
 	
@@ -416,6 +489,37 @@ public class ParseQTI {
 		list.removeAll(Collections.singletonList(null));
 		list.removeAll(Collections.singletonList(""));
 		return list;
+	}
+	
+	/**
+	 * Helper method to remove duplicate items from an arraylist
+	 * @param <T>
+	 * @param list
+	 * @return
+	 */
+	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list){
+		Set<T> set = new LinkedHashSet<>();
+		set.addAll(list);
+		list.clear();
+		list.addAll(set);		
+		return list;
+	}
+	
+	/**
+	 * Helper method to fix namespace and schema validation errors in Canvas provided manifest files
+	 * @param file
+	 */
+	private void fixManifest(File file) {
+		try {
+			String content = FileUtils.readFileToString(file, "UTF-8");
+			content = content.replaceAll("imsccv1p1//imscp_v1p1","imscp_v1p1");
+			content = content.replaceAll("imsmd:string", "imsmd:langstring");
+			FileUtils.writeStringToFile(file, content, "UTF-8");
+			
+		}catch (IOException e) {
+			
+		}
+		
 	}
 	
 }

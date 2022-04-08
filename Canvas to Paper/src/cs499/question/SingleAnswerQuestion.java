@@ -31,6 +31,8 @@ public class SingleAnswerQuestion extends Question {
 	private QuestionType type;
 	
 	private ReferenceMaterial reference;
+	
+	private float points;
 
 	public SingleAnswerQuestion(int id) {
 		this.id = id;
@@ -165,7 +167,8 @@ public class SingleAnswerQuestion extends Question {
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswers(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
-				setType(valueOf(result.getValue(QUESTION.TYPE)));
+				setType(valueOfType(result.getValue(QUESTION.TYPE)));
+				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
 
 			}
 
@@ -194,14 +197,16 @@ public class SingleAnswerQuestion extends Question {
 						QUESTION.TYPE,
 						QUESTION.GRADING_INSTRUCTIONS,
 						QUESTION.ANSWERS,
-						QUESTION.ABET)
+						QUESTION.ABET,
+						QUESTION.POINTS_POSSIBLE)
 				.values(id,
 						name,
 						description,
 						type.toString(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(answers),
-						DataHelper.boolToInt(abet))
+						DataHelper.boolToInt(abet),
+						points)
 				.execute();
 
 			}
@@ -213,6 +218,7 @@ public class SingleAnswerQuestion extends Question {
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answers))
+				.set(QUESTION.POINTS_POSSIBLE, points)
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
@@ -221,5 +227,14 @@ public class SingleAnswerQuestion extends Question {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public float getPoints() {
+		return this.points;
+	}
+	
+	public void setPoints(float points) {
+		this.points = points;
 	}
 }
