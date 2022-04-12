@@ -189,7 +189,7 @@ public class CreateQTI {
 	        if (!quizFolder.exists()) {
 	            quizFolder.mkdir();
 	        }
-		marshaller.marshal(qti, new File(folderPath + "/" + assessmentId + ".xml"));
+		marshaller.marshal(factory.createQuestestinterop(qti), new File(folderPath + "/" + assessmentId + ".xml"));
 		return assessmentId;
 		//needs to return id string for manifest
 	}
@@ -256,7 +256,7 @@ public class CreateQTI {
 			text.setValue(map.get("response_text"));
 
 			mat.getMattextOrMatemtextOrMatimage().add(text);
-			label.getContent().add((Serializable) mat);
+			label.getContent().add(factory.createMaterial(mat));
 
 			render.getMaterialOrMaterialRefOrResponseLabel().add(label);
 		}
@@ -612,7 +612,7 @@ public class CreateQTI {
 			resources.getResource().add(meta);
 		}
 		
-		marshaller.marshal(manifest, new File(filepath + "/imsmanifest.xml"));
+		marshaller.marshal(factory.createManifest(manifest), new File(filepath + "/imsmanifest.xml"));
 
 
 	}

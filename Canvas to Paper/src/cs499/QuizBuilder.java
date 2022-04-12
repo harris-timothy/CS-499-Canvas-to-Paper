@@ -50,7 +50,7 @@ public class QuizBuilder {
 					.from(QUESTION_GROUP)
 					.where(QUESTION_GROUP.QUIZ_ID.eq(id))
 					.fetchArray();
-			
+	
 			// If the array of question IDs is not empty, build Question objects from each ID
 			// and add them to the quiz
 			if(questionArr != null) { // Maybe change to result.length != 0 if something breaks
@@ -67,6 +67,9 @@ public class QuizBuilder {
 			if (groupArr != null) {
 				for(int i = 0; i < groupArr.length; i++) {
 					Integer bankID = groupArr[i].getValue(QUESTION_GROUP.QUESTION_BANK_ID);
+					if(bankID == 0) {
+						continue;
+					}
 					bank = new QuestionBank(bankID);
 					bankQuestionList = bank.getQuestionIds();
 					Collections.shuffle(bankQuestionList);
