@@ -160,6 +160,10 @@ public class SingleAnswerQuestion extends Question {
 					.from(QUESTION)
 					.where(QUESTION.ID.eq(id))
 					.fetchOne();
+			
+			if(result.getValue(QUESTION.ABET) == null) {
+				result.setValue(QUESTION.ABET, 0);
+			}
 
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));

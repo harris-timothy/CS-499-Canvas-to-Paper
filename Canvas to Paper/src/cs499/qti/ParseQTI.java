@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.*;
@@ -28,8 +26,6 @@ import cs499.qti.metadata_mapping.*;
 import cs499.qti.package_mapping.*;
 import cs499.qti.package_mapping.ResourceType;
 import cs499.qti.package_mapping.imsmd.*;
-import cs499.question.AnswerFormatter;
-import cs499.qti.QtiToDB.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -256,14 +252,14 @@ public class ParseQTI {
 				questionValues.put("points_possible", ((QtimetadatafieldType) f).getFieldentry());
 			}			
 		}
-    	ArrayList<Object> responseList = new ArrayList<Object>();
+    	ArrayList<HashMap<String,String>> responseChoicesList = new ArrayList<HashMap<String,String>>();
     	//list that will contain all possible responses
 		for(Object o : item.getPresentation().getMaterialOrResponseLidOrResponseXy()) {
 			if(o instanceof MaterialType) {
 				questionValues.put("description", parseMaterial((MaterialType) o));
 			}
 			else if (o instanceof ResponseLidType) {
-				responseList.addAll(parseResponseLid((ResponseLidType) o));
+				responseChoicesList.addAll(parseResponseLid((ResponseLidType) o));
 				//returns arraylist of hashmaps with matching_ident, answer_name, answer_ident, and answer_value
 				//adds all of them to existing list
 				
@@ -271,23 +267,23 @@ public class ParseQTI {
 			else if (o instanceof ResponseStrType) {
 				HashMap<String,String> responseInfo = new HashMap<String,String>();
 				responseInfo.put("answer_ident",((ResponseStrType) o).getIdent());
-				responseList.add(responseInfo);
+				responseChoicesList.add(responseInfo);
 				//returns single hashmap with answer_ident and answer_value
 				//adds to existing list
 			}
 		}
 		
-		ArrayList<Object> resultsList = new ArrayList<Object>();
+		ArrayList<HashMap<String,String>> correctResultsList = new ArrayList<HashMap<String,String>>();
 		//list that will contain all correct responses
 		for(Object r: item.getResprocessing()) {
-			resultsList.addAll(parseResprocessing((ResprocessingType) r));
+			correctResultsList.addAll(parseResprocessing((ResprocessingType) r));
 			//returns arraylist of hashmaps with response_ident and answer_ident
 		}			
 		for(Object f: item.getItemfeedback()) {
 			//returns single hashmap with answer_ident and answer_value
-			resultsList.add(parseItemFeedback((ItemfeedbackType) f));
+			correctResultsList.add(parseItemFeedback((ItemfeedbackType) f));
 		}
-		String answers = QtiToDB.parseAnswers(resultsList, responseList, questionValues);
+		String answers = QtiToDB.parseAnswers(correctResultsList, responseChoicesList, questionValues);
 		questionValues.put("answers", answers);
 		questionId = QtiToDB.storeQuestion(questionValues);
 		//use hashmap to store question
@@ -324,41 +320,37 @@ public class ParseQTI {
      * @return
      */
     @SuppressWarnings("rawtypes")
-	private ArrayList<Object> parseResponseLid(ResponseLidType responseLid) {
+	private ArrayList<HashMap<String,String>> parseResponseLid(ResponseLidType responseLid) {
     	
-    	ArrayList<Object> data = new ArrayList<Object>();
-    	
-    	
+    	ArrayList<HashMap<String,String>> data = new ArrayList<HashMap<String,String>>();    	
     	
     	List<JAXBElement<?>> list = removeNull(responseLid.getContent());    	
     	
 		for(JAXBElement<?> e: list) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("matching_ident", responseLid.getIdent());					
+								
 			if(e.getValue() instanceof MaterialType) {
-				
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("matching_ident", responseLid.getIdent());
 				map.put("answer_name",parseMaterial((MaterialType) e.getValue()));
+				data.add(map);
 				
 			}
 			else if (e.getValue() instanceof RenderChoiceType) {
-				HashMap<String,String> choices = new HashMap<String,String>();
 				RenderChoiceType render = (RenderChoiceType) e.getValue();
-				for(Object val: render.getMaterialOrMaterialRefOrResponseLabel()) {
-					if (val instanceof ResponseLabelType) {
-						
-						choices.put("answer_ident", ((ResponseLabelType) val).getIdent());
-					 
-						List<Serializable> label = removeNull(((ResponseLabelType) val).getContent());
+				for(Object r: render.getMaterialOrMaterialRefOrResponseLabel()) {
+					if (r instanceof ResponseLabelType) {
+						HashMap<String, String> map = new HashMap<String, String>();
+						map.put("answer_ident", ((ResponseLabelType) r).getIdent());					 
+						List<Serializable> label = removeNull(((ResponseLabelType) r).getContent());
 						for(Object t: label) {
 							if(((JAXBElement)t).getValue() instanceof MaterialType) {
-								choices.put("answer_value", parseMaterial((MaterialType) ((JAXBElement)t).getValue())); 
+								map.put("answer_value", parseMaterial((MaterialType) ((JAXBElement)t).getValue())); 
 							}
-						}								
+						}
+						data.add(map);
 					}
-				}
-				
+				}				
 			}
-			data.add(map);
 		}
 		return removeDuplicates(data);
     	
@@ -385,8 +377,8 @@ public class ParseQTI {
 	 * @param resprocessing
 	 * @return
 	 */
-	private ArrayList<Object> parseResprocessing(ResprocessingType resprocessing) {
-		ArrayList<Object> list = new ArrayList<Object>();
+	private ArrayList<HashMap<String,String>> parseResprocessing(ResprocessingType resprocessing) {
+		ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 		List<Object> respconditions = resprocessing.getRespconditionOrItemprocExtension();
 		for(Object o: respconditions) {
 			if(o instanceof RespconditionType) {
@@ -412,7 +404,6 @@ public class ParseQTI {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void parseMeta(String filepath) throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance("cs499.qti.metadata_mapping");
 		
