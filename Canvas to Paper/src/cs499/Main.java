@@ -1,99 +1,87 @@
 package cs499;
 
-
-import java.io.*;
-
 import cs499.screens.WelcomeScreen;
-
-import java.util.*;
 
 import java.util.Scanner;
 
-public class Main {   
 
-  
+public class Main {
 
-static Scanner cin = new Scanner(System.in);
+	static Scanner cin = new Scanner(System.in);
 
-public static void main(String[] args){
-  
-new WelcomeScreen();
-  
-int correct = 0;
+	public static void main(String[] args) {
 
-int incorrect=0;
+		new WelcomeScreen();
 
-int questions = 5;
+		int correct = 0;
 
-System.out.println("Test templete\n");
+		int incorrect = 0;
 
-String[][] Ques_Ans = {
+		int questions = 5;
 
-{"A statement is a declarative sentence that is either true or false  ","\n T.\n F. \n","F"},
+		System.out.println("Test templete\n");
 
-{"The unary connective not which uses the symbols ' or ~, negates the value of the proposition.  ","\n T.\n F \n","T"},
+		String[][] Ques_Ans = {
 
-{"In the argument P1 ^ P2 &^ P3 ^ ... ^Pn --> Q the Px's are referred to as the hypotheses.  ","\n T.\n F. \n","T"},
+				{ "A statement is a declarative sentence that is either true or false  ", "\n T.\n F. \n", "F" },
 
-{"(A ^ B)' <=> A' v B' is an example of DeBoolean's law.  ","\n T.\n F \n","F"},
+				{ "The unary connective not which uses the symbols ' or ~, negates the value of the proposition.  ",
+						"\n T.\n F \n", "T" },
 
-{"A statement is a declarative sentence that is either true or false ","\n T.\n F \n","T"}};
+				{ "In the argument P1 ^ P2 &^ P3 ^ ... ^Pn --> Q the Px's are referred to as the hypotheses.  ",
+						"\n T.\n F. \n", "T" },
 
-String[] user_ans = new String[(int) questions];
+				{ "(A ^ B)' <=> A' v B' is an example of DeBoolean's law.  ", "\n T.\n F \n", "F" },
 
-int i=0;
+				{ "A statement is a declarative sentence that is either true or false ", "\n T.\n F \n", "T" } };
 
-do {
+		String[] user_ans = new String[(int) questions];
 
-System.out.print("" + (i+1) + ". " + Ques_Ans[i][0] + " "+Ques_Ans[i][1]);
+		int i = 0;
 
-user_ans[i] = String.valueOf(cin.next().charAt(0));
+		do {
 
-  
+			System.out.print("" + (i + 1) + ". " + Ques_Ans[i][0] + " " + Ques_Ans[i][1]);
 
-isValid(user_ans);
+			user_ans[i] = String.valueOf(cin.next().charAt(0));
 
-  
+			isValid(user_ans);
 
-  
+			if (Ques_Ans[i][2].equals(user_ans[i])) {
 
-if(Ques_Ans[i][2].equals(user_ans[i])) {
+				System.out.println("\n Correct!");
 
-System.out.println("\n Correct!");
+				correct++;
 
-correct++;
+			}
 
-  
+			else
 
-}
+			{
 
-else
+				System.out.println("\n Incorrect. The correct answer is " + Ques_Ans[i][2]);
 
-{
+				incorrect++;
 
-System.out.println("\n Incorrect. The correct answer is "+Ques_Ans[i][2]);
+			}
 
-incorrect++;
+			System.out.print("\n");
 
-}
+			i++;
 
-System.out.print("\n");
+		} while (i < questions);
 
-i++;
+		System.out.println("\n Number of correct answers: " + correct);
 
-}while(i<questions);   
+		System.out.println("\n Number of incorrect answers: " + incorrect);
 
-System.out.println("\n Number of correct answers: "+ correct);
+		System.exit(0);
 
-System.out.println("\n Number of incorrect answers: "+ incorrect);
+	}
 
-System.exit(0);
+	private static void isValid(String[] user_ans) {
+		// TODO Auto-generated method stub
 
-}
-
-private static void isValid(String[] user_ans) {
-	// TODO Auto-generated method stub
-	
-}
+	}
 
 }

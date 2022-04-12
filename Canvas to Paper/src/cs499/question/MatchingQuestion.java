@@ -28,10 +28,14 @@ public class MatchingQuestion extends Question {
 	private String gradingInstructions;
 
 	private ReferenceMaterial reference;
+	
+	private QuestionType type;
 		
 	private ArrayList<String> left;
 
 	private HashMap<String, String> right;
+	
+	private float points;
 
 	public MatchingQuestion(int id) {
 		this.id = id;
@@ -100,6 +104,14 @@ public class MatchingQuestion extends Question {
 		this.abet = abet;
 		
 	}
+	
+	public QuestionType getType() {
+		return type;
+	}
+
+	public void setType(QuestionType type) {
+		this.type = type;
+	}
 
 	@Override
 	public void loadQuestion() {
@@ -119,6 +131,8 @@ public class MatchingQuestion extends Question {
 				String answer = result.getValue(QUESTION.ANSWERS);
 				setLeft(AnswerFormatter.keyArray(answer));
 				setRight(AnswerFormatter.answerMap(answer));
+				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
+				setType(QuestionType.valueOfType(result.getValue(QUESTION.TYPE)));
 
 			}
 
@@ -146,14 +160,16 @@ public class MatchingQuestion extends Question {
 						QUESTION.TYPE,
 						QUESTION.GRADING_INSTRUCTIONS,
 						QUESTION.ANSWERS,
-						QUESTION.ABET)
+						QUESTION.ABET,
+						QUESTION.POINTS_POSSIBLE)
 				.values(id,
 						name,
 						description,
-						MATCHING.toString(),
+						type.getType(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(left, right),
-						DataHelper.boolToInt(abet))
+						DataHelper.boolToInt(abet),
+						points)
 				.execute();
 
 			}
@@ -161,10 +177,11 @@ public class MatchingQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, MATCHING.toString())
+				.set(QUESTION.TYPE, type.getType())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(left, right))
+				.set(QUESTION.POINTS_POSSIBLE, points)
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
@@ -230,5 +247,15 @@ public class MatchingQuestion extends Question {
 		}
 		
 	}
+
+	@Override
+	public float getPoints() {
+		return this.points;
+	}
+	
+	public void setPoints(float points) {
+		this.points = points;
+	}
+	
 
 }

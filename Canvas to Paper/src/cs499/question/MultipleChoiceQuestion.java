@@ -33,6 +33,8 @@ public class MultipleChoiceQuestion extends Question {
 	private ReferenceMaterial reference;
 	
 	private ArrayList<String> choices;
+	
+	private float points;
 
 	public MultipleChoiceQuestion(int id) {
 		this.id = id;
@@ -135,14 +137,16 @@ public class MultipleChoiceQuestion extends Question {
 						QUESTION.TYPE,
 						QUESTION.GRADING_INSTRUCTIONS,
 						QUESTION.ANSWERS,
-						QUESTION.ABET)
+						QUESTION.ABET,
+						QUESTION.POINTS_POSSIBLE)
 				.values(id,
 						name,
 						description,
-						type.toString(),
+						type.getType(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(answer, choices),
-						DataHelper.boolToInt(abet))
+						DataHelper.boolToInt(abet),
+						points)
 				.execute();
 
 			}
@@ -150,10 +154,11 @@ public class MultipleChoiceQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, type.toString())
+				.set(QUESTION.TYPE, type.getType())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answer, choices))
+				.set(QUESTION.POINTS_POSSIBLE, points)
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
@@ -183,7 +188,8 @@ public class MultipleChoiceQuestion extends Question {
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
 				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
-				setType(valueOf(result.getValue(QUESTION.TYPE)));
+				setType(valueOfType(result.getValue(QUESTION.TYPE)));
+				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
 
 			}
 
@@ -249,6 +255,15 @@ public class MultipleChoiceQuestion extends Question {
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public float getPoints() {
+		return this.points;
+	}
+	
+	public void setPoints(float points) {
+		this.points = points;
 	}
 
 
