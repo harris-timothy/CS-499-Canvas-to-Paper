@@ -268,7 +268,6 @@ public class QtiToDB {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static String parseAnswers(ArrayList<HashMap<String,String>> correctResultsList, ArrayList<HashMap<String,String>> responseChoicesList, HashMap<String, String> questionInfo) {
 		
 		QuestionType type = QuestionType.valueOfType(questionInfo.get("question_type"));

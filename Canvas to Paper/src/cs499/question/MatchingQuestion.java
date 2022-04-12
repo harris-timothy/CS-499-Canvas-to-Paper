@@ -122,6 +122,9 @@ public class MatchingQuestion extends Question {
 					.from(QUESTION)
 					.where(QUESTION.ID.eq(id))
 					.fetchOne();
+			if(result.getValue(QUESTION.ABET) == null) {
+				result.set(QUESTION.ABET, 0);
+			}
 
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));

@@ -77,6 +77,10 @@ public class CreateQTI {
 	}
 
 	//TODO: quiz bank(?)
+	//TODO: add section for question group
+	//TODO: add feedback section
+	//TODO: check if converting things to JAXBElement fixes names
+	//TODO: fix issue where multiple choice question creates multiple setvar sections
 	
 	public void createPackage(ArrayList<Quiz> quizzes, String filepath) throws JAXBException {
 		
@@ -317,7 +321,7 @@ public class CreateQTI {
 				text.setValue(map.get("response_text"));
 
 				mat.getMattextOrMatemtextOrMatimage().add(text);
-				label.getContent().add((Serializable) mat);
+				label.getContent().add(factory.createMaterial(mat));
 
 				responses.add(label);
 

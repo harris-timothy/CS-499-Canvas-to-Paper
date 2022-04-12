@@ -230,8 +230,10 @@ public class Quiz implements Reference{
                     .where(COURSE.ID.eq(result.getValue(QUIZ.COURSE_ID)))
                     .fetchOne();
 			
-			if(instructorRecord.getValue(COURSE.INSTRUCTOR_ID) != null) {
-				this.instructor = new Instructor(instructorRecord.getValue(COURSE.INSTRUCTOR_ID));
+			if(instructorRecord != null) {
+				if(instructorRecord.getValue(COURSE.INSTRUCTOR_ID) != null) {
+					this.instructor = new Instructor(instructorRecord.getValue(COURSE.INSTRUCTOR_ID));
+				}
 			}
 
 			if(result != null) {
@@ -239,7 +241,11 @@ public class Quiz implements Reference{
 				setId(result.getValue(QUIZ.ID));
 				setDate(result.getValue(QUIZ.DUE_DATE));
 				setDescription(result.getValue(QUIZ.DESCRIPTION));
-				setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
+				
+				if(result.getValue(QUIZ.POINTS_POSSIBLE) != null) {
+					setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
+				}
+				
 
 			}			
 			
