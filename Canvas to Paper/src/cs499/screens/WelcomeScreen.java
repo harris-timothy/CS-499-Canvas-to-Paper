@@ -153,7 +153,6 @@ public class WelcomeScreen {
 				GridBagConstraints qqb_list_constraints = new GridBagConstraints();
 				
 				for (int i = 0; i < QQB.size(); i++){
-					//TODO: Get ID/Name of Q/QB to use in display
 					final int q_qb_index = i;
 					String q_qb_name = QQB.get(q_qb_index).getName();
 					JButton q_qb_btn = new JButton(q_qb_name) {{setBackground(Color.RED);}};
