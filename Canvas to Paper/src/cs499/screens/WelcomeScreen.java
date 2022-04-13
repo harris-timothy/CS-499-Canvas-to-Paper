@@ -3,7 +3,6 @@ package cs499.screens;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -11,15 +10,19 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
+import java.util.ArrayList;
+
+import cs499.qti.CreateQTI;
 import cs499.qti.ParseQTI;
+import cs499.Quiz;
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
 import cs499.gui_utils.MenuBuilder;
@@ -120,15 +123,18 @@ public class WelcomeScreen {
 				*	- Any other information needed for the following to do block about exporting a modified version of this list
 				*/
 				// ListObject QQB = new someobject.listQuizStuff()
+				ArrayList<Quiz> QQB = new ArrayList<Quiz>();
 				
 				// TODO: Make a second list to be modified
 				// ListObject Modified_QQB = new ListObject;
+				ArrayList<Quiz> Modified_QQB = new ArrayList<Quiz>();
 				
 				JButton export_cfm_btn = new JButton("Export");
 				class ExportConfirmAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
 						export_frame.dispose();
-						//TODO: Pass Modified_QQB to the export qti function
+						CreateQTI qti_maker = new CreateQTI();
+						//TODO: pass the quiz to the qti_maker
 					}
 				}
 				export_cfm_btn.addActionListener(new ExportConfirmAction());
@@ -146,33 +152,33 @@ public class WelcomeScreen {
 				qqb_listing.setLayout(new GridBagLayout());
 				GridBagConstraints qqb_list_constraints = new GridBagConstraints();
 				
-				//TODO: Retrieve length of QQB
-				int QQB_length = 100;
-				for (int i = 0; i < QQB_length; i++){
-					//TODO: Make a checkbox for the button to indicate presence in modified list
-					
+				for (int i = 0; i < QQB.size(); i++){
 					//TODO: Get ID/Name of Q/QB to use in display
-					//String q_qb_name = QQB[i].name
-					String q_qb_name = "Element " + i;
-					JButton q_qb_btn = new JButton(q_qb_name);
 					final int q_qb_index = i;
+					String q_qb_name = QQB.get(q_qb_index).getName();
+					JButton q_qb_btn = new JButton(q_qb_name) {{setBackground(Color.RED);}};
 					class ExportQuizSelectorAction implements ActionListener {
 						public void actionPerformed(ActionEvent e) {
-							//TODO: Check if QQB[q_qb_index] is in Modified_QQB, and if not, add it to Modified_QQB and check q_qb_checkbox
-							//TODO: Else, remove QQB[q_qb_index] from Modified_QQB and de-check q_qb_checkbox
+							if (Modified_QQB.contains(QQB.get(q_qb_index))) {
+								Modified_QQB.remove(QQB.get(q_qb_index));
+								q_qb_btn.setBackground(Color.RED);
+							} else {
+								Modified_QQB.add(QQB.get(q_qb_index));
+								q_qb_btn.setBackground(Color.GREEN);
+							}
 						}
 					}
 					q_qb_btn.addActionListener(new ExportQuizSelectorAction());
 
 					JPanel q_qb_panel = new JPanel();
-					//q_qb_panel.add(q_qb_checkbox);
 					q_qb_panel.add(q_qb_btn);
 
 					qqb_list_constraints.gridx = 0;
 					qqb_list_constraints.gridy = i;
 					qqb_listing.add(q_qb_panel, qqb_list_constraints);
 				}
-				
+				if (QQB.size() == 0) qqb_listing.add(new JLabel("No Quizzes Found. Please import or create a quiz to begin."));
+
 				//Add elements to frame
 				export_constraints.fill = GridBagConstraints.BOTH;
 				
