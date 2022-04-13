@@ -122,19 +122,20 @@ public class WelcomeScreen {
 				*	- Type of item (Quiz Bank/Quiz)
 				*	- Any other information needed for the following to do block about exporting a modified version of this list
 				*/
-				// ListObject QQB = new someobject.listQuizStuff()
-				ArrayList<Quiz> QQB = new ArrayList<Quiz>();
+				ArrayList<Quiz> quiz_list = new ArrayList<Quiz>();
 				
-				// TODO: Make a second list to be modified
-				// ListObject Modified_QQB = new ListObject;
-				ArrayList<Quiz> Modified_QQB = new ArrayList<Quiz>();
+				ArrayList<Quiz> modified_quiz_list = new ArrayList<Quiz>();
 				
 				JButton export_cfm_btn = new JButton("Export");
 				class ExportConfirmAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
-						export_frame.dispose();
-						CreateQTI qti_maker = new CreateQTI();
-						//TODO: pass the quiz to the qti_maker
+						//CreateQTI qti_maker = new CreateQTI();
+						//qti_maker.makeQTIFromArrayList(modified_quiz_list);
+						for (Quiz quiz : modified_quiz_list) {
+							System.out.println(quiz.getId());
+							quiz_list.remove(quiz);
+						}
+						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
 				export_cfm_btn.addActionListener(new ExportConfirmAction());
@@ -142,41 +143,47 @@ public class WelcomeScreen {
 				JButton export_cnl_btn = new JButton("Cancel");
 				class ExportCancelAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
-						export_frame.dispose();
 						//TODO: Ensure frame is properly reset, not just hidden and reshown later.
+						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
 				export_cnl_btn.addActionListener(new ExportCancelAction());
 				
-				JPanel qqb_listing = new JPanel();
-				qqb_listing.setLayout(new GridBagLayout());
-				GridBagConstraints qqb_list_constraints = new GridBagConstraints();
+				JPanel quiz_list_listing = new JPanel();
+				quiz_list_listing.setLayout(new GridBagLayout());
+				GridBagConstraints quiz_list_list_constraints = new GridBagConstraints();
 				
-				for (int i = 0; i < QQB.size(); i++){
-					final int q_qb_index = i;
-					String q_qb_name = QQB.get(q_qb_index).getName();
-					JButton q_qb_btn = new JButton(q_qb_name) {{setBackground(Color.RED);}};
+				for (int i = 0; i <= 10; i++){
+					Quiz quiz = new Quiz(i);
+					quiz_list.add(quiz);
+				}
+				for (int i = 0; i < quiz_list.size(); i++){
+					final int quiz_index = i;
+					// String quiz_name = quiz_list.get(quiz_index).getName();
+					String quiz_name = "" + quiz_list.get(quiz_index).getId();
+
+					JButton quiz_btn = new JButton(quiz_name) {{setBackground(Color.RED);}};
 					class ExportQuizSelectorAction implements ActionListener {
 						public void actionPerformed(ActionEvent e) {
-							if (Modified_QQB.contains(QQB.get(q_qb_index))) {
-								Modified_QQB.remove(QQB.get(q_qb_index));
-								q_qb_btn.setBackground(Color.RED);
+							if (modified_quiz_list.contains(quiz_list.get(quiz_index))) {
+								modified_quiz_list.remove(quiz_list.get(quiz_index));
+								quiz_btn.setBackground(Color.RED);
 							} else {
-								Modified_QQB.add(QQB.get(q_qb_index));
-								q_qb_btn.setBackground(Color.GREEN);
+								modified_quiz_list.add(quiz_list.get(quiz_index));
+								quiz_btn.setBackground(Color.GREEN);
 							}
 						}
 					}
-					q_qb_btn.addActionListener(new ExportQuizSelectorAction());
+					quiz_btn.addActionListener(new ExportQuizSelectorAction());
 
-					JPanel q_qb_panel = new JPanel();
-					q_qb_panel.add(q_qb_btn);
+					JPanel quiz_panel = new JPanel();
+					quiz_panel.add(quiz_btn);
 
-					qqb_list_constraints.gridx = 0;
-					qqb_list_constraints.gridy = i;
-					qqb_listing.add(q_qb_panel, qqb_list_constraints);
+					quiz_list_list_constraints.gridx = 0;
+					quiz_list_list_constraints.gridy = i;
+					quiz_list_listing.add(quiz_panel, quiz_list_list_constraints);
 				}
-				if (QQB.size() == 0) qqb_listing.add(new JLabel("No Quizzes Found. Please import or create a quiz to begin."));
+				if (quiz_list.size() == 0) quiz_list_listing.add(new JLabel("No Quizzes Found. Please import or create a quiz to begin."));
 
 				//Add elements to frame
 				export_constraints.fill = GridBagConstraints.BOTH;
@@ -203,7 +210,7 @@ public class WelcomeScreen {
 				export_constraints.weightx = 0.9;
 				export_constraints.gridy = 1;
 				export_constraints.weighty = 0.9;
-				export_frame.add(new JScrollPane(qqb_listing), export_constraints);
+				export_frame.add(new JScrollPane(quiz_list_listing), export_constraints);
 
 				export_frame.setVisible(true);
 			}
@@ -219,15 +226,6 @@ public class WelcomeScreen {
 			}
 		}
 		select_mi.addActionListener(new SelectAction());
-		
-		//TODO: For someone else, need to implement a login functionality to handle login, authentication, and any username/pfp stuff. 
-		//		Alternatively, we can scrap this and just not display a username or pfp or anything like that. Relatively easy to cut.
-
-		//TODO: For someone else, get the username somehow
-		String username = "";
-
-		//TODO: For someone else, get the username's profile picture
-		String pfp_path = "";
 
 		//Create Import QTI File Button
 		JButton import_btn = new JButton("Import QTI Files");
@@ -277,11 +275,11 @@ public class WelcomeScreen {
 
 		//Add PFP
 		constraints.gridy = 1;
-		frame.add(new JLabel(new ImageIcon(pfp_path)), constraints);
+		frame.add(new JLabel(new ImageIcon(logo_icon_path)), constraints);
 
 		//Add Username display
 		constraints.gridy = 2;
-		frame.add(new JLabel("Welcome, " + username + "!"), constraints);
+		frame.add(new JLabel("Welcome!"), constraints);
 
 		//Add Create New Test Button
 		constraints.gridy = 3;
