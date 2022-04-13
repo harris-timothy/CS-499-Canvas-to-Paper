@@ -1,7 +1,6 @@
 package cs499.qti;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +12,10 @@ import cs499.Quiz;
 import cs499.qti.data_mapping.AssessmentType;
 import cs499.qti.data_mapping.ConditionvarType;
 import cs499.qti.data_mapping.DecvarType;
+import cs499.qti.data_mapping.DisplayfeedbackType;
+import cs499.qti.data_mapping.FlowMatType;
 import cs499.qti.data_mapping.ItemType;
+import cs499.qti.data_mapping.ItemfeedbackType;
 import cs499.qti.data_mapping.ItemmetadataType;
 import cs499.qti.data_mapping.MaterialType;
 import cs499.qti.data_mapping.MattextType;
@@ -44,6 +46,7 @@ import cs499.qti.package_mapping.imsmd.TitleType;
 import cs499.question.MatchingQuestion;
 import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
+import cs499.question.QuestionType;
 import cs499.question.SingleAnswerQuestion;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
@@ -77,10 +80,7 @@ public class CreateQTI {
 	}
 
 	//TODO: quiz bank(?)
-	//TODO: add section for question group
-	//TODO: add feedback section
-	//TODO: check if converting things to JAXBElement fixes names
-	//TODO: fix issue where multiple choice question creates multiple setvar sections
+	//TODO: add section for question group?
 	
 	public void createPackage(ArrayList<Quiz> quizzes, String filepath) throws JAXBException {
 		
@@ -159,9 +159,10 @@ public class CreateQTI {
 			}
 			else {
 				switch(q.getType()) {
-				case SHORT_ANSWER:				
+				case SHORT_ANSWER:
 				case ESSAY:
 					buildResponseStr(factory, answerList, presentationList);
+					//TODO: investigate problem w/essay
 					break;
 				case MULTIPLE_ANSWERS:
 				case MULTIPLE_BLANKS:
@@ -187,6 +188,11 @@ public class CreateQTI {
 
 
 			resultProcessing.add(createResprocessing(q, factory, answerList));
+			if(q.getType() == QuestionType.ESSAY) {
+				ItemfeedbackType feedback = createItemFeedback((SingleAnswerQuestion)q,factory);
+				item.getItemfeedback().add(feedback);
+				System.out.println("feedback created");
+			}
 
 		}
 		File quizFolder = new File(folderPath);
@@ -231,7 +237,7 @@ public class CreateQTI {
 			text.setValue(map.get("response_text"));
 
 			mat.getMattextOrMatemtextOrMatimage().add(text);
-			label.getContent().add((Serializable) mat);
+			label.getContent().add(factory.createMaterial(mat));
 
 			renderchoice.getMaterialOrMaterialRefOrResponseLabel().add(label);
 		}
@@ -292,11 +298,11 @@ public class CreateQTI {
 		ArrayList<ResponseLabelType> responses = new ArrayList<ResponseLabelType>();
 
 		for(HashMap<String,String> map: answerList) {
-			ResponseLidType responselid = factory.createResponseLidType();
-			presentationList.add(responselid);
-			List<JAXBElement<?>> contentlist = responselid.getContent();
 
 			if(map.containsKey("matching_ident")) {
+				ResponseLidType responselid = factory.createResponseLidType();
+				presentationList.add(responselid);
+				List<JAXBElement<?>> contentlist = responselid.getContent();
 				responselid.setIdent(map.get("responselid_ident"));
 
 				MaterialType mat = factory.createMaterialType();
@@ -313,6 +319,7 @@ public class CreateQTI {
 			}
 			else {
 				ResponseLabelType label = factory.createResponseLabelType();
+				
 				label.setIdent(map.get("response_ident"));
 
 				MaterialType mat = factory.createMaterialType();
@@ -425,7 +432,7 @@ public class CreateQTI {
 		resultProcessing.getOutcomes().getDecvarAndInterpretvar().add(dec);
 
 		List<Object> respList = resultProcessing.getRespconditionOrItemprocExtension();
-	
+		
 		if(q instanceof MultipleChoiceQuestion) {
 			RespconditionType respcondition = factory.createRespconditionType();
 			respList.add(respcondition);
@@ -437,16 +444,17 @@ public class CreateQTI {
 					ConditionvarType cond = factory.createConditionvarType();
 					cond.getNotOrAndOrOr().add(varequal);
 					respcondition.setConditionvar(cond);
+					SetvarType setvar = factory.createSetvarType();
+					setvar.setAction("Set");
+					setvar.setVarname("SCORE");
+					setvar.setValue("100");
+					respcondition.getSetvar().add(setvar);
 				}
-				SetvarType setvar = factory.createSetvarType();
-				setvar.setAction("Set");
-				setvar.setVarname("SCORE");
-				setvar.setValue("100");
-				respcondition.getSetvar().add(setvar);
-			}
+				}
+				
 		}
 		else if (q instanceof MatchingQuestion) {
-			Float pointsPerAnswer = (float) (100 / (answerList.size() / 2));
+			Float pointsPerAnswer = (float) (100.0 / (answerList.size() / 2));
 			for(HashMap<String,String> map: answerList) {
 				if(map.containsKey("matching_ident")) {
 					RespconditionType respcondition = factory.createRespconditionType();
@@ -469,9 +477,13 @@ public class CreateQTI {
 				}
 			}
 		}
+		else if(q.getType() == QuestionType.ESSAY) {
+			createRespFeedback(resultProcessing, answerList, factory);
+		}
 		else {
-			Float pointsPerAnswer = (float) (100 / answerList.size());
+			Float pointsPerAnswer = (float) (100.0 / answerList.size());
 			for(HashMap<String,String> map: answerList) {
+				System.out.println(map);
 				RespconditionType respcondition = factory.createRespconditionType();
 				respList.add(respcondition);
 
@@ -489,11 +501,61 @@ public class CreateQTI {
 				setvar.setValue(pointsPerAnswer.toString());
 
 				respcondition.getSetvar().add(setvar);
+				
+				//for essay:
+				//don't need points per answer
+				//don't need set score
 
 			}
 		}
 
 		return resultProcessing;
+	}
+	
+	private void createRespFeedback(ResprocessingType resprocessing, ArrayList<HashMap<String,String>> answerList, ObjectFactory factory) {
+		
+		
+		RespconditionType respcondition1 = factory.createRespconditionType();
+		respcondition1.setContinue("Yes");
+		
+		ConditionvarType condition = factory.createConditionvarType();
+
+		respcondition1.setConditionvar(condition);
+		
+		DisplayfeedbackType feedback = factory.createDisplayfeedbackType();
+		feedback.setFeedbacktype("Response");
+		feedback.setLinkrefid("general_fb");
+		
+		respcondition1.getDisplayfeedback().add(feedback);
+		
+		RespconditionType respcondition2 = factory.createRespconditionType();
+		respcondition2.setContinue("No");
+		
+		ConditionvarType condition2 = factory.createConditionvarType();
+		
+		respcondition2.setConditionvar(condition2);
+		
+		resprocessing.getRespconditionOrItemprocExtension().add(respcondition1);
+		resprocessing.getRespconditionOrItemprocExtension().add(respcondition2);
+		
+	}
+	
+	private ItemfeedbackType createItemFeedback(SingleAnswerQuestion question, ObjectFactory factory) {
+		ItemfeedbackType feedback = factory.createItemfeedbackType();
+		feedback.setIdent("general_fb");
+		
+		FlowMatType flow = factory.createFlowMatType();
+		
+		MaterialType mat = factory.createMaterialType();
+		MattextType text = factory.createMattextType();
+		text.setTexttype("text/html");
+		text.setValue(question.getAnswers().get(FIRST)); 
+		
+		mat.getMattextOrMatemtextOrMatimage().add(text);
+		flow.getFlowMatOrMaterialOrMaterialRef().add(mat);
+		feedback.getFlowMatOrMaterialOrSolution().add(flow);
+		
+		return feedback;
 	}
 
 	/**
@@ -650,7 +712,7 @@ public class CreateQTI {
 
 	private String generateIdString() {
 		String uuid = UUID.randomUUID().toString();
-		uuid.replace("-", "");
-		return uuid;
+		String fixed = uuid.replace("-", "");
+		return fixed;
 	}
 }

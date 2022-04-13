@@ -10,6 +10,8 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
+import cs499.utils.DataHelper;
+
 public class ReferenceMaterial {
 	
 	private int id;

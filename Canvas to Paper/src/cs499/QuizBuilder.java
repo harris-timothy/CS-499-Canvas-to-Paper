@@ -15,6 +15,7 @@ import org.jooq.impl.DSL;
 
 import cs499.question.Question;
 import cs499.question.QuestionFactory;
+import cs499.utils.DataHelper;
 
 public class QuizBuilder {
 	// TODO:

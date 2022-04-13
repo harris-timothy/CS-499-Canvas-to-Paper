@@ -1,4 +1,4 @@
-package cs499;
+package cs499.utils;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
