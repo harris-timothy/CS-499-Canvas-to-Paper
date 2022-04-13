@@ -11,8 +11,9 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import cs499.DataHelper;
+
 import cs499.ReferenceMaterial;
+import cs499.utils.DataHelper;
 
 public class MultipleChoiceQuestion extends Question {
 
@@ -180,6 +181,10 @@ public class MultipleChoiceQuestion extends Question {
 					.from(QUESTION)
 					.where(QUESTION.ID.eq(id))
 					.fetchOne();
+			
+			if(result.getValue(QUESTION.ABET) == null) {
+				result.setValue(QUESTION.ABET, 0);
+			}
 
 			if(result != null) {
 				setName(result.getValue(QUESTION.NAME));

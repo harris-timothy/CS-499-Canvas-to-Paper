@@ -14,6 +14,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 import cs499.question.Question;
+import cs499.utils.DataHelper;
 
 public class QuestionBank {
 	
@@ -25,6 +26,7 @@ public class QuestionBank {
 	
 	public QuestionBank(int id) {
 		this.id = id;
+		loadBank();
 	}
 
 	public String getName() {

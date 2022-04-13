@@ -51,7 +51,6 @@ public class AnswerFormatter {
 			match.put("right", right.get(key));
 			answerArray.put(match);
 		}
-		
 		return answerArray.toString();
 	}
 	
