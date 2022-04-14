@@ -36,6 +36,10 @@ public class MultipleChoiceQuestion extends Question {
 	private ArrayList<String> choices;
 	
 	private float points;
+	
+	public MultipleChoiceQuestion() {
+		newQuestion();
+	}
 
 	public MultipleChoiceQuestion(int id) {
 		this.id = id;
@@ -269,6 +273,18 @@ public class MultipleChoiceQuestion extends Question {
 	
 	public void setPoints(float points) {
 		this.points = points;
+	}
+	
+	private void newQuestion() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 
