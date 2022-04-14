@@ -20,12 +20,13 @@ import java.awt.GridBagConstraints;
 
 import java.util.ArrayList;
 
-import cs499.qti.CreateQTI;
-import cs499.qti.ParseQTI;
-import cs499.Quiz;
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
 import cs499.gui_utils.MenuBuilder;
+import cs499.qti.CreateQTI;
+import cs499.qti.ParseQTI;
+import cs499.Quiz;
+import cs499.utils.DataUtils;
 
 public class WelcomeScreen {
     public WelcomeScreen(){
@@ -113,28 +114,26 @@ public class WelcomeScreen {
 		class ExportAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				
-				// For teammates:
-				/* TODO: 
-				* Will need a way to get an array/arraylist/iteratable list of each quiz 
-				* and each quiz bank they could export, each item in the list 
-				* holding the following information:
-				*	- ID/Name of quiz
-				*	- Type of item (Quiz Bank/Quiz)
-				*	- Any other information needed for the following to do block about exporting a modified version of this list
-				*/
-				ArrayList<Quiz> quiz_list = new ArrayList<Quiz>();
-				
+				//Obtain a list of all quizzes in the database
+				ArrayList<Quiz> quiz_list = DataUtils.getAllQuizzes();
+
+				//Create a modified list of these quizzes containing only the ones to export
 				ArrayList<Quiz> modified_quiz_list = new ArrayList<Quiz>();
 				
 				JButton export_cfm_btn = new JButton("Export");
 				class ExportConfirmAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
-						//CreateQTI qti_maker = new CreateQTI();
-						//qti_maker.makeQTIFromArrayList(modified_quiz_list);
-						for (Quiz quiz : modified_quiz_list) {
-							System.out.println(quiz.getId());
-							quiz_list.remove(quiz);
+						CreateQTI qti_maker = new CreateQTI();
+						try {
+							String export_directory_path = "Exports/" + System.currentTimeMillis();
+							if (modified_quiz_list.size() != 0) qti_maker.createPackage(modified_quiz_list, export_directory_path);
+						} catch (Exception ex) {
+							System.out.println(ex);
 						}
+						//TODO: Properly reset the frame and all necessary parts of this functionality.
+
+						//TODO: Reset quiz_list properly
+
 						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
@@ -143,7 +142,7 @@ public class WelcomeScreen {
 				JButton export_cnl_btn = new JButton("Cancel");
 				class ExportCancelAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
-						//TODO: Ensure frame is properly reset, not just hidden and reshown later.
+						//TODO: Properly reset the frame and all necessary parts of this functionality.
 						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
@@ -153,16 +152,12 @@ public class WelcomeScreen {
 				quiz_list_listing.setLayout(new GridBagLayout());
 				GridBagConstraints quiz_list_list_constraints = new GridBagConstraints();
 				
-				for (int i = 0; i <= 10; i++){
-					Quiz quiz = new Quiz(i);
-					quiz_list.add(quiz);
-				}
 				for (int i = 0; i < quiz_list.size(); i++){
 					final int quiz_index = i;
-					// String quiz_name = quiz_list.get(quiz_index).getName();
-					String quiz_name = "" + quiz_list.get(quiz_index).getId();
+					String quiz_name = quiz_list.get(quiz_index).getName();
 
-					JButton quiz_btn = new JButton(quiz_name) {{setBackground(Color.RED);}};
+					JButton quiz_btn = new JButton(quiz_name);
+					quiz_btn.setBackground(Color.RED);
 					class ExportQuizSelectorAction implements ActionListener {
 						public void actionPerformed(ActionEvent e) {
 							if (modified_quiz_list.contains(quiz_list.get(quiz_index))) {
