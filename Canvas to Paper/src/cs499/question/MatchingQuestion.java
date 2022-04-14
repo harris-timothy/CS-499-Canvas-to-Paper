@@ -6,6 +6,7 @@ import static cs499.question.QuestionType.MATCHING;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.jooq.DSLContext;
@@ -41,6 +42,10 @@ public class MatchingQuestion extends Question {
 		this.id = id;
 		loadQuestion();
 		
+	}
+	
+	public void shuffleChoices() {
+		Collections.shuffle(left);
 	}
 
 	public ArrayList<String> getLeft(){
