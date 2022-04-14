@@ -169,9 +169,9 @@ public class SelectQuizScreen {
 		JButton create_quiz_btn = new JButton("Create Quiz");
 		class CreateQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: Create Quiz stuff
+				Quiz new_quiz = new Quiz();
+				new EditQuizScreen(new_quiz);
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				new SelectQuizScreen();
 			}
 		}
 		create_quiz_btn.addActionListener(new CreateQuizAction());
