@@ -6,6 +6,7 @@ import static cs499.question.QuestionType.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -79,6 +80,10 @@ public class MultipleChoiceQuestion extends Question {
 		this.gradingInstructions = gradingInstructions;
 	}
 
+	public void shuffleChoices() {
+		Collections.shuffle(choices);
+	}
+	
 	public ArrayList<String> getChoices(){
 		return this.choices;
 	}
