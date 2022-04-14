@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import cs499.question.AnswerFormatter;
 import cs499.question.Question;
+import cs499.utils.DataHelper;
 
 public class Quiz implements Reference{
 	
@@ -33,9 +34,13 @@ public class Quiz implements Reference{
 	
 	private float pointsPossible;
 	
-	private ArrayList<Question> questions;
+	private ArrayList<Question> questions = new ArrayList<Question>();
 	
 	private ArrayList<ReferenceMaterial> references;
+	
+	public Quiz() {
+		newQuiz();
+	}
 	
 	public Quiz(int id) {
 		this.id = id;
@@ -222,26 +227,77 @@ public class Quiz implements Reference{
 			
 			String courseName = create.select(COURSE.NAME)
                     .from(COURSE)
-                    .where(COURSE.ID.eq(QUIZ.COURSE_ID))
+                    .where(COURSE.ID.eq(result.getValue(QUIZ.COURSE_ID)))
                     .fetchOne(COURSE.NAME);
 			
-			Integer instructorId =create.select(COURSE.INSTRUCTOR_ID)
+			Record instructorRecord = create.select(COURSE.INSTRUCTOR_ID)
                     .from(COURSE)
-                    .where(COURSE.ID.eq(QUIZ.COURSE_ID))
-                    .fetchOne(COURSE.INSTRUCTOR_ID);
+                    .where(COURSE.ID.eq(result.getValue(QUIZ.COURSE_ID)))
+                    .fetchOne();
+			
+			if(instructorRecord != null) {
+				if(instructorRecord.getValue(COURSE.INSTRUCTOR_ID) != null) {
+					this.instructor = new Instructor(instructorRecord.getValue(COURSE.INSTRUCTOR_ID));
+				}
+			}
 
 			if(result != null) {
 				setName(result.getValue(QUIZ.NAME));
 				setId(result.getValue(QUIZ.ID));
 				setDate(result.getValue(QUIZ.DUE_DATE));
 				setDescription(result.getValue(QUIZ.DESCRIPTION));
-				setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
+				
+				if(result.getValue(QUIZ.POINTS_POSSIBLE) != null) {
+					setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
+				}
+				
 
-			}
-			
-			this.instructor = new Instructor(instructorId);
+			}			
 			
 			setCourse(courseName);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void newQuiz() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			this.id = create.insertInto(QUIZ, QUIZ.NAME).values("").returning(QUIZ.ID).fetchOne(QUIZ.ID);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void saveQuiz() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			if(!course.isEmpty()) {
+				Record result = create.select(COURSE.ID)
+						.from(COURSE)
+						.where(COURSE.NAME.eq(course))
+						.fetchOne();
+				
+				create.update(QUIZ)
+				.set(QUIZ.COURSE_ID, result.getValue(COURSE.ID))
+				.where(QUIZ.ID.eq(id))
+				.execute();
+			}			
+			
+			create.update(QUIZ)
+			.set(QUIZ.NAME, name)
+			.set(QUIZ.DESCRIPTION, description)
+			.set(QUIZ.POINTS_POSSIBLE, pointsPossible)
+			.set(QUIZ.DUE_DATE, date)
+			.where(QUIZ.ID.eq(id))
+			.execute();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();

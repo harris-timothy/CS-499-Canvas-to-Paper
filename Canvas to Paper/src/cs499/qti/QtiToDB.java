@@ -20,9 +20,9 @@ import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import cs499.DataHelper;
 import cs499.question.AnswerFormatter;
 import cs499.question.QuestionType;
+import cs499.utils.DataHelper;
 
 public class QtiToDB {
 	
@@ -32,32 +32,24 @@ public class QtiToDB {
 		int quizId = 0;
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-			
 			Record exists = create.select()
 					.from(QUIZ)
-					.where(QUIZ.QTI_ID.eq(data.get("quiz_qti_id")))
+					.where(QUIZ.NAME.eq(data.get("quiz_title")))
 					.fetchOne();
 			
 			if(exists == null) {
-				create.insertInto(QUIZ,
+				quizId =  create.insertInto(QUIZ,
 						QUIZ.QTI_ID,
 						QUIZ.NAME)
 				.values(data.get("quiz_qti_id"),
 						data.get("quiz_title"))
 				.onDuplicateKeyIgnore()
-				.execute();				
+				.returningResult(QUIZ.ID)
+				.fetchOne(QUIZ.ID);
 			}
 			else {
-				create.update(QUIZ)
-				.set(QUIZ.NAME, data.get("quiz_title"))
-				.where(QUIZ.QTI_ID.eq(data.get("quiz_qti_id")))
-				.execute();
+				quizId = exists.getValue(QUIZ.ID);
 			}
-			
-			quizId = create.select(QUIZ.ID)
-					.from(QUIZ)
-					.where(QUIZ.QTI_ID.eq(data.get("quiz_qti_id")))
-					.fetchOne(QUIZ.ID);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -276,31 +268,43 @@ public class QtiToDB {
 		}		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static String parseAnswers(ArrayList<Object> correctAnswers, ArrayList<Object> allChoices, HashMap<String, String> questionInfo) {
+	public static String parseAnswers(ArrayList<HashMap<String,String>> correctResultsList, ArrayList<HashMap<String,String>> responseChoicesList, HashMap<String, String> questionInfo) {
 		
 		QuestionType type = QuestionType.valueOfType(questionInfo.get("question_type"));
 		
 		switch(type) {
 		case MATCHING:
 		case MULTIPLE_ANSWERS:
-			return findMatches(correctAnswers, allChoices);
+		case MULTIPLE_DROPDOWNS:
+			return findMatches(responseChoicesList, correctResultsList);
 		case MULTIPLE_CHOICE:
 		case TRUE_FALSE:
-		case MULTIPLE_DROPDOWNS:
-			String correct = findCorrect((HashMap<String, String>) correctAnswers.get(FIRST), allChoices);
-			ArrayList<String> choices = findChoices(allChoices);
+			String correct = findCorrect(correctResultsList.get(FIRST), responseChoicesList);
+			ArrayList<String> choices = findChoices(responseChoicesList, correct);
 			return AnswerFormatter.answerJSONString(correct, choices);			
-		case CALCULATED:
-		case ESSAY:		
+		case CALCULATED:		
 		case MULTIPLE_BLANKS:		
-		case NUMERICAL:
-		case SHORT_ANSWER:
+		case NUMERICAL:		
 			ArrayList<String> answers = new ArrayList<String>();
-			for(Object i: correctAnswers) {
-				answers.add(findCorrect((HashMap<String,String>) i, allChoices));
+			for(HashMap<String,String> i: correctResultsList) {
+				answers.add(findCorrect(i, responseChoicesList));
 			}
 			return AnswerFormatter.answerJSONString(answers);
+		case ESSAY:
+			ArrayList<String> essay = new ArrayList<String>();
+			for(HashMap<String,String> e: correctResultsList) {
+				if(e.containsKey("answer_value")) {
+					essay.add(e.get("answer_value"));
+				}
+			}
+			return AnswerFormatter.answerJSONString(essay);
+			
+		case SHORT_ANSWER:
+			ArrayList<String> shortAnswer = new ArrayList<String>();
+			for(HashMap<String,String> sa: correctResultsList) {
+				shortAnswer.add(sa.get("answer_ident"));
+			}
+			return AnswerFormatter.answerJSONString(shortAnswer);
 		case TEXT_ONLY:
 		case FILE_UPLOAD:
 			// no answers for these		
@@ -311,55 +315,47 @@ public class QtiToDB {
 	}
 	
 	
-	private static String findCorrect(HashMap<String,String> correct, ArrayList<Object> allChoices) {
+	private static String findCorrect(HashMap<String,String> correct, ArrayList<HashMap<String, String>> allChoices) {
 		//find correct answer
 		String ident = correct.get("answer_ident");
 		String answer = "";
-		for(Object o: allChoices) {
-			if(((HashMap<?,?>)o).containsValue(ident)) {
-				answer = (String) ((HashMap<?,?>)o).get("answer_value");
+		for(HashMap<String,String> o: allChoices) {
+			if(o.containsValue(ident)) {
+				answer = o.get("answer_value");
 			}
-		}		
+		}
 		return answer;
-		
-		//get answer_ident from correct
-		//find the matching answer_ident from all
-		//return answer_value from all
-		//answer_name is only used for matching questions
 	}
 	
-	@SuppressWarnings("unchecked")
-	private static ArrayList<String> findChoices(ArrayList<Object> allChoices) {
+	private static ArrayList<String> findChoices(ArrayList<HashMap<String, String>> allChoices, String correct) {
 		ArrayList<String> choices = new ArrayList<String>();
-		for(Object o: allChoices) {
-			choices.add(((HashMap<String,String>)o).get("answer_value"));	
-		}		
-		return choices;
-		//get answer_value from allChoices
-		//return array of just answer text
-		
-	}
-	
-	private static String findMatches(ArrayList<Object> correct, ArrayList<Object> all) {
-		//correct should contain the left-right association information
-		//all should contain all the options
-		HashMap<String,String> matches = new HashMap<String,String>();
-		ArrayList<String> keys = new ArrayList<String>();
-		for(Object o: all) {
-			keys.add((String) ((HashMap<?,?>)o).get("answer_name"));
-			String ident = (String) ((HashMap<?,?>)o).get("matching_ident");
-			for(Object j: correct) {
-				if(((HashMap<?,?>)j).get("response_ident") == ident) {
-					String answerIdent = (String) ((HashMap<?,?>)j).get("answer_ident");
-					if(((HashMap<?,?>)o).get("answer_ident") == answerIdent) {
-						matches.put((String) ((HashMap<?,?>)o).get("answer_name"),
-								(String) ((HashMap<?,?>)o).get("answer_value"));
-					}
-				}
-				
+		for(HashMap<String,String> o: allChoices) {
+			if(!o.get("answer_value").equals(correct)) {
+				choices.add(o.get("answer_value"));
 			}
 				
 		}
+		return choices;		
+	}
+	
+	
+	private static String findMatches(ArrayList<HashMap<String, String>> allChoices, ArrayList<HashMap<String,String>> correctAnswers) {
+		HashMap<String,String> matches = new HashMap<String,String>();
+		ArrayList<String> keys = new ArrayList<String>();
+		for(HashMap<String,String> map: correctAnswers) {
+			HashMap<String,String> temp = new HashMap<String,String>();
+			for(HashMap<String,String> all:allChoices) {
+				if(all.containsValue(map.get("response_ident"))) {
+					temp.put("left", all.get("answer_name"));
+				}
+				if(all.containsValue(map.get("answer_ident"))) {
+					temp.put("right", all.get("answer_value"));
+				}
+			}
+			matches.put(temp.get("left"), temp.get("right"));
+		}
+		keys.addAll(matches.keySet());
+		
 		return AnswerFormatter.answerJSONString(keys,matches);
 	}
 

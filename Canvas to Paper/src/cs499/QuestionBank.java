@@ -14,10 +14,12 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 import cs499.question.Question;
+import cs499.question.QuestionFactory;
+import cs499.utils.DataHelper;
 
 public class QuestionBank {
 	
-	private ArrayList<Question> questions;
+	private ArrayList<Question> questions = new ArrayList<Question>();
 	
 	private String name;
 	
@@ -25,6 +27,8 @@ public class QuestionBank {
 	
 	public QuestionBank(int id) {
 		this.id = id;
+		loadBank();
+		loadQuestions();
 	}
 
 	public String getName() {
@@ -106,6 +110,12 @@ public class QuestionBank {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void loadQuestions() {
+		for(Integer id: getQuestionIds()) {
+			this.questions.add(QuestionFactory.build(id));
+		}
 	}
 	
 	public List<Integer> getQuestionIds() {

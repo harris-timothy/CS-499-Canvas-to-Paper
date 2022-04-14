@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 
 import org.json.JSONArray;
 
-import cs499.DataHelper;
+import cs499.utils.DataHelper;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
