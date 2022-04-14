@@ -38,6 +38,10 @@ public class Quiz implements Reference{
 	
 	private ArrayList<ReferenceMaterial> references;
 	
+	public Quiz() {
+		newQuiz();
+	}
+	
 	public Quiz(int id) {
 		this.id = id;
 		loadQuiz();
@@ -251,6 +255,49 @@ public class Quiz implements Reference{
 			}			
 			
 			setCourse(courseName);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void newQuiz() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			this.id = create.insertInto(QUIZ, QUIZ.NAME).values("").returning(QUIZ.ID).fetchOne(QUIZ.ID);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void saveQuiz() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			if(!course.isEmpty()) {
+				Record result = create.select(COURSE.ID)
+						.from(COURSE)
+						.where(COURSE.NAME.eq(course))
+						.fetchOne();
+				
+				create.update(QUIZ)
+				.set(QUIZ.COURSE_ID, result.getValue(COURSE.ID))
+				.where(QUIZ.ID.eq(id))
+				.execute();
+			}			
+			
+			create.update(QUIZ)
+			.set(QUIZ.NAME, name)
+			.set(QUIZ.DESCRIPTION, description)
+			.set(QUIZ.POINTS_POSSIBLE, pointsPossible)
+			.set(QUIZ.DUE_DATE, date)
+			.where(QUIZ.ID.eq(id))
+			.execute();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
