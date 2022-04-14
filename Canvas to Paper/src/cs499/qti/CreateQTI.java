@@ -1,11 +1,14 @@
 package cs499.qti;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.io.FileUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
 import cs499.Quiz;
@@ -100,8 +103,14 @@ public class CreateQTI {
 		createManifestXML(dataList, filepath);
 		
 		ZipUtil.pack(new File(filepath), new File(filepath + ".zip"));
-		//take existing folder
-		//convert to zipped version
+		
+		//clean up folder - leave only zip
+		try {
+			FileUtils.deleteDirectory(packageFolder);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
