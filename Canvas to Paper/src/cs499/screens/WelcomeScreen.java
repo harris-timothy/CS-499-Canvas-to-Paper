@@ -130,10 +130,6 @@ public class WelcomeScreen {
 						} catch (Exception ex) {
 							System.out.println(ex);
 						}
-						//TODO: Properly reset the frame and all necessary parts of this functionality.
-
-						//TODO: Reset quiz_list properly
-
 						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
@@ -142,7 +138,6 @@ public class WelcomeScreen {
 				JButton export_cnl_btn = new JButton("Cancel");
 				class ExportCancelAction implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
-						//TODO: Properly reset the frame and all necessary parts of this functionality.
 						export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					}
 				}
