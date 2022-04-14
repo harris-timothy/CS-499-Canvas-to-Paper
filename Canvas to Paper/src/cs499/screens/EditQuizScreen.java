@@ -23,5 +23,7 @@ public class EditQuizScreen {
 			logo_icon_path
 		);
         frame.setLayout(new GridBagLayout());
+        
+        frame.setVisible(true);
     }
 }
