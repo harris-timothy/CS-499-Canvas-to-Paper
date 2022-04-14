@@ -117,6 +117,14 @@ public class MatchingQuestion extends Question {
 	public void setType(QuestionType type) {
 		this.type = type;
 	}
+	
+	public ReferenceMaterial getReference() {
+		return reference;
+	}
+
+	public void setReference(ReferenceMaterial reference) {
+		this.reference = reference;
+	}
 
 	@Override
 	public void loadQuestion() {
