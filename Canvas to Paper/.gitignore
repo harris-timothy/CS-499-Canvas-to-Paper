@@ -1,1 +1,5 @@
 /bin/
+/target/
+/qti/
+.env
+.classpath
