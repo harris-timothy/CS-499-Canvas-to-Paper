@@ -136,7 +136,9 @@ public class SelectQuizScreen {
 			JButton delete_btn = new JButton("Delete");
 			class DeleteQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					//TODO: Delete Quiz quiz from database
+					DataUtils.deleteQuiz(quiz.getId());
+					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+					new SelectQuizScreen();
 				}
 			}
 			delete_btn.addActionListener(new DeleteQuizAction());
@@ -162,6 +164,42 @@ public class SelectQuizScreen {
 			del_panel_constraints.gridy = i+1;
 			del_panel.add(delete_btn, del_panel_constraints);
 		}
+
+		//Create create quiz button
+		JButton create_quiz_btn = new JButton("Create Quiz");
+		class CreateQuizAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Create Quiz stuff
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				new SelectQuizScreen();
+			}
+		}
+		create_quiz_btn.addActionListener(new CreateQuizAction());
+
+		// Element 1: Edit Button
+		edit_panel_constraints.gridx = 0;
+		edit_panel_constraints.gridy = quiz_list.size() + 1;
+		edit_panel_constraints.insets = new Insets(0, 0, 0, 0);
+		edit_panel.add(create_quiz_btn, edit_panel_constraints);
+		
+		// Element 2: Quiz Name
+		name_panel_constraints.gridx = 0;
+		name_panel_constraints.gridy = quiz_list.size() + 1;
+		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		name_panel.add(new JLabel(" "), name_panel_constraints);
+		
+		// Element 3: Course Number
+		course_panel_constraints.gridx = 0;
+		course_panel_constraints.gridy = quiz_list.size() + 1;
+		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		course_panel.add(new JLabel(" "), course_panel_constraints);
+		
+		// Element 4: Delete Button
+		del_panel_constraints.gridx = 0;
+		del_panel_constraints.gridy = quiz_list.size() + 1;
+		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		del_panel.add(new JLabel(" "), del_panel_constraints);
+
 		
 		//Create Constraints Guide
 		GridBagConstraints constraints = new GridBagConstraints();

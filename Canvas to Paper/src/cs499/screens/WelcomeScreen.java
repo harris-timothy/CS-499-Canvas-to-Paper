@@ -212,8 +212,12 @@ public class WelcomeScreen {
 		}
 		export_mi.addActionListener(new ExportAction());
 
-		//File -> Select Test
-		JMenuItem select_mi = menu.buildMenuItem("Select Test", KeyEvent.VK_S, file_menu);
+		//Fill the Menu Bar:
+		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
+		menu_bar.add(edit_menu);
+
+		//Edit -> Select Quiz
+		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
 		class SelectAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				new SelectQuizScreen();
