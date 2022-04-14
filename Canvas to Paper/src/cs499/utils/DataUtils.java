@@ -2,6 +2,8 @@ package cs499.utils;
 
 import static cs499.data_classes.Tables.QUIZ;
 import static cs499.data_classes.Tables.QUESTION_BANK;
+import static cs499.data_classes.Tables.QUIZ_TO_QUESTION;
+import static cs499.data_classes.Tables.QUIZ_REFERENCE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -122,6 +124,24 @@ public class DataUtils {
 			e.printStackTrace();
 		}
 		return bankArray;
+		
+	}
+	
+	public static void deleteQuiz(int quizId) {
+		
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.delete(QUIZ_TO_QUESTION).where(QUIZ_TO_QUESTION.QUIZ_ID.eq(quizId)).execute();
+			
+			create.delete(QUIZ_REFERENCE).where(QUIZ_REFERENCE.QUIZ_ID.eq(quizId)).execute();
+			
+			create.delete(QUIZ).where(QUIZ.ID.eq(quizId)).execute();
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
