@@ -1,4 +1,5 @@
 package cs499;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,10 +46,10 @@ public class WordDocx
 		ArrayList<Question> questionList = quiz.getQuestions();
 		
 		// TODO:
-		// For doc generation
+		// For doc generation:
 		// Header generation - Test Name, Teacher Name, Test Points
 		// Page numbers
-		// User-set font, font-size, etc (accessible through GUI somehow)
+		// Templates
 		
 		// Display Test Points
 		// TODO: Change to full header functionality
