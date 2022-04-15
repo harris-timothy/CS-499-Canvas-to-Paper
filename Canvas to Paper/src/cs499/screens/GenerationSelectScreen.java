@@ -15,11 +15,13 @@ import java.awt.Insets;
 import java.awt.GridBagConstraints;
 
 import cs499.Quiz;
+import cs499.WordDocx;
 import cs499.gui_utils.FrameBuilder;
 import cs499.utils.DataUtils;
 
 public class GenerationSelectScreen {
     JFrame frame;
+    private WordDocx doc;
     public GenerationSelectScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
@@ -130,7 +132,33 @@ public class GenerationSelectScreen {
 			Quiz quiz = quiz_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					//TODO: Generate Test from Quiz functionality
+					//TODO: Generate Paper Test from Quiz functionality
+					doc = new WordDocx();
+					
+					String test_string = quiz.getName();
+					String test_path = "";
+					
+					for (int i = 0; i < test_string.length(); i++) {
+					    test_path += test_string.charAt(i);
+					}
+					test_path = "Generated_Tests\\" + quiz.getName();
+					String test_fullpath = test_path + ".docx";
+					String key_fullpath = test_path + "_ANSWER_KEY.docx";
+					
+					try {
+						doc.DocumentBuilder(quiz, test_fullpath);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					try {
+						doc.TestKeyBuilder(quiz, key_fullpath);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				}
 			}
