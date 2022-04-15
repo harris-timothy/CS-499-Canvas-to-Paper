@@ -128,11 +128,11 @@ public class QtiToDB {
 			else {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, data.get("name"))
-				.set(QUESTION.DESCRIPTION, data.get("description"))
+				.set(QUESTION.QTI_ID, data.get("qti_id"))
 				.set(QUESTION.TYPE, data.get("question_type"))
 				.set(QUESTION.ANSWERS, data.get("answers"))
 				.set(QUESTION.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
-				.where(QUESTION.QTI_ID.eq(data.get("qti_id")))
+				.where(QUESTION.DESCRIPTION.eq(data.get("description")))
 				.execute();
 			}
 			
