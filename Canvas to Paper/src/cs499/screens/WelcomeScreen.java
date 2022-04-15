@@ -207,9 +207,18 @@ public class WelcomeScreen {
 		}
 		export_mi.addActionListener(new ExportAction());
 
-		//Fill the Menu Bar:
 		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
 		menu_bar.add(edit_menu);
+		
+		//File -> Generate Test From Quiz
+		JMenuItem gen_mi = menu.buildMenuItem("Generate Test from Quiz", KeyEvent.VK_G, file_menu);
+		class GenerationSelectAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new GenerationSelectScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		gen_mi.addActionListener(new GenerationSelectAction());
 
 		//Edit -> Select Quiz
 		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);

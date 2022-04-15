@@ -272,6 +272,12 @@ public class EditQuizScreen {
 		del_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
 
+        //TODO: Add a button to return to the main menu (just a "<- Back" button that calls the following two commented functions)
+        //new WelcomeScreen();
+        //frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+
+        //TODO: Add a button that saves a quiz and functionality for that button to actually save the quiz.
+
         //Add elements to frame
         constraints.fill = GridBagConstraints.BOTH;
 
