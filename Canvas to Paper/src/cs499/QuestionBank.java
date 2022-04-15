@@ -25,6 +25,10 @@ public class QuestionBank {
 	
 	private int id;
 	
+	public QuestionBank() {
+		newBank();
+	}
+	
 	public QuestionBank(int id) {
 		this.id = id;
 		loadBank();
@@ -46,6 +50,11 @@ public class QuestionBank {
 	public void addQuestion(Question question) {
 		this.questions.add(question);
 		associateQuestion(question.getId());
+	}
+	
+	public void addQuestion(int id) {
+		this.questions.add(QuestionFactory.build(id));
+		associateQuestion(id);
 	}
 	
 	public void removeQuestion(Question question) {
@@ -167,6 +176,22 @@ public class QuestionBank {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void newBank() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			this.id = create.insertInto(QUESTION_BANK, 
+					QUESTION_BANK.NAME)
+					.values("")
+					.returning(QUESTION_BANK.ID)
+					.fetchOne(QUESTION_BANK.ID);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }
