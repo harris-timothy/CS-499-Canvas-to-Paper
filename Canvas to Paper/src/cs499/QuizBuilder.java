@@ -40,14 +40,14 @@ public class QuizBuilder {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			// Fetch an array of question IDs from the database that match the given quiz ID
-			Integer[] questionArr = create.select(QUIZ_TO_QUESTION.QUESTION_ID)
+			Integer[] questionArr = create.selectDistinct(QUIZ_TO_QUESTION.QUESTION_ID)
 					.from(QUIZ_TO_QUESTION)
 					.where(QUIZ_TO_QUESTION.QUIZ_ID.eq(id))
 					.fetchArray(QUIZ_TO_QUESTION.QUESTION_ID);
 			
 			// Fetch an array of question group records containing the question bank ID and the pick count
 			// from the database that match the given quiz ID
-			Record[] groupArr = create.select(QUESTION_GROUP.QUESTION_BANK_ID, QUESTION_GROUP.PICK_COUNT)
+			Record[] groupArr = create.selectDistinct(QUESTION_GROUP.QUESTION_BANK_ID, QUESTION_GROUP.PICK_COUNT)
 					.from(QUESTION_GROUP)
 					.where(QUESTION_GROUP.QUIZ_ID.eq(id))
 					.fetchArray();

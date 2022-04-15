@@ -59,7 +59,7 @@ public class WordDocx
 		tpRun.setText(String.valueOf(quiz.getPointsPossible() + " points possible"));
 		tpRun.addBreak();
 		
-		// Display Question Name, Description, Points, and Choices
+		// Display Description, Points, and Choices
 		// TODO: Add reference material to document
 		for (Question question : questionList)
 		{
@@ -68,9 +68,6 @@ public class WordDocx
 			XWPFParagraph questionParagraph = document.createParagraph();
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
 			XWPFRun questionRun = questionParagraph.createRun();
-			
-			questionRun.setText(builtQuestion.getName());
-			questionRun.addBreak();
 			
 			questionRun.setText(builtQuestion.getDescription());
 			questionRun.addBreak();
@@ -153,20 +150,21 @@ public class WordDocx
 				
 				matching.shuffleChoices();
 				
-				HashMap<String, String> choices = new HashMap<String, String>(matching.getRight());
+				ArrayList<String> keys = matching.getLeft();
+				HashMap<String, String> values = new HashMap<String, String>(matching.getRight());
 
 				// Will probably have to toy with this to get it to look decent on paper
-				XWPFTable table = document.createTable(choices.size(), 2);
+				XWPFTable table = document.createTable(values.size(), 2);
 				table.removeBorders();
 				
 				int row = 0;
-				for (HashMap.Entry<String, String> entry : choices.entrySet()) {
+				for (HashMap.Entry<String, String> entry : values.entrySet()) {
 					for (int column = 0; column < 2; column++) {
 						if (column == 0) {
-							table.getRow(row).getCell(column).setText(entry.getValue());
+							table.getRow(row).getCell(column).setText(keys.get(row));
 						}
 						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(entry.getKey());
+							table.getRow(row).getCell(column).setText(entry.getValue());
 						}
 					}
 					row++;
@@ -249,9 +247,6 @@ public class WordDocx
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
 			XWPFRun questionRun = questionParagraph.createRun();
 			
-			questionRun.setText(builtQuestion.getName());
-			questionRun.addBreak();
-			
 			if (builtQuestion.getAbet()) {
 				questionRun.setText(builtQuestion.getDescription() + " - ABET Question");
 				questionRun.addBreak();
@@ -302,10 +297,10 @@ public class WordDocx
 				for (HashMap.Entry<String, String> entry : choices.entrySet()) {
 					for (int column = 0; column < 2; column++) {
 						if (column == 0) {
-							table.getRow(row).getCell(column).setText(entry.getValue() + " (" + entry.getKey() + ")");
+							table.getRow(row).getCell(column).setText(entry.getKey() + " (" + entry.getValue() + ")");
 						}
 						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(entry.getKey());
+							table.getRow(row).getCell(column).setText(entry.getValue());
 						}
 					}
 					row++;
