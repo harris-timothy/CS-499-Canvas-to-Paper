@@ -34,6 +34,10 @@ public class SingleAnswerQuestion extends Question {
 	private ReferenceMaterial reference;
 	
 	private float points;
+	
+	public SingleAnswerQuestion() {
+		newQuestion();
+	}
 
 	public SingleAnswerQuestion(int id) {
 		this.id = id;
@@ -249,5 +253,17 @@ public class SingleAnswerQuestion extends Question {
 	
 	public void setPoints(float points) {
 		this.points = points;
+	}
+	
+	private void newQuestion() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
