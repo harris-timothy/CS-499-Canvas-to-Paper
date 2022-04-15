@@ -105,7 +105,7 @@ public class QtiToDB {
 
 			Record exists = create.select()
 					.from(QUESTION)
-					.where(QUESTION.QTI_ID.eq(data.get("qti_id")))
+					.where(QUESTION.DESCRIPTION.eq(data.get("description")))
 					.fetchOne();
 
 			if(exists == null) {
@@ -138,7 +138,7 @@ public class QtiToDB {
 			
 			questionId = create.select(QUESTION.ID)
 			.from(QUESTION)
-			.where(QUESTION.QTI_ID.eq(data.get("qti_id")))
+			.where(QUESTION.DESCRIPTION.eq(data.get("description")))
 			.fetchOne(QUESTION.ID);			
 
 		} catch (Exception e) {
