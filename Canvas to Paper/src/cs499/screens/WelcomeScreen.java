@@ -230,7 +230,15 @@ public class WelcomeScreen {
 		export_btn.addActionListener(new ExportAction());
 
 		//Create Create New Test Button
-		JButton new_test_btn = new JButton("Create New Test");
+		JButton create_quiz_btn = new JButton("Create New Test");
+		class CreateQuizAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				Quiz new_quiz = new Quiz();
+				new EditQuizScreen(new_quiz);
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		create_quiz_btn.addActionListener(new CreateQuizAction());
 
 		//Add elements to frame
 		constraints.fill = GridBagConstraints.BOTH;
@@ -277,7 +285,7 @@ public class WelcomeScreen {
 
 		//Add Create New Test Button
 		constraints.gridy = 3;
-		frame.add(new_test_btn, constraints);
+		frame.add(create_quiz_btn, constraints);
 
 		//Add Import Button
 		constraints.gridy = 4;

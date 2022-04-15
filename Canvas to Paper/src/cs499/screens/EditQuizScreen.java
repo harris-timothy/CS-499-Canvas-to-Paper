@@ -85,8 +85,11 @@ public class EditQuizScreen {
         this.instructorField = new JTextField();
         instructorField.setBounds(150,85,200,20);
         
-        //TODO: Add functionality of each field
-        
+        quizField.setText(quiz.getName());
+        courseField.setText(quiz.getCourse());
+        dateField.setText(quiz.getDate());
+        if (quiz.getInstructor() != null) instructorField.setText(quiz.getInstructor().getTitle() + quiz.getInstructor().getFname() + quiz.getInstructor().getLname());
+
         quiz_info_panel.add(quizLabel);
         quiz_info_panel.add(quizField);
         quiz_info_panel.add(courseLabel);
