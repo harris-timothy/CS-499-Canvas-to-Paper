@@ -59,8 +59,8 @@ public class WordDocx
 		tpRun.setText(String.valueOf(quiz.getPointsPossible() + " points possible"));
 		tpRun.addBreak();
 		
-		// Display Description, Points, and Choices
-		// TODO: Add reference material to document
+		// Display Description, Points, Choices, and Reference Material
+		int numbering = 1;
 		for (Question question : questionList)
 		{
 			Question builtQuestion = QuestionFactory.build(question.getId());
@@ -69,7 +69,7 @@ public class WordDocx
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
 			XWPFRun questionRun = questionParagraph.createRun();
 			
-			questionRun.setText(builtQuestion.getDescription());
+			questionRun.setText(numbering + ") " + builtQuestion.getDescription());
 			questionRun.addBreak();
 			
 			questionRun.setText(String.valueOf(builtQuestion.getPoints() + " points"));
@@ -201,7 +201,7 @@ public class WordDocx
 				}
 				
 			}
-			
+			numbering++;
 		}
 		
 		// Write to file
@@ -225,7 +225,6 @@ public class WordDocx
 		// File stream is used to write in the document
 		FileOutputStream out = new FileOutputStream(newFile);
 		
-		quiz.shuffleQuestions();
 		ArrayList<Question> questionList = quiz.getQuestions();
 
 		// Display Test Points (and also Test Key marker for now)
@@ -237,8 +236,8 @@ public class WordDocx
 		tpRun.addBreak();
 		tpRun.setText("**TEST KEY**");
 		
-		// Display Question Name, Description, Points, and Choices
-		// TODO: Add reference material to document
+		// Display Question Name, Description, Points, Choices, and Reference Material
+		int numbering = 1;
 		for (Question question : questionList)
 		{
 			Question builtQuestion = QuestionFactory.build(question.getId());
@@ -248,11 +247,11 @@ public class WordDocx
 			XWPFRun questionRun = questionParagraph.createRun();
 			
 			if (builtQuestion.getAbet()) {
-				questionRun.setText(builtQuestion.getDescription() + " - ABET Question");
+				questionRun.setText(numbering + ") " + builtQuestion.getDescription() + " - ABET Question");
 				questionRun.addBreak();
 			}
 			else {
-				questionRun.setText(builtQuestion.getDescription());
+				questionRun.setText(numbering + ") " + builtQuestion.getDescription());
 				questionRun.addBreak();
 			}
 			
@@ -307,7 +306,7 @@ public class WordDocx
 				}
 								
 			}
-			
+			numbering++;
 		}
 		
 		// Write to file
