@@ -9,19 +9,18 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
 import java.util.ArrayList;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.GridBagConstraints;
 
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.utils.DataUtils;
 
-public class SelectQuizScreen {
-    private JFrame frame;
-    public SelectQuizScreen(){
+public class GenerationSelectScreen {
+    JFrame frame;
+    public GenerationSelectScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
 
@@ -56,11 +55,11 @@ public class SelectQuizScreen {
 		quiz_list_listing.setLayout(new GridBagLayout());
 		GridBagConstraints quiz_list_list_constraints = new GridBagConstraints();
 		
-		//Create JPanel for storing Edit Buttons
-		JPanel edit_panel = new JPanel();
-		edit_panel.setLayout(new GridBagLayout());
-		GridBagConstraints edit_panel_constraints = new GridBagConstraints();
-		edit_panel_constraints.anchor = GridBagConstraints.WEST;
+		//Create JPanel for storing Generate Buttons
+		JPanel gen_panel = new JPanel();
+		gen_panel.setLayout(new GridBagLayout());
+		GridBagConstraints gen_panel_constraints = new GridBagConstraints();
+		gen_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Name info
 		JPanel name_panel = new JPanel();
@@ -84,11 +83,11 @@ public class SelectQuizScreen {
 		int inset_size = ((back_btn.getMinimumSize().height) - ((new JLabel(" ")).getMinimumSize().height)) / 2;
 		
 		// Element 1: Edit Button
-		edit_panel_constraints.gridx = 0;
-		edit_panel_constraints.gridy = 0;
-		edit_panel_constraints.weightx = 1;
-		edit_panel_constraints.weighty = 1;
-		edit_panel.add(back_btn, edit_panel_constraints);
+		gen_panel_constraints.gridx = 0;
+		gen_panel_constraints.gridy = 0;
+		gen_panel_constraints.weightx = 1;
+		gen_panel_constraints.weighty = 1;
+		gen_panel.add(back_btn, gen_panel_constraints);
 		
 		// Element 2: Quiz Name
 		name_panel_constraints.gridx = 0;
@@ -118,7 +117,7 @@ public class SelectQuizScreen {
 		//Add elements to listing
 		quiz_list_list_constraints.gridx = 0;
 		quiz_list_list_constraints.gridy = 0;
-		quiz_list_listing.add(edit_panel, quiz_list_list_constraints);
+		quiz_list_listing.add(gen_panel, quiz_list_list_constraints);
 		quiz_list_list_constraints.gridx = 1;
 		quiz_list_listing.add(name_panel, quiz_list_list_constraints);
 		quiz_list_list_constraints.gridx = 2;
@@ -127,15 +126,15 @@ public class SelectQuizScreen {
 		quiz_list_listing.add(del_panel, quiz_list_list_constraints);
 
 		for (int i = 0; i < quiz_list.size(); i++){
-			JButton edit_btn = new JButton("Edit");
+			JButton gen_btn = new JButton("Generate");
 			Quiz quiz = quiz_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					new EditQuizScreen(quiz);
+					//TODO: Generate Test from Quiz functionality
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				}
 			}
-			edit_btn.addActionListener(new SelectQuizAction());
+			gen_btn.addActionListener(new SelectQuizAction());
 
 			JButton delete_btn = new JButton("Delete");
 			class DeleteQuizAction implements ActionListener {
@@ -148,9 +147,9 @@ public class SelectQuizScreen {
 			delete_btn.addActionListener(new DeleteQuizAction());
 
 			// Element 1: Edit Button
-			edit_panel_constraints.gridx = 0;
-			edit_panel_constraints.gridy = i+1;
-			edit_panel.add(edit_btn, edit_panel_constraints);
+			gen_panel_constraints.gridx = 0;
+			gen_panel_constraints.gridy = i+1;
+			gen_panel.add(gen_btn, gen_panel_constraints);
 			
 			// Element 2: Quiz Name
 			name_panel_constraints.gridx = 0;
@@ -181,10 +180,10 @@ public class SelectQuizScreen {
 		create_quiz_btn.addActionListener(new CreateQuizAction());
 
 		// Element 1: Edit Button
-		edit_panel_constraints.gridx = 0;
-		edit_panel_constraints.gridy = quiz_list.size() + 1;
-		edit_panel_constraints.insets = new Insets(0, 0, 0, 0);
-		edit_panel.add(create_quiz_btn, edit_panel_constraints);
+		gen_panel_constraints.gridx = 0;
+		gen_panel_constraints.gridy = quiz_list.size() + 1;
+		gen_panel_constraints.insets = new Insets(0, 0, 0, 0);
+		gen_panel.add(create_quiz_btn, gen_panel_constraints);
 		
 		// Element 2: Quiz Name
 		name_panel_constraints.gridx = 0;
@@ -204,7 +203,6 @@ public class SelectQuizScreen {
 		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
 
-		
 		//Create Constraints Guide
 		GridBagConstraints constraints = new GridBagConstraints();
         
