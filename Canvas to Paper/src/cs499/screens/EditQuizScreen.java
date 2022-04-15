@@ -272,17 +272,21 @@ public class EditQuizScreen {
         //Add elements to frame
         constraints.fill = GridBagConstraints.BOTH;
 
+        JScrollPane questions_scroller = new JScrollPane(questions_panel);
+        questions_scroller.setMaximumSize(new Dimension(0,300));
+        questions_scroller.setPreferredSize(new Dimension(0, 300));
+
 		constraints.gridx = 0;
 		constraints.weightx = 1;
 		constraints.gridy = 0;
-		constraints.weighty = 0.5;
+		constraints.weighty = 1;
 		frame.add(quiz_info_panel, constraints);
 
         constraints.gridx = 0;
 		constraints.weightx = 1;
 		constraints.gridy = 1;
-		constraints.weighty = 0.5;
-		frame.add(new JScrollPane(questions_panel), constraints);
+		constraints.weighty = 1;
+		frame.add(questions_scroller, constraints);
         
         frame.setVisible(true);
     }
