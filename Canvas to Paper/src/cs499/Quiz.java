@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -14,7 +16,6 @@ import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cs499.question.AnswerFormatter;
 import cs499.question.Question;
 import cs499.utils.DataHelper;
 
@@ -118,16 +119,25 @@ public class Quiz implements Reference{
 		return this.questions;
 	}
 	
-	private String questionJSON() {
-		JSONArray questionList = new JSONArray();
+	private String metaJSON() {
+		LocalDateTime timestamp = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		
+		JSONArray metadataArray = new JSONArray();
+		
+		JSONObject quizMeta = new JSONObject();
+		quizMeta.put("name", this.getName());
+		quizMeta.put("date", timestamp.format(formatter));
+		metadataArray.put(quizMeta);
+		
 		
 		for(int i = 0; i < this.questions.size(); i++) {
 			JSONObject question = new JSONObject();
-			question.put("id", this.questions.get(i).getId());
-			questionList.put(question);
+			question.put("question_id", this.questions.get(i).getId());
+			metadataArray.put(question);
 		}
 		
-		return questionList.toString();
+		return metadataArray.toString();
 		
 	}
 	
@@ -141,7 +151,7 @@ public class Quiz implements Reference{
             		METADATA.QUIZ_ID,
             		METADATA.DATA)
             .values(this.getId(), 
-            		this.questionJSON())
+            		this.metaJSON())
             .execute();
             
 		}
