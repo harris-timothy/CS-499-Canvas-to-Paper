@@ -207,9 +207,18 @@ public class WelcomeScreen {
 		}
 		export_mi.addActionListener(new ExportAction());
 
-		//Fill the Menu Bar:
 		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
 		menu_bar.add(edit_menu);
+		
+		//File -> Generate Test From Quiz
+		JMenuItem gen_mi = menu.buildMenuItem("Generate Test from Quiz", KeyEvent.VK_G, file_menu);
+		class GenerationSelectAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new GenerationSelectScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		gen_mi.addActionListener(new GenerationSelectAction());
 
 		//Edit -> Select Quiz
 		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
@@ -230,7 +239,15 @@ public class WelcomeScreen {
 		export_btn.addActionListener(new ExportAction());
 
 		//Create Create New Test Button
-		JButton new_test_btn = new JButton("Create New Test");
+		JButton create_quiz_btn = new JButton("Create New Test");
+		class CreateQuizAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				Quiz new_quiz = new Quiz();
+				new EditQuizScreen(new_quiz);
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		create_quiz_btn.addActionListener(new CreateQuizAction());
 
 		//Add elements to frame
 		constraints.fill = GridBagConstraints.BOTH;
@@ -277,7 +294,7 @@ public class WelcomeScreen {
 
 		//Add Create New Test Button
 		constraints.gridy = 3;
-		frame.add(new_test_btn, constraints);
+		frame.add(create_quiz_btn, constraints);
 
 		//Add Import Button
 		constraints.gridy = 4;
