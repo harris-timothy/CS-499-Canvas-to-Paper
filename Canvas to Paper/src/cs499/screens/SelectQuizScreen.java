@@ -60,21 +60,25 @@ public class SelectQuizScreen {
 		JPanel edit_panel = new JPanel();
 		edit_panel.setLayout(new GridBagLayout());
 		GridBagConstraints edit_panel_constraints = new GridBagConstraints();
+		edit_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Name info
 		JPanel name_panel = new JPanel();
 		name_panel.setLayout(new GridBagLayout());
 		GridBagConstraints name_panel_constraints = new GridBagConstraints();
-
+		name_panel_constraints.anchor = GridBagConstraints.WEST;
+		
 		//Create JPanel for storing Course info
 		JPanel course_panel = new JPanel();
 		course_panel.setLayout(new GridBagLayout());
 		GridBagConstraints course_panel_constraints = new GridBagConstraints();
+		course_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Delete Buttons
 		JPanel del_panel = new JPanel();
 		del_panel.setLayout(new GridBagLayout());
 		GridBagConstraints del_panel_constraints = new GridBagConstraints();
+		del_panel_constraints.anchor = GridBagConstraints.WEST;
 
 		//Get the proper inset size
 		int inset_size = ((back_btn.getMinimumSize().height) - ((new JLabel(" ")).getMinimumSize().height)) / 2;
@@ -91,7 +95,7 @@ public class SelectQuizScreen {
 		name_panel_constraints.gridy = 0;
 		name_panel_constraints.weightx = 1;
 		name_panel_constraints.weighty = 1;
-		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		name_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		name_panel.add(new JLabel("Quiz Name"), name_panel_constraints);
 
 		// Element 3: Course Number
@@ -99,7 +103,7 @@ public class SelectQuizScreen {
 		course_panel_constraints.gridy = 0;
 		course_panel_constraints.weightx = 1;
 		course_panel_constraints.weighty = 1;
-		course_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		course_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		course_panel.add(new JLabel("Course Section"), course_panel_constraints);
 		
 		// Element 4: Delete Button
@@ -107,7 +111,7 @@ public class SelectQuizScreen {
 		del_panel_constraints.gridy = 0;
 		del_panel_constraints.weightx = 1;
 		del_panel_constraints.weighty = 1;
-		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		del_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
 		del_panel_constraints.insets = new Insets(0, 0, 0, 0);
 
@@ -191,13 +195,13 @@ public class SelectQuizScreen {
 		// Element 3: Course Number
 		course_panel_constraints.gridx = 0;
 		course_panel_constraints.gridy = quiz_list.size() + 1;
-		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		course_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		course_panel.add(new JLabel(" "), course_panel_constraints);
 		
 		// Element 4: Delete Button
 		del_panel_constraints.gridx = 0;
 		del_panel_constraints.gridy = quiz_list.size() + 1;
-		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
 
 		

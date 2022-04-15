@@ -17,7 +17,6 @@ import java.awt.GridBagConstraints;
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
-import cs499.question.QuestionFactory;
 
 public class EditQuizScreen {
     private JFrame frame;
@@ -30,7 +29,7 @@ public class EditQuizScreen {
 		frame = maker.buildFrame(
             frame_title, 
 			JFrame.DISPOSE_ON_CLOSE, 
-			500, 400, 
+			800, 600, 
 			null, 
 			logo_icon_path
         );
@@ -64,21 +63,25 @@ public class EditQuizScreen {
 		JPanel edit_panel = new JPanel();
 		edit_panel.setLayout(new GridBagLayout());
 		GridBagConstraints edit_panel_constraints = new GridBagConstraints();
+		edit_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Question Text info
 		JPanel text_panel = new JPanel();
 		text_panel.setLayout(new GridBagLayout());
 		GridBagConstraints text_panel_constraints = new GridBagConstraints();
-
+		text_panel_constraints.anchor = GridBagConstraints.WEST;
+        
 		//Create JPanel for storing Question Type info
 		JPanel type_panel = new JPanel();
 		type_panel.setLayout(new GridBagLayout());
 		GridBagConstraints type_panel_constraints = new GridBagConstraints();
+		type_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Delete Buttons
 		JPanel del_panel = new JPanel();
 		del_panel.setLayout(new GridBagLayout());
 		GridBagConstraints del_panel_constraints = new GridBagConstraints();
+		del_panel_constraints.anchor = GridBagConstraints.WEST;
         
 		
 		// Element 1: Edit Button
@@ -95,7 +98,7 @@ public class EditQuizScreen {
 		text_panel_constraints.gridy = 0;
 		text_panel_constraints.weightx = 1;
 		text_panel_constraints.weighty = 1;
-		text_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		text_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		text_panel.add(new JLabel("Question Text"), text_panel_constraints);
 
 		// Element 3: Question Type
@@ -103,7 +106,7 @@ public class EditQuizScreen {
 		type_panel_constraints.gridy = 0;
 		type_panel_constraints.weightx = 1;
 		type_panel_constraints.weighty = 1;
-		type_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		type_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		type_panel.add(new JLabel("Question Type"), type_panel_constraints);
 		
 		// Element 4: Delete Button
@@ -111,9 +114,9 @@ public class EditQuizScreen {
 		del_panel_constraints.gridy = 0;
 		del_panel_constraints.weightx = 1;
 		del_panel_constraints.weighty = 1;
-		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		del_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
-		del_panel_constraints.insets = new Insets(0, 0, 0, 0);
+		del_panel_constraints.insets = new Insets(0, 25, 0, 0);
 
 		//Add elements to listing
 		questions_panel_constraints.gridx = 0;
@@ -157,9 +160,10 @@ public class EditQuizScreen {
 			// Element 2: Question Text
 			text_panel_constraints.gridx = 0;
 			text_panel_constraints.gridy = i+1;
-			text_panel.add(new JLabel(question.getDescription()), text_panel_constraints);
-			
-			// Element 3: type Number
+			if (question.getDescription().length() > 50) text_panel.add(new JLabel(question.getDescription().substring(0, 50) + "..."), text_panel_constraints);
+			else text_panel.add(new JLabel(question.getDescription()), text_panel_constraints);
+
+			// Element 3: Question Type
 			type_panel_constraints.gridx = 0;
 			type_panel_constraints.gridy = i+1;
 			type_panel.add(new JLabel("" + question.getType()), type_panel_constraints);
@@ -194,19 +198,19 @@ public class EditQuizScreen {
 		// Element 2: Question Text
 		text_panel_constraints.gridx = 0;
 		text_panel_constraints.gridy = question_list.size() + 1;
-		text_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		text_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		text_panel.add(new JLabel(" "), text_panel_constraints);
 		
 		// Element 3: Question Type
 		type_panel_constraints.gridx = 0;
 		type_panel_constraints.gridy = question_list.size() + 1;
-		text_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		type_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		type_panel.add(new JLabel(" "), type_panel_constraints);
 		
 		// Element 4: Delete Button
 		del_panel_constraints.gridx = 0;
 		del_panel_constraints.gridy = question_list.size() + 1;
-		text_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
+		del_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
 
         //Add elements to frame
