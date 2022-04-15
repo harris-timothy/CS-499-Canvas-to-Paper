@@ -75,6 +75,7 @@ public class Reporting {
 	private void parseMetaJSON(String metaJSON) {
 		HashMap<String,String> map = new HashMap<String,String>();
 		JSONArray metaJSONArray = new JSONArray(metaJSON);
+		
 		for(int i = 0; i < metaJSONArray.length();i++) {
 			if(metaJSONArray.getJSONObject(i).has("name")) {
 				String name = metaJSONArray.getJSONObject(i).getString("name");
@@ -88,6 +89,7 @@ public class Reporting {
 				map.put(questionId.toString(),"true");
 			}
 		}
+		metaList.add(map);
 		
 	}
 

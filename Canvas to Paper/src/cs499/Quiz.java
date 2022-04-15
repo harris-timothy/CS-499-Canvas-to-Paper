@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -118,11 +120,14 @@ public class Quiz implements Reference{
 	}
 	
 	private String metaJSON() {
+		LocalDateTime timestamp = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		
 		JSONArray metadataArray = new JSONArray();
 		
 		JSONObject quizMeta = new JSONObject();
 		quizMeta.put("name", this.getName());
-		quizMeta.put("date", this.getDate());
+		quizMeta.put("date", timestamp.format(formatter));
 		metadataArray.put(quizMeta);
 		
 		
