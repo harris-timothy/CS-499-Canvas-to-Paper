@@ -23,6 +23,7 @@ import java.awt.GridBagConstraints;
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
+import cs499.RecentItems;
 
 public class EditQuizScreen {
     private JFrame frame;
@@ -38,6 +39,9 @@ public class EditQuizScreen {
     public EditQuizScreen(Quiz quiz){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
+        
+        RecentItems recent = new RecentItems();
+        recent.addToRecent(quiz);
         
         //Initialize the frame
         FrameBuilder maker = new FrameBuilder();
