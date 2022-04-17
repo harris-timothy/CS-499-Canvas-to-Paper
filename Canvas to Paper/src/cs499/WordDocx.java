@@ -45,10 +45,10 @@ public class WordDocx
 		quiz.shuffleQuestions();
 		ArrayList<Question> questionList = quiz.getQuestions();
 		
+		DocUtils.header(document, quiz);
+		DocUtils.numberedFooter(document);
 		// TODO:
 		// For doc generation:
-		// Header generation - Test Name, Teacher Name, Test Points
-		// Page numbers
 		// Templates
 		
 		// Display Test Points
