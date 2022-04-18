@@ -58,7 +58,15 @@ public class RecentItems {
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	private void removeAll() {
+		try {
+			preferences.clear();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void load() {

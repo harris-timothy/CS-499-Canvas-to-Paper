@@ -1,13 +1,12 @@
 package cs499;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.HashMap;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -27,7 +26,6 @@ public class DocUtils {
 	
 	public static XWPFDocument header(XWPFDocument doc, Quiz quiz) {
 		
-		//TODO: fix once data source is defined
 		XWPFHeaderFooterPolicy hfPolicy = doc.getHeaderFooterPolicy();
 		if (hfPolicy == null) {
 			 hfPolicy = doc.createHeaderFooterPolicy();
@@ -42,12 +40,12 @@ public class DocUtils {
 		XWPFTableRow row = table.getRow(0);
 		row.getCell(0).setText(quiz.getShortCourse());
 		row.getCell(1).setText(quiz.getName());
-		row.getCell(2).setText(quiz.getDate());
+		row.getCell(2).setText(dateString(quiz.getDate()));
 		
 		row = table.getRow(1);
 		row.getCell(0).setText(quiz.getInstructor().getName());
 		row.getCell(1).setText(" ");
-		row.getCell(2).setText(" ");		
+		row.getCell(2).setText(Float.toString(quiz.getPointsPossible()) + " Point Exam");		
 		
 		return doc;
 		
@@ -55,7 +53,6 @@ public class DocUtils {
 	
 public static XWPFDocument keyHeader(XWPFDocument doc, Quiz quiz) {
 		
-		//TODO: fix once data source is defined
 		XWPFHeaderFooterPolicy hfPolicy = doc.getHeaderFooterPolicy();
 		if (hfPolicy == null) {
 			 hfPolicy = doc.createHeaderFooterPolicy();
@@ -70,7 +67,7 @@ public static XWPFDocument keyHeader(XWPFDocument doc, Quiz quiz) {
 		XWPFTableRow row = table.getRow(0);
 		row.getCell(0).setText(quiz.getShortCourse());
 		row.getCell(1).setText(quiz.getName());
-		row.getCell(2).setText(quiz.getDate());
+		row.getCell(2).setText(dateString(quiz.getDate()));
 		
 		row = table.getRow(1);
 		row.getCell(0).setText(quiz.getInstructor().getName());
@@ -90,7 +87,7 @@ public static XWPFDocument keyHeader(XWPFDocument doc, Quiz quiz) {
 		}
 		
 		
-		row.getCell(2).setText(" ");		
+		row.getCell(2).setText(Float.toString(quiz.getPointsPossible()) + " Point Exam");		
 		
 		return doc;
 		
@@ -208,6 +205,15 @@ public static XWPFDocument keyHeader(XWPFDocument doc, Quiz quiz) {
 		}
 		return null;
 		
+	}
+	
+	public static String dateString(String date) {
+		if(date.isEmpty() || date.isBlank()) {
+			return LocalDate.now().toString();
+		}
+		else {
+			return LocalDateTime.parse(date).toLocalDate().toString();
+		}
 	}
 	
 	
