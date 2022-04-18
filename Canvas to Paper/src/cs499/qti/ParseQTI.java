@@ -7,17 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.io.FileUtils;
-import org.jsoup.Jsoup;
 import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.*;
@@ -112,6 +107,7 @@ public class ParseQTI {
         		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
         			  if(fileName.equals("imsmanifest.xml")) {
+        				  
         				  			  
         				  parseManifest(child.getPath());
         			  }
@@ -125,6 +121,17 @@ public class ParseQTI {
     		  }
     	  }
     }
+    
+    //need to add the following functionality
+    //detect when images are referenced
+    //move image files into references folder?
+    //possibly just use them from the folder that they're in currently
+    //correctly deal with the other answer types
+    //numeric questions - need correct answer as answer, range as grading instructions
+    //change feedback parser - needs to set feedback as answer for essay but as grading instructions for everything else
+    
+    
+    
         
     /**
      * Parses a document that uses the QTI schema
@@ -133,6 +140,8 @@ public class ParseQTI {
      */
     @SuppressWarnings("unchecked")
 	public void xmlParse(String filepath) throws JAXBException {
+    	
+    	System.out.println(filepath);
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
     	
@@ -180,7 +189,7 @@ public class ParseQTI {
     			group.put("bank_qti_id", selection.getSourcebankRef());
     			group.put("pick_count", selection.getSelectionNumber());
 
-    			Element test = (Element) removeNull(selection.getSelectionExtension().getContent()).get(FIRST);
+    			Element test = (Element) ParseUtils.removeNull(selection.getSelectionExtension().getContent()).get(FIRST);
     			group.put("points_per_item",test.getFirstChild().getTextContent()); // points per item
     			
     			//data from here goes into question group table
@@ -283,7 +292,7 @@ public class ParseQTI {
 			//returns single hashmap with answer_ident and answer_value
 			correctResultsList.add(parseItemFeedback((ItemfeedbackType) f));
 		}
-		String answers = QtiToDB.parseAnswers(correctResultsList, responseChoicesList, questionValues);
+		String answers = ParseUtils.parseAnswers(correctResultsList, responseChoicesList, questionValues);
 		questionValues.put("answers", answers);
 		questionId = QtiToDB.storeQuestion(questionValues);
 		//use hashmap to store question
@@ -324,7 +333,7 @@ public class ParseQTI {
     	
     	ArrayList<HashMap<String,String>> data = new ArrayList<HashMap<String,String>>();    	
     	
-    	List<JAXBElement<?>> list = removeNull(responseLid.getContent());    	
+    	List<JAXBElement<?>> list = ParseUtils.removeNull(responseLid.getContent());    	
     	
 		for(JAXBElement<?> e: list) {
 								
@@ -341,7 +350,7 @@ public class ParseQTI {
 					if (r instanceof ResponseLabelType) {
 						HashMap<String, String> map = new HashMap<String, String>();
 						map.put("answer_ident", ((ResponseLabelType) r).getIdent());					 
-						List<Serializable> label = removeNull(((ResponseLabelType) r).getContent());
+						List<Serializable> label = ParseUtils.removeNull(((ResponseLabelType) r).getContent());
 						for(Object t: label) {
 							if(((JAXBElement)t).getValue() instanceof MaterialType) {
 								map.put("answer_value", parseMaterial((MaterialType) ((JAXBElement)t).getValue())); 
@@ -352,7 +361,7 @@ public class ParseQTI {
 				}				
 			}
 		}
-		return removeDuplicates(data);
+		return ParseUtils.removeDuplicates(data);
     	
     }
 	
@@ -369,7 +378,7 @@ public class ParseQTI {
 				text = mattext.getValue(); //question or answer text
 			}					
 		}
-		return Jsoup.parse(text).text();
+		return ParseUtils.fixText(text);
 	}
 	
 	/**
@@ -415,7 +424,7 @@ public class ParseQTI {
 		
 		HashMap<String,String> data = new HashMap<String,String>();
 		data.put("name", quiz.getTitle());
-		data.put("description",Jsoup.parse(quiz.getDescription()).text());
+		data.put("description",ParseUtils.fixText(quiz.getDescription()));
 		data.put("qti_id",quiz.getIdentifier());
 		data.put("points_possible",quiz.getPointsPossible());
 		data.put("due_date",quiz.getDueAt());
@@ -424,11 +433,11 @@ public class ParseQTI {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void parseManifest(String filepath) throws JAXBException {
+	public int parseManifest(String filepath) throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping:cs499.qti.package_mapping.imsmd");
 		
 		File xmlFile = new File(filepath);
-		fixManifest(xmlFile);
+		ParseUtils.fixManifest(xmlFile);
 		
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		
@@ -442,7 +451,7 @@ public class ParseQTI {
 		JAXBElement element = (JAXBElement) elements.get(FIRST);
 		LomType lom = (LomType) element.getValue();
 		
-		JAXBElement el = (JAXBElement) removeNull(lom.getGeneral().getContent()).get(FIRST);
+		JAXBElement el = (JAXBElement) ParseUtils.removeNull(lom.getGeneral().getContent()).get(FIRST);
 		TitleType title = (TitleType) el.getValue();
 		String course = StringUtils.substringBetween(title.getLangstring().get(FIRST).getValue(),"\"","\"");
 		
@@ -451,66 +460,26 @@ public class ParseQTI {
 		ArrayList<String> courseQuizzes = new ArrayList<String>();
 		for(Object o: manifest.getResources().getResource()) {
 			ResourceType resource = (ResourceType) o;
-			if(resource.getType().equals("imsqti_xmlv1p2")) {
+			if(resource.getType().contains("imsqti_xmlv1p2")) {
 				courseQuizzes.add(resource.getIdentifier());
 			}
 		}
 		
 		QtiToDB.associateCourse(courseId, courseQuizzes);
+		return courseId;
 				
 		
 	}
 	
 	
-	/**
-	 * Helper method to remove null or whitespace only entries from lists
-	 * @param <T>
-	 * @param list
-	 * @return
-	 */
-	private <T> List<T> removeNull(List<T> list) {
-		
-		for(int i = 0; i < list.size(); i++) {
-			if(list.get(i) instanceof String) {
-				if(((String) list.get(i)).trim().isEmpty()) {
-					list.remove(i);
-				}
-			}
-		}
-		list.removeAll(Collections.singletonList(null));
-		list.removeAll(Collections.singletonList(""));
-		return list;
-	}
 	
-	/**
-	 * Helper method to remove duplicate items from an arraylist
-	 * @param <T>
-	 * @param list
-	 * @return
-	 */
-	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list){
-		Set<T> set = new LinkedHashSet<>();
-		set.addAll(list);
-		list.clear();
-		list.addAll(set);		
-		return list;
-	}
 	
-	/**
-	 * Helper method to fix namespace and schema validation errors in Canvas provided manifest files
-	 * @param file
-	 */
-	private void fixManifest(File file) {
-		try {
-			String content = FileUtils.readFileToString(file, "UTF-8");
-			content = content.replaceAll("imsccv1p1//imscp_v1p1","imscp_v1p1");
-			content = content.replaceAll("imsmd:string", "imsmd:langstring");
-			FileUtils.writeStringToFile(file, content, "UTF-8");
-			
-		}catch (IOException e) {
-			
-		}
-		
-	}
+	
+	
+	
+	
+	
+	
+	
 	
 }

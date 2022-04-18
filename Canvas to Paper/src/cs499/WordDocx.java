@@ -33,7 +33,7 @@ public class WordDocx
 	public void DocumentBuilder(Quiz quiz, String filepath) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = new XWPFDocument();
+		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -47,6 +47,7 @@ public class WordDocx
 		
 		DocUtils.header(document, quiz);
 		DocUtils.numberedFooter(document);
+		
 		// TODO:
 		// For doc generation:
 		// Templates
@@ -216,7 +217,7 @@ public class WordDocx
 	public void TestKeyBuilder(Quiz quiz, String filepath) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = new XWPFDocument();
+		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -226,6 +227,9 @@ public class WordDocx
 		FileOutputStream out = new FileOutputStream(newFile);
 		
 		ArrayList<Question> questionList = quiz.getQuestions();
+		
+		DocUtils.keyHeader(document, quiz);
+		DocUtils.numberedFooter(document);
 
 		// Display Test Points (and also Test Key marker for now)
 		// TODO: Change to full header functionality
