@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,11 +22,13 @@ import cs499.question.SingleAnswerQuestion;
 
 import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 public class WordDocx
 {
@@ -89,8 +92,7 @@ public class WordDocx
 					try {
 					    reference = ImageIO.read(new File(multiChoice.getReference().getFilepath()));
 					    
-						if (FileNameUtils.getExtension(multiChoice.getReference().getFilepath()).equals("png"))
-						{
+						if (FileNameUtils.getExtension(multiChoice.getReference().getFilepath()).equals("png")) {
 							// NOTE: May have to add some sort of size restriction to the width and height parameters
 							questionRun.addPicture(new FileInputStream(multiChoice.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, multiChoice.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
 						}
@@ -106,9 +108,19 @@ public class WordDocx
 					
 				}
 				
-				multiChoice.shuffleChoices();
+				if (question.getType().equals(QuestionType.MULTIPLE_CHOICE)) {
+					multiChoice.shuffleChoices();
+					
+				}
 				
 				ArrayList<String> choices = multiChoice.getChoices();
+				
+				if (question.getType().equals(QuestionType.TRUE_FALSE)) {
+					if (!choices.get(0).toLowerCase().equals("true")) {
+						choices.set(0, "True");
+						choices.set(1,  "False");
+					}
+				}
 				
 				char choiceLetter = 'a';
 				for (String choice : choices) {
@@ -159,16 +171,22 @@ public class WordDocx
 				table.removeBorders();
 				
 				int row = 0;
+				char lettering = 'A';
 				for (HashMap.Entry<String, String> entry : values.entrySet()) {
 					for (int column = 0; column < 2; column++) {
 						if (column == 0) {
-							table.getRow(row).getCell(column).setText(keys.get(row));
+							table.getRow(row).getCell(column).setText(keys.get(row) + "  ____");
+							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
+							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
 						}
 						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(entry.getValue());
+							table.getRow(row).getCell(column).setText(lettering + ". " + entry.getValue());
+							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
+							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
 						}
 					}
 					row++;
+					lettering ++;
 				}
 								
 			}
@@ -203,6 +221,39 @@ public class WordDocx
 				
 			}
 			numbering++;
+		}
+		
+		XWPFParagraph referenceParagraph = document.createParagraph();
+		referenceParagraph.setAlignment(ParagraphAlignment.RIGHT);
+		XWPFRun refRun = referenceParagraph.createRun();
+		
+		if (quiz.getReferences() != null) {
+			
+			// Load data of reference image
+			BufferedImage refImg;
+			
+			try {
+				for (ReferenceMaterial reference : quiz.getReferences()) {
+				    refImg = ImageIO.read(new File(reference.getFilepath()));
+				    
+					if (FileNameUtils.getExtension(reference.getFilepath()).equals("png"))
+					{
+						// NOTE: May have to add some sort of size restriction to the width and height parameters
+						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
+						refRun.addBreak(BreakType.PAGE);
+					}
+					else if (FileNameUtils.getExtension(reference.getFilepath()).equals("jpeg") || FileNameUtils.getExtension(reference.getFilepath()).equals("jpg")) {
+						// NOTE: May have to add some sort of size restriction to the width and height parameters
+						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
+						refRun.addBreak(BreakType.PAGE);
+					}
+				}
+			    
+			} 
+			catch (IOException e) {
+				
+			}
+			
 		}
 		
 		// Write to file

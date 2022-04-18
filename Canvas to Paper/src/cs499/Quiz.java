@@ -123,6 +123,10 @@ public class Quiz implements Reference{
 		return this.questions;
 	}
 	
+	public ArrayList<ReferenceMaterial> getReferences() {
+		return this.references;
+	}
+	
 	private String metaJSON() {
 		LocalDateTime timestamp = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
