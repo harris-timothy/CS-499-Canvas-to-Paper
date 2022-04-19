@@ -219,7 +219,7 @@ public class SingleAnswerQuestion extends Question {
 				.values(id,
 						name,
 						description,
-						type.toString(),
+						type.getType(),
 						gradingInstructions,
 						AnswerFormatter.answerJSONString(answers),
 						DataHelper.boolToInt(abet),
@@ -231,7 +231,7 @@ public class SingleAnswerQuestion extends Question {
 				create.update(QUESTION)
 				.set(QUESTION.NAME, name)
 				.set(QUESTION.DESCRIPTION, description)
-				.set(QUESTION.TYPE, type.toString())
+				.set(QUESTION.TYPE, type.getType())
 				.set(QUESTION.ABET, DataHelper.boolToInt(abet))
 				.set(QUESTION.GRADING_INSTRUCTIONS, gradingInstructions)
 				.set(QUESTION.ANSWERS, AnswerFormatter.answerJSONString(answers))
@@ -265,5 +265,10 @@ public class SingleAnswerQuestion extends Question {
 			e.printStackTrace();
 		}
 		
+	}
+
+	@Override
+	public String getAnswer() {
+		return answers.toString();
 	}
 }

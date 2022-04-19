@@ -322,7 +322,7 @@ public class WordDocx
 				char choiceLetter = 'a';
 				for (String choice : choices) {
 					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
-					if (choice.equals(multiChoice.getAnswer())) {
+					if (choice.equals(multiChoice.getCorrectAnswer())) {
 						questionRun.setBold(true);
 						questionRun.setText(choiceLetter + ") " + choice + " - **CORRECT ANSWER**");
 						questionRun.setBold(false);

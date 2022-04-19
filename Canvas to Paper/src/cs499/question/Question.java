@@ -21,5 +21,7 @@ public abstract class Question implements Reference{
 	public abstract float getPoints();
 	
 	public abstract QuestionType getType();
+	
+	public abstract String getAnswer();
 
 }

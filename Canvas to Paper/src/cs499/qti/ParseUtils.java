@@ -90,8 +90,9 @@ public class ParseUtils {
 	 * Helper method to fix namespace and schema validation errors in Canvas provided manifest files
 	 * @param file
 	 */
-	public static void fixManifest(File file) {
+	public static void fixManifest(String filepath) {
 		try {
+			File file = new File(filepath);
 			String content = FileUtils.readFileToString(file, "UTF-8");
 			content = content.replaceAll("imsccv1p1//imscp_v1p1","imscp_v1p1");
 			content = content.replaceAll("imsmd:string", "imsmd:langstring");

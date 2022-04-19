@@ -41,7 +41,9 @@ public class EditQuizScreen {
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
         
         RecentItems recent = new RecentItems();
-        recent.addToRecent(quiz);
+        if(quiz != null) {
+        	recent.addToRecent(quiz);
+        }
         
         //Initialize the frame
         FrameBuilder maker = new FrameBuilder();
@@ -103,9 +105,9 @@ public class EditQuizScreen {
 		quiz_info_panel.add(save_btn);
 
         quizField.setText(quiz.getName());
-        courseField.setText(quiz.getCourse());
+        courseField.setText(quiz.getShortCourse());
         dateField.setText(quiz.getDate());
-        if (quiz.getInstructor() != null) instructorField.setText(quiz.getInstructor().getTitle() + quiz.getInstructor().getFname() + quiz.getInstructor().getLname());
+        if (quiz.getInstructor() != null) instructorField.setText(quiz.getInstructor().getName());
 
         quiz_info_panel.add(quizLabel);
         quiz_info_panel.add(quizField);

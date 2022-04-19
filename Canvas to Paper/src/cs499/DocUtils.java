@@ -208,7 +208,7 @@ public static XWPFDocument keyHeader(XWPFDocument doc, Quiz quiz) {
 	}
 	
 	public static String dateString(String date) {
-		if(date.isEmpty() || date.isBlank()) {
+		if(date == null || date.isEmpty() || date.isBlank()) {
 			return LocalDate.now().toString();
 		}
 		else {

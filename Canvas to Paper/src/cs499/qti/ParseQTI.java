@@ -107,8 +107,8 @@ public class ParseQTI {
         		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
         			  if(fileName.equals("imsmanifest.xml")) {
-        				  
         				  			  
+        				  ParseUtils.fixManifest(child.getPath());
         				  parseManifest(child.getPath());
         			  }
         			  else if(fileName.equals("assessment_meta.xml")) {
@@ -140,8 +140,6 @@ public class ParseQTI {
      */
     @SuppressWarnings("unchecked")
 	public void xmlParse(String filepath) throws JAXBException {
-    	
-    	System.out.println(filepath);
     	
     	JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
     	
@@ -437,7 +435,6 @@ public class ParseQTI {
 		JAXBContext jc = JAXBContext.newInstance("cs499.qti.package_mapping:cs499.qti.package_mapping.imsmd");
 		
 		File xmlFile = new File(filepath);
-		ParseUtils.fixManifest(xmlFile);
 		
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		

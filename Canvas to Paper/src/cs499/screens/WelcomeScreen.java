@@ -264,9 +264,9 @@ public class WelcomeScreen {
 			model.addRow(o);
 		}
 		recent_table.setModel(model);
-		recent_table.setRowHeight(100);
+		recent_table.setRowHeight(80);
 		JScrollPane table_pane = new JScrollPane(recent_table);
-		table_pane.setPreferredSize(new Dimension(75, 400));
+		table_pane.setPreferredSize(new Dimension(200, 425));
 
 		//Add elements to frame
 		constraints.fill = GridBagConstraints.BOTH;
@@ -332,6 +332,7 @@ public class WelcomeScreen {
 		
 		constraints.gridy = 3;
 		constraints.gridheight = 3;
+		constraints.fill = GridBagConstraints.NONE;
 		frame.add(table_pane, constraints);
 
 		//View the Welcome Screen frame
