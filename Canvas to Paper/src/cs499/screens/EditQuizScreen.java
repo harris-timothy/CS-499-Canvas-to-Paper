@@ -89,6 +89,19 @@ public class EditQuizScreen {
         this.instructorField = new JTextField();
         instructorField.setBounds(150,85,200,20);
         
+		//Create Back Button
+        JButton save_btn = new JButton("Save Changes");
+		class SaveAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				quiz.saveQuiz();
+				new SelectQuizScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
+			}
+		}
+		save_btn.addActionListener(new SaveAction());
+		save_btn.setBounds(485, 30, 200, 20);
+		quiz_info_panel.add(save_btn);
+
         quizField.setText(quiz.getName());
         courseField.setText(quiz.getCourse());
         dateField.setText(quiz.getDate());
