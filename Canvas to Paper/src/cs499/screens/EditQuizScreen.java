@@ -41,7 +41,7 @@ public class EditQuizScreen {
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
         
         RecentItems recent = new RecentItems();
-        if(quiz != null) {
+        if(quiz != null && quiz.getName() != null) {
         	recent.addToRecent(quiz);
         }
         
