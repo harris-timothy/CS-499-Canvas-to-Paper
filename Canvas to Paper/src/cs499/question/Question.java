@@ -1,6 +1,7 @@
 package cs499.question;
 
 import cs499.Reference;
+import cs499.ReferenceMaterial;
 
 public abstract class Question implements Reference{
 	
@@ -23,5 +24,7 @@ public abstract class Question implements Reference{
 	public abstract QuestionType getType();
 	
 	public abstract String getAnswer();
+	
+	public abstract ReferenceMaterial getReference();
 
 }

@@ -31,7 +31,7 @@ import cs499.qti.CreateQTI;
 import cs499.qti.ParseQTI;
 import cs499.Quiz;
 import cs499.RecentItems;
-import cs499.utils.DataUtils;
+import cs499.utils.DatabaseUtils;
 
 public class WelcomeScreen {
     public WelcomeScreen(){
@@ -120,7 +120,7 @@ public class WelcomeScreen {
 			public void actionPerformed(ActionEvent e) {
 				
 				//Obtain a list of all quizzes in the database
-				ArrayList<Quiz> quiz_list = DataUtils.getAllQuizzes();
+				ArrayList<Quiz> quiz_list = DatabaseUtils.getAllQuizzes();
 
 				//Create a modified list of these quizzes containing only the ones to export
 				ArrayList<Quiz> modified_quiz_list = new ArrayList<Quiz>();

@@ -17,7 +17,7 @@ import java.awt.GridBagConstraints;
 import cs499.Quiz;
 import cs499.WordDocx;
 import cs499.gui_utils.FrameBuilder;
-import cs499.utils.DataUtils;
+import cs499.utils.DatabaseUtils;
 
 public class GenerationSelectScreen {
     JFrame frame;
@@ -50,7 +50,7 @@ public class GenerationSelectScreen {
 		back_btn.addActionListener(new BackAction());
 
 		//Obtain a list of all quizzes in the database
-		ArrayList<Quiz> quiz_list = DataUtils.getAllQuizzes();
+		ArrayList<Quiz> quiz_list = DatabaseUtils.getAllQuizzes();
 
 		//Create a list of all quizzes
 		JPanel quiz_list_listing = new JPanel();
@@ -167,7 +167,7 @@ public class GenerationSelectScreen {
 			JButton delete_btn = new JButton("Delete");
 			class DeleteQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					DataUtils.deleteQuiz(quiz.getId());
+					DatabaseUtils.deleteQuiz(quiz.getId());
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					new SelectQuizScreen();
 				}
