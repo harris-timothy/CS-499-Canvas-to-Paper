@@ -1,5 +1,8 @@
 package cs499.question;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import cs499.Reference;
 
 public abstract class Question implements Reference{
@@ -21,5 +24,7 @@ public abstract class Question implements Reference{
 	public abstract float getPoints();
 	
 	public abstract QuestionType getType();
+	
+	public abstract void shuffleChoices();
 
 }

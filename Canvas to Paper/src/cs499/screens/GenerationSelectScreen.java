@@ -142,16 +142,9 @@ public class GenerationSelectScreen {
 					}
 					test_path = "Generated_Tests\\" + quiz.getName();
 					String test_fullpath = test_path + ".docx";
-					String key_fullpath = test_path + "_ANSWER_KEY.docx";
 					
 					try {
-						doc.DocumentBuilder(quiz, test_fullpath);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					
-					try {
-						doc.TestKeyBuilder(quiz, key_fullpath);
+						doc.Shuffler(quiz, test_fullpath);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
