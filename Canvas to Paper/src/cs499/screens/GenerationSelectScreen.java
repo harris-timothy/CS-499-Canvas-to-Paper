@@ -132,7 +132,6 @@ public class GenerationSelectScreen {
 			Quiz quiz = quiz_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					//TODO: Generate Paper Test from Quiz functionality
 					doc = new WordDocx();
 					
 					String test_string = quiz.getName();
@@ -147,11 +146,11 @@ public class GenerationSelectScreen {
 					try {
 						doc.Shuffler(quiz, test_fullpath);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+					new WelcomeScreen();
 				}
 			}
 			gen_btn.addActionListener(new SelectQuizAction());
