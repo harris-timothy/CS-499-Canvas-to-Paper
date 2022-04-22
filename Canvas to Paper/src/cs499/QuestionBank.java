@@ -193,5 +193,9 @@ public class QuestionBank {
 		}
 		
 	}
+	
+	public ArrayList<Question> getQuestions(){
+		return questions;
+	}
 
 }
