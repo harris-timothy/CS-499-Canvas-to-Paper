@@ -266,4 +266,10 @@ public class SingleAnswerQuestion extends Question {
 		}
 		
 	}
+
+	@Override
+	public void shuffleChoices() {
+		// TODO Auto-generated method stub
+		
+	}
 }
