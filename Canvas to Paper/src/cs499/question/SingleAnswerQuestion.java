@@ -268,6 +268,10 @@ public class SingleAnswerQuestion extends Question {
 	}
 
 	@Override
+
+	public void shuffleChoices() {
+		// TODO Auto-generated method stub
+		
 	public String getAnswer() {
 		return answers.toString();
 	}
