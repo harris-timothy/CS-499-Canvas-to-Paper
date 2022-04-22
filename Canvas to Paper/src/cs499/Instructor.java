@@ -14,6 +14,9 @@ import cs499.utils.DataHelper;
 
 public class Instructor {
 	
+	//TODO populate instructor info from gui
+	//instructor info screen
+	
 	private String fname;
 	
 	private String lname;
@@ -27,6 +30,10 @@ public class Instructor {
 	public Instructor(int id) {
 		this.id = id;
 		loadInstructor();
+	}
+	
+	public String getName() {
+		return title + " " + lname;
 	}
 
 	public String getFname() {

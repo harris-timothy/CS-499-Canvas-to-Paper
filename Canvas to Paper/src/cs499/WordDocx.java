@@ -39,7 +39,7 @@ public class WordDocx
 	private void DocumentBuilder(Quiz quiz, String filepath) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = new XWPFDocument();
+		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -51,10 +51,11 @@ public class WordDocx
 		// quiz.shuffleQuestions();
 		ArrayList<Question> questionList = quiz.getQuestions();
 		
+		DocUtils.header(document, quiz);
+		DocUtils.numberedFooter(document);
+		
 		// TODO:
 		// For doc generation:
-		// Header generation - Test Name, Teacher Name, Test Points
-		// Page numbers
 		// Templates
 		
 		// Display Test Points
@@ -273,7 +274,7 @@ public class WordDocx
 	private void TestKeyBuilder(Quiz quiz, String filepath) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = new XWPFDocument();
+		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -283,6 +284,9 @@ public class WordDocx
 		FileOutputStream out = new FileOutputStream(newFile);
 		
 		ArrayList<Question> questionList = quiz.getQuestions();
+		
+		DocUtils.keyHeader(document, quiz);
+		DocUtils.numberedFooter(document);
 
 		// Display Test Points (and also Test Key marker for now)
 		// TODO: Change to full header functionality
@@ -324,7 +328,7 @@ public class WordDocx
 				char choiceLetter = 'a';
 				for (String choice : choices) {
 					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
-					if (choice.equals(multiChoice.getAnswer())) {
+					if (choice.equals(multiChoice.getCorrectAnswer())) {
 						questionRun.setBold(true);
 						questionRun.setText(choiceLetter + ") " + choice + " - **CORRECT ANSWER**");
 						questionRun.setBold(false);

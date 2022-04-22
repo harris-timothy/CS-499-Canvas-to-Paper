@@ -48,7 +48,7 @@ public class MultipleChoiceQuestion extends Question {
 		
 	}
 
-	public String getAnswer() {
+	public String getCorrectAnswer() {
 		return answer;
 	}
 
@@ -202,7 +202,7 @@ public class MultipleChoiceQuestion extends Question {
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
 				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
 				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
-				setType(valueOfType(result.getValue(QUESTION.TYPE)));
+				setType(QuestionType.valueOfType(result.getValue(QUESTION.TYPE)));
 				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
 
 			}
@@ -290,6 +290,10 @@ public class MultipleChoiceQuestion extends Question {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public String getAnswer() {
+		return "Correct: " + answer + " Choices: " + choices.toString();
 	}
 
 

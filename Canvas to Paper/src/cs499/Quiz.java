@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
@@ -30,6 +31,8 @@ public class Quiz implements Reference{
 	private Instructor instructor;
 	
 	private String course;
+	
+	private String shortCourse;
 	
 	private String description;
 	
@@ -82,6 +85,7 @@ public class Quiz implements Reference{
 	
 	public void setCourse(String course) { // Different table
 		this.course = course;
+		setShortCourse();
 	}
 	
 	public String getDescription() {
@@ -269,6 +273,8 @@ public class Quiz implements Reference{
 			}			
 			
 			setCourse(courseName);
+			setShortCourse();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -317,7 +323,15 @@ public class Quiz implements Reference{
 			e.printStackTrace();
 		}
 		
-	}	
+	}
+	
+	private void setShortCourse() {
+		this.shortCourse = StringUtils.substringBetween(course, "(",")");
+	}
+	
+	public String getShortCourse() {
+		return this.shortCourse;
+	}
 
 	
 }

@@ -289,6 +289,11 @@ public class MatchingQuestion extends Question {
 		}
 		
 	}
+
+	@Override
+	public String getAnswer() {
+		return right.toString();
+	}
 	
 
 }
