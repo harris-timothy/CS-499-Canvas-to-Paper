@@ -29,6 +29,8 @@ public class QuestionGroup {
 	
 	private QuestionBank bank;
 	
+	private String description;
+	
 	public QuestionGroup() {
 		newGroup();
 	}
@@ -142,6 +144,14 @@ public class QuestionGroup {
 
 	public void setBank(int bankId) {
 		this.bank = new QuestionBank(bankId);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

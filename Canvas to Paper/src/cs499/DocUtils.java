@@ -14,19 +14,24 @@ import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
+import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFStyle;
+import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
 
 import cs499.question.MatchingQuestion;
 import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
+import cs499.question.QuestionType;
 import cs499.utils.DataHelper;
 
 public class DocUtils {
@@ -34,7 +39,10 @@ public class DocUtils {
 	private static final String POINTS = "{POINTS}";
 
 	private static final String DESCRIPTION = "{DESCRIPTION}";
+	
+	private static CTStyles templateStyles;
 
+	private static final int FIRST = 0;
 	/**
 	 * Generates header for test document
 	 * @param doc
@@ -205,6 +213,9 @@ public class DocUtils {
 
 			FileOutputStream outstream = new FileOutputStream(destDoc);
 			XWPFDocument dest = new XWPFDocument();
+			
+			templateStyles = source.getStyle();
+			dest.createStyles().setStyles(templateStyles);
 
 			List<XWPFParagraph> paraList = source.getParagraphs();
 			parbreak:
@@ -261,6 +272,13 @@ public class DocUtils {
 	public static XWPFDocument trueFalseSection(XWPFDocument doc, List<MultipleChoiceQuestion> tfList, int startingNumber) {
 		
 		//TODO points, section description
+		float points = 0;
+		XWPFParagraph par = doc.createParagraph();
+		XWPFRun run = par.createRun();
+		for(MultipleChoiceQuestion mult: tfList) {
+			points += mult.getPoints();
+		}
+		run.setText("Each question is worth " + DataHelper.numToString(points / tfList.size()) + " points.");
 		
 		XWPFTable tfTable = doc.createTable(tfList.size(),4);
 		tfTable.removeBorders();
@@ -272,6 +290,31 @@ public class DocUtils {
 			row.getCell(1).setText("T");
 			row.getCell(2).setText("F");
 			row.getCell(3).setText(tfList.get(i).getDescription());
+			startingNumber++;
+		}
+		return doc;
+	}
+	
+public static XWPFDocument trueFalseSection(XWPFDocument doc, QuestionGroup group, int startingNumber) {
+		
+		XWPFParagraph par = doc.createParagraph();
+		XWPFRun run = par.createRun();
+		run.setText(group.getDescription());
+		run.addCarriageReturn();
+		XWPFRun pointsRun = par.createRun();
+		pointsRun.setText(DataHelper.numToString(group.getPoints()) + " points");
+		//TODO points, section description
+		
+		XWPFTable tfTable = doc.createTable(group.getQuestions().size(),4);
+		tfTable.removeBorders();
+		tfTable.setWidth("100%");
+		
+		for(int i = 0; i < group.getQuestions().size(); i++) {
+			XWPFTableRow row = tfTable.getRow(i);
+			row.getCell(0).setText(Integer.toString(startingNumber));
+			row.getCell(1).setText("T");
+			row.getCell(2).setText("F");
+			row.getCell(3).setText(group.getQuestions().get(i).getDescription());
 			startingNumber++;
 		}
 		return doc;
@@ -298,17 +341,51 @@ public class DocUtils {
 	}
 	
 	public static XWPFDocument multipleChoiceSection(XWPFDocument doc, Quiz quiz, int startingNumber) {
-		return null;
+		ArrayList<MultipleChoiceQuestion> multipleChoiceList = new ArrayList<MultipleChoiceQuestion>();
+		for(Question q:quiz.getQuestions()) {
+			if(q.getType().equals(QuestionType.MULTIPLE_CHOICE)) {
+				multipleChoiceList.add((MultipleChoiceQuestion) q);
+			}
+		}
+		for(MultipleChoiceQuestion mult:multipleChoiceList) {
+			XWPFParagraph par = doc.createParagraph();
+			XWPFRun run1 = par.createRun();
+			run1.setText(Integer.toString(startingNumber) + ".)");
+			run1.addTab();
+			XWPFRun run2 = par.createRun();
+			run2.setText(mult.getDescription());
+			run2.addCarriageReturn();
+			char lettering = 'a';
+			for(String choice:mult.getChoices()) {
+				XWPFRun numRun = par.createRun();
+				numRun.addTab();
+				numRun.setText(Character.toString(lettering) + ".) ");
+				XWPFRun choiceRun = par.createRun();
+				choiceRun.setText(choice);				
+				lettering++;
+			}
+			startingNumber++;
+		}
+				
+		return doc;
 	}
 	
 	public static XWPFDocument insertQuizReference(XWPFDocument doc, Quiz quiz) {
-		
+		//TODO implement
+		//get images
+		//insert
+		//this should be the last page of the document		
 		quiz.getReferences();
 		return doc;
 	}
 	
 	public static XWPFDocument insertQuestionReference(XWPFDocument doc, Question question) {
 		
+		//TODO maybe change to paragraph?
+		//get image
+		//insert before question description
+		//how to handle reference that applies to multiple questions?
+		//unclear
 		question.getReference();
 		return null;
 	}
