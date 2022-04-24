@@ -34,12 +34,11 @@ public class FileExplorer {
 	public String DirectorySelect() {
 		JFileChooser browser = new JFileChooser();
 		browser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(".zip", "zip");
-		browser.setFileFilter(filter);
-		int option_selection = browser.showOpenDialog(new JFrame());
+		browser.setDialogTitle("Please select the directory to create the file within.");
+		int option_selection = browser.showDialog(new JFrame(), "Select");
 		switch (option_selection){
 			case JFileChooser.APPROVE_OPTION:
-				return browser.getSelectedFile().getName();
+				return browser.getSelectedFile().getAbsolutePath();
 			case JFileChooser.CANCEL_OPTION:
 				return "Blank";
 			case JFileChooser.ERROR_OPTION:

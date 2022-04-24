@@ -130,7 +130,14 @@ public class WelcomeScreen {
 					public void actionPerformed(ActionEvent e) {
 						CreateQTI qti_maker = new CreateQTI();
 						try {
-							String export_directory_path = "Exports/" + System.currentTimeMillis();
+							String export_directory_path = explorer.DirectorySelect();
+							while (export_directory_path == "Error") {
+								export_directory_path = explorer.DirectorySelect();
+							}
+							if (export_directory_path == "Blank") {
+								export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+								return;
+							}
 							if (modified_quiz_list.size() != 0) qti_maker.createPackage(modified_quiz_list, export_directory_path);
 						} catch (Exception ex) {
 							System.out.println(ex);
