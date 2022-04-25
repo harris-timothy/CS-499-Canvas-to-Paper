@@ -3,7 +3,6 @@ package cs499.gui_utils;
 import java.awt.FileDialog;
 import java.io.File;
 import javax.swing.JFrame;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 
 public class FileExplorer {

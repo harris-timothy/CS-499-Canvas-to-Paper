@@ -1,7 +1,5 @@
 package cs499.screens;
 
-
-import javax.swing.JFormattedTextField;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,19 +10,16 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
+import java.util.ArrayList;
+
 import cs499.QuestionBank;
-import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
-import cs499.RecentItems;
 
 public class EditBankScreen {
     private JFrame frame;
@@ -63,7 +58,7 @@ public class EditBankScreen {
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				bank.saveBank();
-				new SelectBankScreen();
+				new WelcomeScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
 			}
 		}
