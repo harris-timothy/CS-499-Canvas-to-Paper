@@ -131,6 +131,7 @@ public class QuestionGroup {
 	}
 	
 	public void pullFromBank() {
+		questions.clear();
 		ArrayList<Question> bankQuestions = bank.getQuestions();
 		Collections.shuffle(bankQuestions);
 		for(int i = 0; i < count; i++) {

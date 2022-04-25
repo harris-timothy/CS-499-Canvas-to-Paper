@@ -4,6 +4,8 @@ import static cs499.data_classes.Tables.QUIZ;
 import static cs499.data_classes.Tables.QUESTION_BANK;
 import static cs499.data_classes.Tables.QUIZ_TO_QUESTION;
 import static cs499.data_classes.Tables.QUIZ_REFERENCE;
+import static cs499.data_classes.Tables.QUESTION_BANK_QUESTION;
+import static cs499.data_classes.Tables.QUESTION_GROUP;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,6 +18,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
 import cs499.QuestionBank;
+import cs499.QuestionGroup;
 import cs499.Quiz;
 import cs499.QuizBuilder;
 import cs499.question.Question;
@@ -146,12 +149,89 @@ public class DatabaseUtils {
 		
 	}
 	
-	public static ArrayList<Question> getGroupQuestions(){
-		return null;
+	public static void deleteBank(int bankId) {
+		
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.delete(QUESTION_BANK_QUESTION).where(QUESTION_BANK_QUESTION.QUESTION_BANK_ID.eq(bankId)).execute();
+			
+			create.update(QUESTION_GROUP).set(QUESTION_GROUP.QUESTION_BANK_ID, 0).where(QUESTION_GROUP.QUESTION_BANK_ID.eq(bankId)).execute();
+			
+			create.delete(QUESTION_BANK).where(QUESTION_BANK.ID.eq(bankId)).execute();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static ArrayList<QuestionGroup> getQuestionGroups(int quizId){
+		ArrayList<QuestionGroup> groupList = new ArrayList<QuestionGroup>();
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Result<Record> result = create.select().from(QUESTION_GROUP).where(QUESTION_GROUP.QUIZ_ID.eq(quizId)).fetch();
+			
+			for(Record r: result) {
+				groupList.add(new QuestionGroup(r.getValue(QUESTION_GROUP.ID)));
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		return groupList;
+	}
+	
+	public static ArrayList<QuestionGroup> getQuestionGroups(Quiz quiz){
+		ArrayList<QuestionGroup> groupList = new ArrayList<QuestionGroup>();
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Result<Record> result = create.select().from(QUESTION_GROUP).where(QUESTION_GROUP.QUIZ_ID.eq(quiz.getId())).fetch();
+			
+			for(Record r: result) {
+				groupList.add(new QuestionGroup(r.getValue(QUESTION_GROUP.ID)));
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		return groupList;
 	}
 	
 	public static ArrayList<Integer> getQuestionGroupIds(Quiz quiz){
-		return null;
+		ArrayList<Integer> idList = new ArrayList<Integer>();
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Result<Record> result = create.select().from(QUESTION_GROUP).where(QUESTION_GROUP.QUIZ_ID.eq(quiz.getId())).fetch();
+			
+			for(Record r: result) {
+				idList.add(r.getValue(QUESTION_GROUP.ID));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+	}
+		return idList;
+	}
+	
+	public static ArrayList<Integer> getQuestionGroupIds(int quizId){
+		ArrayList<Integer> idList = new ArrayList<Integer>();
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			Result<Record> result = create.select().from(QUESTION_GROUP).where(QUESTION_GROUP.QUIZ_ID.eq(quizId)).fetch();
+			
+			for(Record r: result) {
+				idList.add(r.getValue(QUESTION_GROUP.ID));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+	}
+		return idList;
 	}
 
 }
