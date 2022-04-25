@@ -233,14 +233,24 @@ public class WelcomeScreen {
 		gen_mi.addActionListener(new GenerationSelectAction());
 
 		//Edit -> Select Quiz
-		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
-		class SelectAction implements ActionListener {
+		JMenuItem select_quiz_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
+		class SelectQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				new SelectQuizScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
-		select_mi.addActionListener(new SelectAction());
+		select_quiz_mi.addActionListener(new SelectQuizAction());
+
+		//Edit -> Select Quiz Bank
+		JMenuItem select_bank_mi = menu.buildMenuItem("Select Quiz Bank", KeyEvent.VK_S, edit_menu);
+		class SelectBankAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new SelectBankScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		select_bank_mi.addActionListener(new SelectBankAction());
 
 		//Create Import QTI File Button
 		JButton import_btn = new JButton("Import QTI Files");

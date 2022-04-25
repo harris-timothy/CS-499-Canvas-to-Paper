@@ -20,30 +20,20 @@ import java.text.SimpleDateFormat;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
+import cs499.QuestionBank;
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
 import cs499.RecentItems;
 
-public class EditQuizScreen {
+public class EditBankScreen {
     private JFrame frame;
-    private JLabel quizLabel;
-    private JTextField quizField;
-    private JLabel courseLabel;
-    private JTextField courseField;
-    private JLabel dateLabel;
-    private JFormattedTextField dateField;
-    private JLabel instructorLabel;
-    private JTextField instructorField;
+    private JLabel bankLabel;
+    private JTextField bankField;
     
-    public EditQuizScreen(Quiz quiz){
+    public EditBankScreen(QuestionBank bank){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
-        
-        RecentItems recent = new RecentItems();
-        if(quiz != null && quiz.getName() != null) {
-        	recent.addToRecent(quiz);
-        }
         
         //Initialize the frame
         FrameBuilder maker = new FrameBuilder();
@@ -57,66 +47,34 @@ public class EditQuizScreen {
         frame.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         
-        JPanel quiz_info_panel = new JPanel();
+        JPanel bank_info_panel = new JPanel();
       
-        quiz_info_panel.setLayout(null);
+        bank_info_panel.setLayout(null);
         
-        this.quizLabel = new JLabel();
-        quizLabel.setText("Quiz Name");
-        quizLabel.setBounds(10,0,100,30);
+        this.bankLabel = new JLabel();
+        bankLabel.setText("Quiz Bank Name");
+        bankLabel.setBounds(10,0,100,30);
         
-        this.quizField = new JTextField();
-        quizField.setBounds(10, 30, 325, 20);
-        
-        this.courseLabel = new JLabel();
-        courseLabel.setText("Course Number");
-        courseLabel.setBounds(350,0,100,30);
-        
-        this.courseField = new JTextField();
-        courseField.setBounds(350, 30, 120, 20);
-        
-        this.dateLabel = new JLabel();
-        dateLabel.setText("Date (MM/DD/YYYY)");
-        dateLabel.setBounds(10, 55, 150, 30);
-        
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        this.dateField = new JFormattedTextField(dateFormat);
-        dateField.setHorizontalAlignment(JTextField.RIGHT);
-        dateField.setBounds(10, 85, 125, 20);
-        
-        this.instructorLabel = new JLabel();
-        instructorLabel.setText("Instructor");
-        instructorLabel.setBounds(150,55,150,30);
-        
-        this.instructorField = new JTextField();
-        instructorField.setBounds(150,85,200,20);
+        this.bankField = new JTextField();
+        bankField.setBounds(10, 30, 325, 20);
         
 		//Create Back Button
         JButton save_btn = new JButton("Save Changes");
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				quiz.saveQuiz();
-				new SelectQuizScreen();
+				bank.saveBank();
+				new SelectBankScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
 			}
 		}
 		save_btn.addActionListener(new SaveAction());
 		save_btn.setBounds(485, 30, 200, 20);
-		quiz_info_panel.add(save_btn);
+		bank_info_panel.add(save_btn);
 
-        quizField.setText(quiz.getName());
-        courseField.setText(quiz.getShortCourse());
-        dateField.setText(quiz.getDate());
-        if (quiz.getInstructor() != null) instructorField.setText(quiz.getInstructor().getName());
-
-        quiz_info_panel.add(quizLabel);
-        quiz_info_panel.add(quizField);
-        quiz_info_panel.add(courseLabel);
-        quiz_info_panel.add(courseField);
-        quiz_info_panel.add(dateLabel);
-        quiz_info_panel.add(dateField);
-        quiz_info_panel.add(instructorLabel);
-        quiz_info_panel.add(instructorField);
+        bankField.setText(bank.getName());
+        
+        bank_info_panel.add(bankLabel);
+        bank_info_panel.add(bankField);
         
         JPanel questions_panel = new JPanel();
         questions_panel.setLayout(new GridBagLayout());
@@ -160,7 +118,6 @@ public class EditQuizScreen {
 		del_panel.setLayout(new GridBagLayout());
 		GridBagConstraints del_panel_constraints = new GridBagConstraints();
 		del_panel_constraints.anchor = GridBagConstraints.WEST;
-        
 		
 		// Element 1: Edit Button
 		edit_panel_constraints.gridx = 0;
@@ -207,7 +164,7 @@ public class EditQuizScreen {
 		questions_panel_constraints.gridx = 3;
 		questions_panel.add(del_panel, questions_panel_constraints);
 
-        ArrayList<Question> question_list = quiz.getQuestions();
+        ArrayList<Question> question_list = bank.getQuestions();
 
 		for (int i = 0; i < question_list.size(); i++){
 			JButton edit_btn = new JButton("Edit");
@@ -223,9 +180,9 @@ public class EditQuizScreen {
 			JButton delete_btn = new JButton("Delete");
 			class DeleteQuestionAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					quiz.removeQuestion(question);
+					bank.removeQuestion(question);
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					new EditQuizScreen(quiz);
+					new EditBankScreen(bank);
 				}
 			}
 			delete_btn.addActionListener(new DeleteQuestionAction());
@@ -262,7 +219,7 @@ public class EditQuizScreen {
                 
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				//TODO: Once new question is passed to EditQuestionScreen(), remove the following line:
-                new EditQuizScreen(quiz);
+                new EditBankScreen(bank);
 			}
 		}
 		create_question_btn.addActionListener(new CreateQuestionAction());
@@ -301,8 +258,8 @@ public class EditQuizScreen {
 		constraints.gridx = 0;
 		constraints.weightx = 1;
 		constraints.gridy = 0;
-		constraints.weighty = 1;
-		frame.add(quiz_info_panel, constraints);
+		constraints.weighty = 0.5;
+		frame.add(bank_info_panel, constraints);
 
         constraints.gridx = 0;
 		constraints.weightx = 1;
