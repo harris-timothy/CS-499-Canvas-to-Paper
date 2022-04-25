@@ -3,6 +3,7 @@ package cs499.gui_utils;
 import java.awt.FileDialog;
 import java.io.File;
 import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 
 public class FileExplorer {
     /**
@@ -23,6 +24,26 @@ public class FileExplorer {
 			}
 		} catch (Exception e) {
 			return "Error";
+		}
+	}
+	/**
+	 * Opens a file explorer frame to cause the user to select a directory
+	 * @return The directory path that the user selected; "Blank" if no selection; "Error" if error;
+	 */
+	public String DirectorySelect() {
+		JFileChooser browser = new JFileChooser();
+		browser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		browser.setDialogTitle("Please select the directory to create the file within.");
+		int option_selection = browser.showDialog(new JFrame(), "Select");
+		switch (option_selection){
+			case JFileChooser.APPROVE_OPTION:
+				return browser.getSelectedFile().getAbsolutePath();
+			case JFileChooser.CANCEL_OPTION:
+				return "Blank";
+			case JFileChooser.ERROR_OPTION:
+				return "Error";
+			default:
+				return "Blank";
 		}
 	}
 	/**

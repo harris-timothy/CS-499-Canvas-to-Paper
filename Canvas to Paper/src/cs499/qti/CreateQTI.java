@@ -200,7 +200,6 @@ public class CreateQTI {
 			if(q.getType() == QuestionType.ESSAY) {
 				ItemfeedbackType feedback = createItemFeedback((SingleAnswerQuestion)q,factory);
 				item.getItemfeedback().add(feedback);
-				System.out.println("feedback created");
 			}
 
 		}
@@ -492,7 +491,6 @@ public class CreateQTI {
 		else {
 			Float pointsPerAnswer = (float) (100.0 / answerList.size());
 			for(HashMap<String,String> map: answerList) {
-				System.out.println(map);
 				RespconditionType respcondition = factory.createRespconditionType();
 				respList.add(respcondition);
 
@@ -582,7 +580,7 @@ public class CreateQTI {
 				HashMap<String,String> map = new HashMap<String,String>();
 				map.put("response_text", s);
 				map.put("response_ident", answerIdSource.get(FIRST).toString());
-				if(s.equals(((MultipleChoiceQuestion)question).getAnswer())) {
+				if(s.equals(((MultipleChoiceQuestion)question).getCorrectAnswer())) {
 					map.put("correct", "true");
 				}
 				else {

@@ -9,8 +9,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -19,14 +22,17 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
 import cs499.gui_utils.MenuBuilder;
 import cs499.qti.CreateQTI;
 import cs499.qti.ParseQTI;
+import cs499.QuestionBank;
 import cs499.Quiz;
-import cs499.utils.DataUtils;
+import cs499.RecentItems;
+import cs499.utils.DatabaseUtils;
 
 public class WelcomeScreen {
     public WelcomeScreen(){
@@ -115,7 +121,7 @@ public class WelcomeScreen {
 			public void actionPerformed(ActionEvent e) {
 				
 				//Obtain a list of all quizzes in the database
-				ArrayList<Quiz> quiz_list = DataUtils.getAllQuizzes();
+				ArrayList<Quiz> quiz_list = DatabaseUtils.getAllQuizzes();
 
 				//Create a modified list of these quizzes containing only the ones to export
 				ArrayList<Quiz> modified_quiz_list = new ArrayList<Quiz>();
@@ -125,7 +131,14 @@ public class WelcomeScreen {
 					public void actionPerformed(ActionEvent e) {
 						CreateQTI qti_maker = new CreateQTI();
 						try {
-							String export_directory_path = "Exports/" + System.currentTimeMillis();
+							String export_directory_path = explorer.DirectorySelect();
+							while (export_directory_path == "Error") {
+								export_directory_path = explorer.DirectorySelect();
+							}
+							if (export_directory_path == "Blank") {
+								export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+								return;
+							}
 							if (modified_quiz_list.size() != 0) qti_maker.createPackage(modified_quiz_list, export_directory_path);
 						} catch (Exception ex) {
 							System.out.println(ex);
@@ -206,9 +219,6 @@ public class WelcomeScreen {
 			}
 		}
 		export_mi.addActionListener(new ExportAction());
-
-		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
-		menu_bar.add(edit_menu);
 		
 		//File -> Generate Test From Quiz
 		JMenuItem gen_mi = menu.buildMenuItem("Generate Test from Quiz", KeyEvent.VK_G, file_menu);
@@ -219,27 +229,35 @@ public class WelcomeScreen {
 			}
 		}
 		gen_mi.addActionListener(new GenerationSelectAction());
-
+		
+		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
+		menu_bar.add(edit_menu);
+		
 		//Edit -> Select Quiz
-		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
-		class SelectAction implements ActionListener {
+		JMenuItem select_quiz_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
+		class SelectQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				new SelectQuizScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
-		select_mi.addActionListener(new SelectAction());
+		select_quiz_mi.addActionListener(new SelectQuizAction());
+		
+		//Edit -> Select Quiz Bank
+		JMenuItem select_bank_mi = menu.buildMenuItem("Select Quiz Bank", KeyEvent.VK_S, edit_menu);
+		class SelectBankAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new SelectBankScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		select_bank_mi.addActionListener(new SelectBankAction());
+		
+		JMenu create_menu = menu.buildMenu("Create", KeyEvent.VK_C);
+		menu_bar.add(create_menu);
 
-		//Create Import QTI File Button
-		JButton import_btn = new JButton("Import QTI Files");
-		import_btn.addActionListener(new ImportAction());
-
-		//Create Export QTI File Button
-		JButton export_btn = new JButton("Export QTI File");
-		export_btn.addActionListener(new ExportAction());
-
-		//Create Create New Test Button
-		JButton create_quiz_btn = new JButton("Create New Test");
+		//Create -> Create Quiz
+		JMenuItem create_quiz_mi = menu.buildMenuItem("Create Quiz", KeyEvent.VK_Q, create_menu);
 		class CreateQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Quiz new_quiz = new Quiz();
@@ -247,7 +265,44 @@ public class WelcomeScreen {
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
+		create_quiz_mi.addActionListener(new CreateQuizAction());
+
+		//Create -> Create Quiz Bank
+		JMenuItem create_bank_mi = menu.buildMenuItem("Create Quiz Bank", KeyEvent.VK_B, create_menu);
+		class CreateBankAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				QuestionBank new_bank = new QuestionBank();
+				new EditBankScreen(new_bank);
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		create_bank_mi.addActionListener(new CreateBankAction());
+
+		//Create Import QTI File Button
+		JButton import_btn = new JButton("Import QTI Files");
+		import_btn.addActionListener(new ImportAction());
+		
+		//Create Export QTI File Button
+		JButton export_btn = new JButton("Export QTI File");
+		export_btn.addActionListener(new ExportAction());
+
+		//Create Create New Test Button
+		JButton create_quiz_btn = new JButton("Create New Test");
 		create_quiz_btn.addActionListener(new CreateQuizAction());
+		
+		RecentItems recent = new RecentItems();
+		JTable recent_table = new JTable();
+		Object[] columns = {" "};
+		DefaultTableModel model = new DefaultTableModel(new Object[0][0],columns);
+		for(HashMap<String,String> map: recent.getRecentQuizzes()) {
+			Object[] o = new Object[1];
+			o[0] = map.get("quiz_name");
+			model.addRow(o);
+		}
+		recent_table.setModel(model);
+		recent_table.setRowHeight(80);
+		JScrollPane table_pane = new JScrollPane(recent_table);
+		table_pane.setPreferredSize(new Dimension(200, 425));
 
 		//Add elements to frame
 		constraints.fill = GridBagConstraints.BOTH;
@@ -309,7 +364,12 @@ public class WelcomeScreen {
 
 		//TODO: Add document information
 		constraints.gridy = 2;
-		frame.add(new JLabel("Recent Documents:"), constraints);
+		frame.add(new JLabel("Recent Tests:"), constraints);
+		
+		constraints.gridy = 3;
+		constraints.gridheight = 3;
+		constraints.fill = GridBagConstraints.NONE;
+		frame.add(table_pane, constraints);
 
 		//View the Welcome Screen frame
 		frame.setVisible(true);

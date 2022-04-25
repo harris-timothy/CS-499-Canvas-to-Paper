@@ -6,11 +6,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
@@ -31,6 +34,8 @@ public class Quiz implements Reference{
 	
 	private String course;
 	
+	private String shortCourse;
+	
 	private String description;
 	
 	private float pointsPossible;
@@ -38,6 +43,8 @@ public class Quiz implements Reference{
 	private ArrayList<Question> questions = new ArrayList<Question>();
 	
 	private ArrayList<ReferenceMaterial> references;
+	
+	private ArrayList<QuestionGroup> groups = new ArrayList<QuestionGroup>();
 	
 	public Quiz() {
 		newQuiz();
@@ -82,6 +89,7 @@ public class Quiz implements Reference{
 	
 	public void setCourse(String course) { // Different table
 		this.course = course;
+		setShortCourse();
 	}
 	
 	public String getDescription() {
@@ -113,6 +121,10 @@ public class Quiz implements Reference{
 	
 	public void shuffleQuestions() {
 		Collections.shuffle(questions);
+	}
+	
+	public void sortQuestionsByType() {
+		questions.sort(Comparator.comparing(Question::getType));
 	}
 	
 	public ArrayList<Question> getQuestions() {
@@ -269,6 +281,8 @@ public class Quiz implements Reference{
 			}			
 			
 			setCourse(courseName);
+			setShortCourse();
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -317,7 +331,56 @@ public class Quiz implements Reference{
 			e.printStackTrace();
 		}
 		
-	}	
+	}
+	
+	private void setShortCourse() {
+		this.shortCourse = StringUtils.substringBetween(course, "(",")");
+	}
+	
+	public String getShortCourse() {
+		return this.shortCourse;
+	}
+	
+	public void loadQuestionGroups() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
+			Result<Record> result = create.select()
+					.from(QUESTION_GROUP)
+					.where(QUESTION_GROUP.QUIZ_ID.eq(id))
+					.fetch();
+			
+			for(Record r: result) {
+				groups.add(new QuestionGroup(r.getValue(QUESTION_GROUP.ID)));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public ArrayList<QuestionGroup> getQuestionGroups(){
+		return groups;
+	}
+	
+	public void createGroup(int bankId) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
+
+			int groupId = create.insertInto(QUESTION_GROUP,
+						QUESTION_GROUP.QUIZ_ID,
+						QUESTION_GROUP.QUESTION_BANK_ID)
+					.values(id,
+							bankId)
+					.returning(QUESTION_GROUP.ID)
+					.fetchOne(QUESTION_GROUP.ID);
+			
+			groups.add(new QuestionGroup(groupId));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

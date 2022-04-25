@@ -15,13 +15,14 @@ import java.awt.Insets;
 
 import java.util.ArrayList;
 
+import cs499.QuestionBank;
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.utils.DatabaseUtils;
 
-public class SelectQuizScreen {
+public class SelectBankScreen {
     private JFrame frame;
-    public SelectQuizScreen(){
+    public SelectBankScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
 
@@ -48,13 +49,13 @@ public class SelectQuizScreen {
 		}
 		back_btn.addActionListener(new BackAction());
 
-		//Obtain a list of all quizzes in the database
-		ArrayList<Quiz> quiz_list = DatabaseUtils.getAllQuizzes();
+		//Obtain a list of all banks in the database
+		ArrayList<QuestionBank> bank_list = DatabaseUtils.getAllBanks();
 
-		//Create a list of all quizzes
-		JPanel quiz_list_listing = new JPanel();
-		quiz_list_listing.setLayout(new GridBagLayout());
-		GridBagConstraints quiz_list_list_constraints = new GridBagConstraints();
+		//Create a list of all banks
+		JPanel bank_list_listing = new JPanel();
+		bank_list_listing.setLayout(new GridBagLayout());
+		GridBagConstraints bank_list_list_constraints = new GridBagConstraints();
 		
 		//Create JPanel for storing Edit Buttons
 		JPanel edit_panel = new JPanel();
@@ -67,12 +68,6 @@ public class SelectQuizScreen {
 		name_panel.setLayout(new GridBagLayout());
 		GridBagConstraints name_panel_constraints = new GridBagConstraints();
 		name_panel_constraints.anchor = GridBagConstraints.WEST;
-		
-		//Create JPanel for storing Course info
-		JPanel course_panel = new JPanel();
-		course_panel.setLayout(new GridBagLayout());
-		GridBagConstraints course_panel_constraints = new GridBagConstraints();
-		course_panel_constraints.anchor = GridBagConstraints.WEST;
 		
 		//Create JPanel for storing Delete Buttons
 		JPanel del_panel = new JPanel();
@@ -90,23 +85,15 @@ public class SelectQuizScreen {
 		edit_panel_constraints.weighty = 1;
 		edit_panel.add(back_btn, edit_panel_constraints);
 		
-		// Element 2: Quiz Name
+		// Element 2: Bank Name
 		name_panel_constraints.gridx = 0;
 		name_panel_constraints.gridy = 0;
 		name_panel_constraints.weightx = 1;
 		name_panel_constraints.weighty = 1;
 		name_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
-		name_panel.add(new JLabel("Quiz Name"), name_panel_constraints);
+		name_panel.add(new JLabel("Bank Name"), name_panel_constraints);
 
-		// Element 3: Course Number
-		course_panel_constraints.gridx = 0;
-		course_panel_constraints.gridy = 0;
-		course_panel_constraints.weightx = 1;
-		course_panel_constraints.weighty = 1;
-		course_panel_constraints.insets = new Insets(inset_size, 25, inset_size, 0);
-		course_panel.add(new JLabel("Course Section"), course_panel_constraints);
-		
-		// Element 4: Delete Button
+		// Element 3: Delete Button
 		del_panel_constraints.gridx = 0;
 		del_panel_constraints.gridy = 0;
 		del_panel_constraints.weightx = 1;
@@ -116,36 +103,34 @@ public class SelectQuizScreen {
 		del_panel_constraints.insets = new Insets(0, 0, 0, 0);
 
 		//Add elements to listing
-		quiz_list_list_constraints.gridx = 0;
-		quiz_list_list_constraints.gridy = 0;
-		quiz_list_listing.add(edit_panel, quiz_list_list_constraints);
-		quiz_list_list_constraints.gridx = 1;
-		quiz_list_listing.add(name_panel, quiz_list_list_constraints);
-		quiz_list_list_constraints.gridx = 2;
-		quiz_list_listing.add(course_panel, quiz_list_list_constraints);
-		quiz_list_list_constraints.gridx = 3;
-		quiz_list_listing.add(del_panel, quiz_list_list_constraints);
+		bank_list_list_constraints.gridx = 0;
+		bank_list_list_constraints.gridy = 0;
+		bank_list_listing.add(edit_panel, bank_list_list_constraints);
+		bank_list_list_constraints.gridx = 1;
+		bank_list_listing.add(name_panel, bank_list_list_constraints);
+		bank_list_list_constraints.gridx = 2;
+		bank_list_listing.add(del_panel, bank_list_list_constraints);
 
-		for (int i = 0; i < quiz_list.size(); i++){
+		for (int i = 0; i < bank_list.size(); i++){
 			JButton edit_btn = new JButton("Edit");
-			Quiz quiz = quiz_list.get(i);
+			QuestionBank bank = bank_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					new EditQuizScreen(quiz);
+					new EditBankScreen(bank);
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				}
 			}
 			edit_btn.addActionListener(new SelectQuizAction());
 
 			JButton delete_btn = new JButton("Delete");
-			class DeleteQuizAction implements ActionListener {
+			class DeleteBankAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					DatabaseUtils.deleteQuiz(quiz.getId());
+					DatabaseUtils.deleteBank(bank.getId());
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					new SelectQuizScreen();
+					new SelectBankScreen();
 				}
 			}
-			delete_btn.addActionListener(new DeleteQuizAction());
+			delete_btn.addActionListener(new DeleteBankAction());
 
 			// Element 1: Edit Button
 			edit_panel_constraints.gridx = 0;
@@ -155,55 +140,42 @@ public class SelectQuizScreen {
 			// Element 2: Quiz Name
 			name_panel_constraints.gridx = 0;
 			name_panel_constraints.gridy = i+1;
-			name_panel.add(new JLabel(quiz.getName()), name_panel_constraints);
+			name_panel.add(new JLabel(bank.getName()), name_panel_constraints);
 			
-			// Element 3: Course Number
-			course_panel_constraints.gridx = 0;
-			course_panel_constraints.gridy = i+1;
-			if (quiz.getCourse() != null) course_panel.add(new JLabel(quiz.getCourse()), course_panel_constraints);
-			else course_panel.add(new JLabel("Not Course Attached"), course_panel_constraints);
-			
-			// Element 4: Delete Button
+			// Element 3: Delete Button
 			del_panel_constraints.gridx = 0;
 			del_panel_constraints.gridy = i+1;
 			del_panel.add(delete_btn, del_panel_constraints);
 		}
 
-		//Create create quiz button
-		JButton create_quiz_btn = new JButton("Create Quiz");
-		class CreateQuizAction implements ActionListener {
+		//Create create bank button
+		JButton create_quiz_btn = new JButton("Create Quiz Bank");
+		class CreateBankAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				Quiz new_quiz = new Quiz();
-				new EditQuizScreen(new_quiz);
+				QuestionBank new_bank = new QuestionBank();
+				new EditBankScreen(new_bank);
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
-		create_quiz_btn.addActionListener(new CreateQuizAction());
+		create_quiz_btn.addActionListener(new CreateBankAction());
 
 		// Element 1: Edit Button
 		edit_panel_constraints.gridx = 0;
-		edit_panel_constraints.gridy = quiz_list.size() + 1;
+		edit_panel_constraints.gridy = bank_list.size() + 1;
 		edit_panel_constraints.insets = new Insets(0, 0, 0, 0);
 		edit_panel.add(create_quiz_btn, edit_panel_constraints);
 		
 		// Element 2: Quiz Name
 		name_panel_constraints.gridx = 0;
-		name_panel_constraints.gridy = quiz_list.size() + 1;
+		name_panel_constraints.gridy = bank_list.size() + 1;
 		name_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		name_panel.add(new JLabel(" "), name_panel_constraints);
 		
-		// Element 3: Course Number
-		course_panel_constraints.gridx = 0;
-		course_panel_constraints.gridy = quiz_list.size() + 1;
-		course_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
-		course_panel.add(new JLabel(" "), course_panel_constraints);
-		
-		// Element 4: Delete Button
+		// Element 3: Delete Button
 		del_panel_constraints.gridx = 0;
-		del_panel_constraints.gridy = quiz_list.size() + 1;
+		del_panel_constraints.gridy = bank_list.size() + 1;
 		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
-
 		
 		//Create Constraints Guide
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -215,7 +187,7 @@ public class SelectQuizScreen {
 		constraints.weightx = 1;
 		constraints.gridy = 0;
 		constraints.weighty = 1;
-		frame.add(new JScrollPane(quiz_list_listing), constraints);
+		frame.add(new JScrollPane(bank_list_listing), constraints);
 
         frame.setVisible(true);
     }

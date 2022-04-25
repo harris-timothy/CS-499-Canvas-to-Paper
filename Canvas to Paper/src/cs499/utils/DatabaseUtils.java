@@ -18,8 +18,9 @@ import org.jooq.impl.DSL;
 import cs499.QuestionBank;
 import cs499.Quiz;
 import cs499.QuizBuilder;
+import cs499.question.Question;
 
-public class DataUtils {
+public class DatabaseUtils {
 	
 	public static ArrayList<Quiz> getAllQuizzes() {
 		
@@ -143,6 +144,14 @@ public class DataUtils {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static ArrayList<Question> getGroupQuestions(){
+		return null;
+	}
+	
+	public static ArrayList<Integer> getQuestionGroupIds(Quiz quiz){
+		return null;
 	}
 
 }

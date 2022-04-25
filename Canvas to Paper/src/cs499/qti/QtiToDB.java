@@ -7,7 +7,7 @@ import static cs499.data_classes.Tables.QUIZ_TO_QUESTION;
 import static cs499.data_classes.Tables.QUESTION_GROUP;
 import static cs499.data_classes.Tables.QUESTION_BANK;
 import static cs499.data_classes.Tables.COURSE;
-import static cs499.question.QuestionType.*;
+import static cs499.data_classes.Tables.REFERENCE_MATERIAL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,12 +16,9 @@ import java.util.HashMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import cs499.question.AnswerFormatter;
-import cs499.question.QuestionType;
 import cs499.utils.DataHelper;
 
 public class QtiToDB {
@@ -268,96 +265,7 @@ public class QtiToDB {
 		}		
 	}
 	
-	public static String parseAnswers(ArrayList<HashMap<String,String>> correctResultsList, ArrayList<HashMap<String,String>> responseChoicesList, HashMap<String, String> questionInfo) {
-		
-		QuestionType type = QuestionType.valueOfType(questionInfo.get("question_type"));
-		
-		switch(type) {
-		case MATCHING:
-		case MULTIPLE_ANSWERS:
-		case MULTIPLE_DROPDOWNS:
-			return findMatches(responseChoicesList, correctResultsList);
-		case MULTIPLE_CHOICE:
-		case TRUE_FALSE:
-			String correct = findCorrect(correctResultsList.get(FIRST), responseChoicesList);
-			ArrayList<String> choices = findChoices(responseChoicesList, correct);
-			return AnswerFormatter.answerJSONString(correct, choices);			
-		case CALCULATED:		
-		case MULTIPLE_BLANKS:		
-		case NUMERICAL:		
-			ArrayList<String> answers = new ArrayList<String>();
-			for(HashMap<String,String> i: correctResultsList) {
-				answers.add(findCorrect(i, responseChoicesList));
-			}
-			return AnswerFormatter.answerJSONString(answers);
-		case ESSAY:
-			ArrayList<String> essay = new ArrayList<String>();
-			for(HashMap<String,String> e: correctResultsList) {
-				if(e.containsKey("answer_value")) {
-					essay.add(e.get("answer_value"));
-				}
-			}
-			return AnswerFormatter.answerJSONString(essay);
-			
-		case SHORT_ANSWER:
-			ArrayList<String> shortAnswer = new ArrayList<String>();
-			for(HashMap<String,String> sa: correctResultsList) {
-				shortAnswer.add(sa.get("answer_ident"));
-			}
-			return AnswerFormatter.answerJSONString(shortAnswer);
-		case TEXT_ONLY:
-		case FILE_UPLOAD:
-			// no answers for these		
-		default:
-			break;		
-		}		
-		return null;
-	}
 	
-	
-	private static String findCorrect(HashMap<String,String> correct, ArrayList<HashMap<String, String>> allChoices) {
-		//find correct answer
-		String ident = correct.get("answer_ident");
-		String answer = "";
-		for(HashMap<String,String> o: allChoices) {
-			if(o.containsValue(ident)) {
-				answer = o.get("answer_value");
-			}
-		}
-		return answer;
-	}
-	
-	private static ArrayList<String> findChoices(ArrayList<HashMap<String, String>> allChoices, String correct) {
-		ArrayList<String> choices = new ArrayList<String>();
-		for(HashMap<String,String> o: allChoices) {
-			if(!o.get("answer_value").equals(correct)) {
-				choices.add(o.get("answer_value"));
-			}
-				
-		}
-		return choices;		
-	}
-	
-	
-	private static String findMatches(ArrayList<HashMap<String, String>> allChoices, ArrayList<HashMap<String,String>> correctAnswers) {
-		HashMap<String,String> matches = new HashMap<String,String>();
-		ArrayList<String> keys = new ArrayList<String>();
-		for(HashMap<String,String> map: correctAnswers) {
-			HashMap<String,String> temp = new HashMap<String,String>();
-			for(HashMap<String,String> all:allChoices) {
-				if(all.containsValue(map.get("response_ident"))) {
-					temp.put("left", all.get("answer_name"));
-				}
-				if(all.containsValue(map.get("answer_ident"))) {
-					temp.put("right", all.get("answer_value"));
-				}
-			}
-			matches.put(temp.get("left"), temp.get("right"));
-		}
-		keys.addAll(matches.keySet());
-		
-		return AnswerFormatter.answerJSONString(keys,matches);
-	}
 
 	public static int storeCourse(String courseName) {
 		int courseId = 0;
@@ -368,8 +276,6 @@ public class QtiToDB {
 					.from(COURSE)
 					.where(COURSE.NAME.eq(courseName))
 					.fetchOne();
-			
-			
 			
 			if(exists == null) {
 				create.insertInto(COURSE, 
@@ -385,8 +291,7 @@ public class QtiToDB {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}		
 		
 		return courseId;
 	}
@@ -410,6 +315,31 @@ public class QtiToDB {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static void storeReference(String filename, String filepath, int questionId) {
+
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+			int referenceId = create.insertInto(REFERENCE_MATERIAL,
+					REFERENCE_MATERIAL.CONTENT,
+					REFERENCE_MATERIAL.NAME)
+					.values(filepath,
+							filename)
+					.returning(REFERENCE_MATERIAL.ID)
+					.fetchOne(REFERENCE_MATERIAL.ID);
+
+			create.update(QUESTION)
+			.set(QUESTION.REFERENCE_ID, referenceId)
+			.where(QUESTION.ID.eq(questionId))
+			.execute();
+
+
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
