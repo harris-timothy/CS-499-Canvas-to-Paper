@@ -3,10 +3,8 @@ package cs499.screens;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
@@ -37,66 +35,66 @@ public class EditQuestionScreen {
 	    
     public EditQuestionScreen(Question question){
     	
-    	 String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
-         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
+    	String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
+        String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
          
-         //Initialize the frame
-         FrameBuilder maker = new FrameBuilder();
+        //Initialize the frame
+        FrameBuilder maker = new FrameBuilder();
  		frame = maker.buildFrame(
-             frame_title, 
+            frame_title, 
  			JFrame.DISPOSE_ON_CLOSE, 
  			800, 600, 
  			null, 
  			logo_icon_path
-         );
-         frame.setLayout(new GridBagLayout());
-         GridBagConstraints constraints = new GridBagConstraints();
+        );
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
          
-         JPanel question_info_panel = new JPanel();
+        JPanel question_info_panel = new JPanel();
          
-         question_info_panel.setLayout(null);
+        question_info_panel.setLayout(null);
          
-         this.questionLabel = new JLabel();
-         questionLabel.setText("Question Name");
-         questionLabel.setBounds(10,0,100,30);
+        this.questionLabel = new JLabel();
+        questionLabel.setText("Question Name");
+        questionLabel.setBounds(10,0,100,30);
          
-         this.nameField = new JTextField();
-         nameField.setBounds(10, 30, 325, 20);
+        this.nameField = new JTextField();
+        nameField.setBounds(10, 30, 325, 20);
          
-         this.descriptionLabel = new JLabel();
-         descriptionLabel.setText("Description");
-         descriptionLabel.setBounds(350,0,100,30);
+        this.descriptionLabel = new JLabel();
+        descriptionLabel.setText("Description");
+        descriptionLabel.setBounds(350,0,100,30);
          
-         this.descriptionField = new JTextArea();
-         descriptionField.setPreferredSize(new Dimension(300,250));
-         descriptionField.setLineWrap(true);
-         descriptionField.setWrapStyleWord(true);
+        this.descriptionField = new JTextArea();
+        descriptionField.setPreferredSize(new Dimension(300,250));
+        descriptionField.setLineWrap(true);
+        descriptionField.setWrapStyleWord(true);
          
-         this.typeLabel = new JLabel();
-         typeLabel.setText("Type");
-         typeLabel.setBounds(10, 55, 150, 30);
+        this.typeLabel = new JLabel();
+        typeLabel.setText("Type");
+        typeLabel.setBounds(10, 55, 150, 30);
          
-         this.typeField = new JTextField();
-         typeField.setBounds(10, 85, 125, 20);
+        this.typeField = new JTextField();
+        typeField.setBounds(10, 85, 125, 20);
          
-         this.instructionLabel = new JLabel();
-         instructionLabel.setText("Grading Instructions");
-         instructionLabel.setBounds(150,55,150,30);
+        this.instructionLabel = new JLabel();
+        instructionLabel.setText("Grading Instructions");
+        instructionLabel.setBounds(150,55,150,30);
          
-         this.instructionField = new JTextField();
-         instructionField.setBounds(150,85,200,20);
+        this.instructionField = new JTextField();
+        instructionField.setBounds(150,85,200,20);
          
-         this.answerLabel = new JLabel();
-         answerLabel.setText("Answer");
-         answerLabel.setBounds(350,0,100,30);
+        this.answerLabel = new JLabel();
+        answerLabel.setText("Answer");
+        answerLabel.setBounds(350,0,100,30);
+        
+        this.answerField = new JTextArea();
+        answerField.setPreferredSize(new Dimension(300,250));
+        answerField.setLineWrap(true);
+        answerField.setWrapStyleWord(true);
          
-         this.answerField = new JTextArea();
-         answerField.setPreferredSize(new Dimension(300,250));
-         answerField.setLineWrap(true);
-         answerField.setWrapStyleWord(true);
-         
-       //Create Back Button
-         JButton save_btn = new JButton("Save Changes");
+        //Create Back Button
+        JButton save_btn = new JButton("Save Changes");
  		class SaveAction implements ActionListener {
  			public void actionPerformed(ActionEvent e) {
  				question.saveQuestion();
@@ -188,7 +186,6 @@ public class EditQuestionScreen {
 		constraints.weighty = 1;
 		frame.add(questions_scroller, constraints);
 		
-        
         frame.setVisible(true);
         
     }

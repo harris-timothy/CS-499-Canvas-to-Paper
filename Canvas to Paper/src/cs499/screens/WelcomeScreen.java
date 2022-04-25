@@ -29,6 +29,7 @@ import cs499.gui_utils.FrameBuilder;
 import cs499.gui_utils.MenuBuilder;
 import cs499.qti.CreateQTI;
 import cs499.qti.ParseQTI;
+import cs499.QuestionBank;
 import cs499.Quiz;
 import cs499.RecentItems;
 import cs499.utils.DatabaseUtils;
@@ -130,7 +131,14 @@ public class WelcomeScreen {
 					public void actionPerformed(ActionEvent e) {
 						CreateQTI qti_maker = new CreateQTI();
 						try {
-							String export_directory_path = "Exports/" + System.currentTimeMillis();
+							String export_directory_path = explorer.DirectorySelect();
+							while (export_directory_path == "Error") {
+								export_directory_path = explorer.DirectorySelect();
+							}
+							if (export_directory_path == "Blank") {
+								export_frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+								return;
+							}
 							if (modified_quiz_list.size() != 0) qti_maker.createPackage(modified_quiz_list, export_directory_path);
 						} catch (Exception ex) {
 							System.out.println(ex);
@@ -211,9 +219,6 @@ public class WelcomeScreen {
 			}
 		}
 		export_mi.addActionListener(new ExportAction());
-
-		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
-		menu_bar.add(edit_menu);
 		
 		//File -> Generate Test From Quiz
 		JMenuItem gen_mi = menu.buildMenuItem("Generate Test from Quiz", KeyEvent.VK_G, file_menu);
@@ -224,27 +229,35 @@ public class WelcomeScreen {
 			}
 		}
 		gen_mi.addActionListener(new GenerationSelectAction());
-
+		
+		JMenu edit_menu = menu.buildMenu("Edit", KeyEvent.VK_E);
+		menu_bar.add(edit_menu);
+		
 		//Edit -> Select Quiz
-		JMenuItem select_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
-		class SelectAction implements ActionListener {
+		JMenuItem select_quiz_mi = menu.buildMenuItem("Select Quiz", KeyEvent.VK_S, edit_menu);
+		class SelectQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				new SelectQuizScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
-		select_mi.addActionListener(new SelectAction());
+		select_quiz_mi.addActionListener(new SelectQuizAction());
+		
+		//Edit -> Select Quiz Bank
+		JMenuItem select_bank_mi = menu.buildMenuItem("Select Quiz Bank", KeyEvent.VK_S, edit_menu);
+		class SelectBankAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new SelectBankScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		select_bank_mi.addActionListener(new SelectBankAction());
+		
+		JMenu create_menu = menu.buildMenu("Create", KeyEvent.VK_C);
+		menu_bar.add(create_menu);
 
-		//Create Import QTI File Button
-		JButton import_btn = new JButton("Import QTI Files");
-		import_btn.addActionListener(new ImportAction());
-
-		//Create Export QTI File Button
-		JButton export_btn = new JButton("Export QTI File");
-		export_btn.addActionListener(new ExportAction());
-
-		//Create Create New Test Button
-		JButton create_quiz_btn = new JButton("Create New Test");
+		//Create -> Create Quiz
+		JMenuItem create_quiz_mi = menu.buildMenuItem("Create Quiz", KeyEvent.VK_Q, create_menu);
 		class CreateQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Quiz new_quiz = new Quiz();
@@ -252,6 +265,29 @@ public class WelcomeScreen {
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}
+		create_quiz_mi.addActionListener(new CreateQuizAction());
+
+		//Create -> Create Quiz Bank
+		JMenuItem create_bank_mi = menu.buildMenuItem("Create Quiz Bank", KeyEvent.VK_B, create_menu);
+		class CreateBankAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				QuestionBank new_bank = new QuestionBank();
+				new EditBankScreen(new_bank);
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		create_bank_mi.addActionListener(new CreateBankAction());
+
+		//Create Import QTI File Button
+		JButton import_btn = new JButton("Import QTI Files");
+		import_btn.addActionListener(new ImportAction());
+		
+		//Create Export QTI File Button
+		JButton export_btn = new JButton("Export QTI File");
+		export_btn.addActionListener(new ExportAction());
+
+		//Create Create New Test Button
+		JButton create_quiz_btn = new JButton("Create New Test");
 		create_quiz_btn.addActionListener(new CreateQuizAction());
 		
 		RecentItems recent = new RecentItems();
