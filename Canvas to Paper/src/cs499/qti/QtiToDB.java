@@ -80,11 +80,10 @@ public class QtiToDB {
 			}
 			else {
 				create.update(QUIZ)
-				.set(QUIZ.NAME, data.get("name"))
 				.set(QUIZ.DESCRIPTION, data.get("description"))
 				.set(QUIZ.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
 				.set(QUIZ.DUE_DATE, data.get("due_date"))
-				.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+				.where(QUIZ.NAME.eq(data.get("name")))
 				.execute();
 			}
 			
@@ -158,23 +157,23 @@ public class QtiToDB {
 
 			Record exists = create.select()
 					.from(QUESTION_BANK)
-					.where(QUESTION_BANK.QTI_ID.eq(data.get("qti_id")))
+					.where(QUESTION_BANK.NAME.eq(data.get("bank_title")))
 					.fetchOne();
 
 			if(exists == null) {
-				create.insertInto(QUESTION_BANK,
+				bankId = create.insertInto(QUESTION_BANK,
 						QUESTION_BANK.QTI_ID,
 						QUESTION_BANK.NAME)
 				.values(data.get("qti_id"),
 						data.get("bank_title"))
-				.execute();
+				.onDuplicateKeyIgnore()
+				.returning(QUESTION_BANK.ID)
+				.fetchOne(QUESTION_BANK.ID);
 			}
+			else {
 			
-			bankId = create.select(QUESTION_BANK.ID)
-					.from(QUESTION_BANK)
-					.where(QUESTION_BANK.QTI_ID.eq(data.get("qti_id")))
-					.fetchOne(QUESTION_BANK.ID);
-			
+				bankId = exists.getValue(QUESTION_BANK.ID);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

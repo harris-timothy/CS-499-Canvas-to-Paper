@@ -45,7 +45,7 @@ public class ParseQTI {
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
-            destDir.mkdir();
+            destDir.mkdirs();
         }
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
 
@@ -55,11 +55,15 @@ public class ParseQTI {
             String filePath = destDirectory + File.separator + entry.getName();
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
+            	try {
                 extractFile(zipIn, filePath);
+            	} catch(IOException e) {
+            		
+            	}
             } else {
                 // if the entry is a directory, make the directory
                 File dir = new File(filePath);
-                dir.mkdir();
+                dir.mkdirs();
             }
             zipIn.closeEntry();
             entry = zipIn.getNextEntry();
@@ -124,20 +128,40 @@ public class ParseQTI {
     	  }
     }
     
-    public void importQTI(String filepath) throws IOException, JAXBException {
-    	unzip(filepath, QTI_PATH);
+    public void importQTI(String filepath) throws JAXBException {
+    	try {
+			unzip(filepath, QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	xmlLoop(QTI_PATH);
-    	ParseUtils.deleteDirectory(QTI_PATH);
+    	try {
+			ParseUtils.deleteDirectory(QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     }
     
-    public void importIMSCC(String filepath) throws IOException, JAXBException {
-    	unzip(filepath, QTI_PATH);
+    public void importIMSCC(String filepath) throws JAXBException {
+    	try {
+			unzip(filepath, QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	imsccLoop(QTI_PATH);
     	
     	
     	
-    	ParseUtils.deleteDirectory(QTI_PATH);
+//    	try {
+//			ParseUtils.deleteDirectory(QTI_PATH);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
     }
     
     //need to add the following functionality

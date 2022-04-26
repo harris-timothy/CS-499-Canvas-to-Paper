@@ -21,6 +21,7 @@ import cs499.QuestionBank;
 import cs499.QuestionGroup;
 import cs499.Quiz;
 import cs499.QuizBuilder;
+import cs499.qti.ParseUtils;
 import cs499.question.Question;
 
 public class DatabaseUtils {
@@ -45,7 +46,7 @@ public class DatabaseUtils {
 			e.printStackTrace();
 		}
 		
-		return quizArray;
+		return (ArrayList<Quiz>) ParseUtils.removeNull(quizArray);
 	}
 	
 	public static ArrayList<Integer> getAllQuizIds() {

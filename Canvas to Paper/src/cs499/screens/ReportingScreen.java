@@ -32,7 +32,6 @@ import java.awt.event.WindowEvent;
 
 public class ReportingScreen {
 
-	private JFrame frame;
 	private JPanel contentPane;
 	private JTable generationsTable;
 	private JTable detailsTable;
@@ -45,12 +44,23 @@ public class ReportingScreen {
 	 * Create the frame.
 	 */
 	public ReportingScreen() {
+		
+		String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
+		String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
+		
 		MenuBuilder menu = new MenuBuilder();
 		FrameBuilder maker = new FrameBuilder();
 		JMenuBar menu_bar = new JMenuBar();
 		
+		JFrame frame = maker.buildFrame(
+				frame_title, 
+				JFrame.DISPOSE_ON_CLOSE, 
+				1000, 800, 
+				menu_bar, 
+				logo_icon_path
+			);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setBounds(100, 100, 800, 600);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		frame.setContentPane(contentPane);
