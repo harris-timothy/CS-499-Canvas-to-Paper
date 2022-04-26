@@ -449,6 +449,25 @@ public class ParseQTI {
 						data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
 						list.add(data);	
 					}
+					else if(var instanceof OrType) {
+						for(Object or:((OrType) var).getNotOrAndOrOr()) {
+							if(or instanceof VarequalType) {
+								data.put("answer_ident", ((VarequalType)or).getRespident());
+								data.put("answer_value", ((VarequalType)or).getValue());
+							}
+							else if(or instanceof AndType) {
+								for(Object and: ((AndType)or).getNotOrAndOrOr()) {
+									if(and instanceof VargteType) {
+										data.put("floor", ((VargteType) and).getValue());
+									}
+									else if(and instanceof VarlteType) {
+										data.put("ceiling", ((VarlteType) and).getValue());
+									}
+								}
+							}
+							list.add(data);
+						}
+					}
 					else {
 						List<DisplayfeedbackType> disp = ((RespconditionType) o).getDisplayfeedback();
 						for(DisplayfeedbackType d: disp) {

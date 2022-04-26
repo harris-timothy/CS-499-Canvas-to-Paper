@@ -66,16 +66,22 @@ public class QuizBuilder {
 			// - Choose a number of questions from the question bank based off of PICK_COUNT
 			// - Add the chosen questions to the quiz
 			if (groupArr != null) {
-				for(int i = 0; i < groupArr.length; i++) {
+				for (int i = 0; i < groupArr.length; i++) {
 					Integer bankID = groupArr[i].getValue(QUESTION_GROUP.QUESTION_BANK_ID);
-					if(bankID == 0) {
+					if (bankID == 0) {
 						continue;
 					}
 					bank = new QuestionBank(bankID);
 					bankQuestionList = bank.getQuestionIds();
 					Collections.shuffle(bankQuestionList);
-					for (int j = 0; j < groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT); j++) {
-						builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
+					if (groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT) > bankQuestionList.size()) {
+						for (int j = 0; j < bankQuestionList.size(); j++) {
+							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
+						}
+					} else {
+						for (int j = 0; j < groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT); j++) {
+							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
+						}
 					}
 				}
 			}

@@ -259,7 +259,12 @@ public class SingleAnswerQuestion extends Question {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
-			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
+			this.id = create.insertInto(QUESTION,
+					QUESTION.NAME,
+					QUESTION.TYPE)
+					.values("", QuestionType.TEXT_ONLY.getType())
+					.returning(QUESTION.ID)
+					.fetchOne(QUESTION.ID);
 			
 		}catch(Exception e) {
 			e.printStackTrace();

@@ -162,13 +162,18 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 			String correct = findCorrect(correctResultsList.get(FIRST), responseChoicesList);
 			ArrayList<String> choices = findChoices(responseChoicesList, correct);
 			return AnswerFormatter.answerJSONString(correct, choices);			
-		case CALCULATED:		
-		case MULTIPLE_BLANKS:		
-		case NUMERICAL:		
+		case CALCULATED:
+		case NUMERICAL:
+			for(HashMap<String,String> num: correctResultsList) {
+				if(num.containsKey("floor")) {
+					return AnswerFormatter.answerJSONString(num);
+				}
+			}
+			break;			
+		case MULTIPLE_BLANKS:				
 			ArrayList<String> answers = new ArrayList<String>();
 			for(HashMap<String,String> i: correctResultsList) {
 				answers.add(findCorrect(i, responseChoicesList));
-				findNumRange(i);
 			}
 			return AnswerFormatter.answerJSONString(answers);
 		case ESSAY:
@@ -267,6 +272,32 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
           .sorted(Comparator.reverseOrder())
           .map(Path::toFile)
           .forEach(File::delete);
+	}
+	
+	public static void deleteDirectory(Path path) throws IOException{
+		Files.walk(path)
+          .sorted(Comparator.reverseOrder())
+          .map(Path::toFile)
+          .forEach(File::delete);
+	}
+	
+	public static void imsccCleanup(String filepath) {
+
+		try(Stream<Path> walk = Files.walk(Paths.get(filepath))){
+
+			List<Path> files = walk
+					.filter(Files::isRegularFile)
+					.collect(Collectors.toList());
+
+			for(Path p: files) {
+				if(p.toString().endsWith(".xml") && !p.toString().contains("imsmanifest.xml")) {
+					Files.deleteIfExists(p);
+				}
+			}
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

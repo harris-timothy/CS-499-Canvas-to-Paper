@@ -57,7 +57,7 @@ public class QuestionGroup {
 				setName(group.getValue(QUESTION_GROUP.NAME));
 				setCount(group.getValue(QUESTION_GROUP.PICK_COUNT));
 				setPoints(group.getValue(QUESTION_GROUP.QUESTION_POINTS));
-				setBank(group.getValue(QUESTION_GROUP.QUESTION_BANK_ID));
+				bank = new QuestionBank(group.getValue(QUESTION_GROUP.QUESTION_BANK_ID));
 			}
 			
 		} catch (Exception e) {

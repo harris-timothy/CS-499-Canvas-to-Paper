@@ -54,6 +54,19 @@ public class AnswerFormatter {
 		return answerArray.toString();
 	}
 	
+	public static String answerJSONString(HashMap<String,String> answerMap) {
+		JSONArray answerArray = new JSONArray();
+		
+		JSONObject answer = new JSONObject();
+		answer.put("answer", answerMap.get("answer_value"));
+		answer.put("floor", answerMap.get("floor"));
+		answer.put("ceiling", answerMap.get("ceiling"));
+		answerArray.put(answer);
+		
+		return answerArray.toString();
+		
+	}
+	
 	public static ArrayList<String> answerArray(String answerJSONString) {
 		
 		JSONArray answerJSON = new JSONArray(answerJSONString);

@@ -23,6 +23,7 @@ import java.awt.GridBagConstraints;
 import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
+import cs499.question.SingleAnswerQuestion;
 import cs499.RecentItems;
 
 public class EditQuizScreen {
@@ -212,6 +213,9 @@ public class EditQuizScreen {
 		for (int i = 0; i < question_list.size(); i++){
 			JButton edit_btn = new JButton("Edit");
 			Question question = question_list.get(i);
+			if(question == null) {
+				break;
+			}
 			class EditQuestionAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
 					new EditQuestionScreen(question);
@@ -256,13 +260,11 @@ public class EditQuizScreen {
 		JButton create_question_btn = new JButton("Create Question");
 		class CreateQuestionAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-                //TODO: Deal with Question Factories to make a new Question of some default type (likely just choose multiple choice as default)
-                //TODO: Pass the new question to EditQuestionScreen(new_question);
-                //TODO: Add the new question to the quiz
+				Question newQuestion = new SingleAnswerQuestion();
+				new EditQuestionScreen(newQuestion);
+				quiz.addQuestion(newQuestion);
                 
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				//TODO: Once new question is passed to EditQuestionScreen(), remove the following line:
-                new EditQuizScreen(quiz);
 			}
 		}
 		create_question_btn.addActionListener(new CreateQuestionAction());
