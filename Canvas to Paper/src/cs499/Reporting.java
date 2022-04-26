@@ -20,13 +20,22 @@ public class Reporting {
 	
 	private ArrayList<String> metaTitles = new ArrayList<String>();
 	
+	public ArrayList<String> getMetaTitles() {
+		return metaTitles;
+	}
+
+	public ArrayList<HashMap<String, String>> getMetaList() {
+		return metaList;
+	}
+
+
+
 	private ArrayList<HashMap<String,String>> metaList = new ArrayList<HashMap<String,String>>();
 	
 	public Reporting() {
 		loadMetadata();
 	}
-	
-	
+		
 	public void loadMetadata() {
 		
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
@@ -92,5 +101,7 @@ public class Reporting {
 		metaList.add(map);
 		
 	}
+	
+	
 
 }

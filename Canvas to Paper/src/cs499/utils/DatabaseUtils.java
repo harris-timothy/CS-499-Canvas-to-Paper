@@ -36,11 +36,11 @@ public class DatabaseUtils {
 			Result<Record> result = create.select()
 					.from(QUIZ)
 					.fetch();
-			
-			for(Record r:result) {
-				quizArray.add(builder.buildQuiz(r.getValue(QUIZ.ID)));
-			}			
-			
+			if (result != null) {
+				for(Record r:result) {
+					quizArray.add(builder.buildQuiz(r.getValue(QUIZ.ID)));
+				}			
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -94,7 +94,7 @@ public class WelcomeScreen {
 					
 					//Check for non .zip files and retry if caught
 					for (String filepath : ImportZip) {
-						if (!filepath.contains(".zip")) {
+						if (!(filepath.contains(".zip") || filepath.contains(".imscc")) ) {
 							ImportZip = new String[0];
 						}
 					}
@@ -102,12 +102,15 @@ public class WelcomeScreen {
 				
 				//Handle selection
 				try {
-					//Unzip .zip directory to QTITest directory
+					//Unzip QTI or IMSCC file and parse data
 					for (String filepath : ImportZip) {
-						qti.unzip(filepath, "QTITest");
+						if(filepath.endsWith(".imscc")) {
+							qti.importIMSCC(filepath);
+						}
+						else {
+							qti.importQTI(filepath);
+						}
 					}
-					//Loop through QTITest directory, handling all xml files
-					qti.xmlLoop("QTITest");
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

@@ -259,38 +259,11 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		
 	}
 	
-	public static void imsccCleanup(String filepath) {
-
-		try(Stream<Path> walk = Files.walk(Paths.get(filepath))){
-
-			List<Path> files = walk
-					.filter(Files::isRegularFile)
-					.collect(Collectors.toList());
-
-			for(Path p: files) {
-				if(p.toString().endsWith(".xml") && !p.toString().contains("imsmanifest.xml")) {
-					Files.deleteIfExists(p);
-				}
-				else if(p.toString().endsWith("course_settings") || p.toString().endsWith("wiki_content")) {
-					deleteDirectory(p);
-				}
-			}
-
-
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
-
-		
-		//go through extracted folder
-		//delete course_settings folder
-		//delete all xml files in root folder other than imsmanifest
-		//delete wiki_content
-	}
 	
-	private static void deleteDirectory(Path directory) throws IOException{
-		  Files.walk(directory)
+	public static void deleteDirectory(String path) throws IOException{
+		Path directory = Paths.get(path);
+		
+		Files.walk(directory)
           .sorted(Comparator.reverseOrder())
           .map(Path::toFile)
           .forEach(File::delete);

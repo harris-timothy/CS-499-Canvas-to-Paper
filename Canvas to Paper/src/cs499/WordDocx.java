@@ -362,8 +362,6 @@ public class WordDocx
 				for (HashMap.Entry<String, String> entry : rightSide.entrySet()) {
 					for (int column = 0; column < 2; column++) {
 						if (column == 0) {
-							System.out.println(rightSide.get(leftSide.get(row)));
-							System.out.println(listOfValues.indexOf(rightSide.get(leftSide.get(row))));
 							table.getRow(row).getCell(column).setText(leftSide.get(row) + " _" + Character.toString(listOfValues.indexOf(rightSide.get(leftSide.get(row))) + 65) + "_");
 							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
 							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));

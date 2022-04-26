@@ -106,7 +106,7 @@ public class QtiToDB {
 					.fetchOne();
 
 			if(exists == null) {
-				create.insertInto(QUESTION,
+				Record record = create.insertInto(QUESTION,
 						QUESTION.QTI_ID,
 						QUESTION.NAME,
 						QUESTION.DESCRIPTION,
@@ -119,24 +119,31 @@ public class QtiToDB {
 						data.get("question_type"),
 						data.get("answers"),
 						Float.parseFloat(data.get("points_possible")))
-				.execute();
+				.onDuplicateKeyIgnore()
+				.returning(QUESTION.ID)
+				.fetchOne();
+				
+				if(record != null) {
+					
+					questionId = record.getValue(QUESTION.ID);
+				}
 
 			}
 			else {
-				create.update(QUESTION)
+				
+				Record record = create.update(QUESTION)
 				.set(QUESTION.NAME, data.get("name"))
-				.set(QUESTION.QTI_ID, data.get("qti_id"))
 				.set(QUESTION.TYPE, data.get("question_type"))
 				.set(QUESTION.ANSWERS, data.get("answers"))
 				.set(QUESTION.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
 				.where(QUESTION.DESCRIPTION.eq(data.get("description")))
-				.execute();
-			}
-			
-			questionId = create.select(QUESTION.ID)
-			.from(QUESTION)
-			.where(QUESTION.DESCRIPTION.eq(data.get("description")))
-			.fetchOne(QUESTION.ID);			
+				.returning(QUESTION.ID)
+				.fetchOne();
+				
+				if(record != null) {
+					questionId = record.getValue(QUESTION.ID);
+				}
+			}		
 
 		} catch (Exception e) {
 			e.printStackTrace();
