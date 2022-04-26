@@ -243,6 +243,16 @@ public class WelcomeScreen {
 		}
 		select_quiz_mi.addActionListener(new SelectQuizAction());
 		
+		//Edit -> Select References
+		JMenuItem select_ref_mi = menu.buildMenuItem("Select References", KeyEvent.VK_S, edit_menu);
+		class SelectRefAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new ReferencesScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		select_ref_mi.addActionListener(new SelectRefAction());
+		
 		//Edit -> Select Quiz Bank
 		JMenuItem select_bank_mi = menu.buildMenuItem("Select Quiz Bank", KeyEvent.VK_S, edit_menu);
 		class SelectBankAction implements ActionListener {
