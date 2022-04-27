@@ -132,7 +132,7 @@ public class GenerationSelectScreen {
 			Quiz quiz = quiz_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					doc = new WordDocx();
+					/*doc = new WordDocx();
 					
 					String test_string = quiz.getName();
 					String test_path = "";
@@ -150,7 +150,10 @@ public class GenerationSelectScreen {
 					}
 					
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					new WelcomeScreen();
+					new WelcomeScreen();*/
+					
+					new GeneratorScreen(quiz);
+					
 				}
 			}
 			gen_btn.addActionListener(new SelectQuizAction());
