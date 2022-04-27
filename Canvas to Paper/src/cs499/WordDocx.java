@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -36,10 +37,10 @@ public class WordDocx
 {
 	// For use with a built quiz (QuizBuilder)
 	
-	private void DocumentBuilder(Quiz quiz, String filepath) throws Exception
+	private void DocumentBuilder(Quiz quiz, String filepath, String templatepath, List<MultipleChoiceQuestion> tfList) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
+		XWPFDocument document = DocUtils.copyCoverPage(templatepath, filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -54,213 +55,61 @@ public class WordDocx
 		DocUtils.header(document, quiz);
 		DocUtils.numberedFooter(document);
 		
-		// TODO:
-		// For doc generation:
-		// Templates
-		
-		// Display Test Points
-		// TODO: Change to full header functionality
-		XWPFParagraph testPoints = document.createParagraph();
-		testPoints.setAlignment(ParagraphAlignment.RIGHT);
-		XWPFRun tpRun = testPoints.createRun();
-		tpRun.setText(String.valueOf(quiz.getPointsPossible() + " points possible"));
-		tpRun.addBreak();
-		
+				
 		// Display Description, Points, Choices, and Reference Material
 		int numbering = 1;
+		if(!tfList.isEmpty()) {
+			DocUtils.trueFalseSection(document, tfList, numbering);
+			numbering = numbering + tfList.size();
+		}
+		
 		for (Question question : questionList)
-		{
-			//Question builtQuestion = QuestionFactory.build(question.getId());
+		{	
+			if(question == null) break;
+			if(question.getType() == QuestionType.TRUE_FALSE) break;
 			
 			XWPFParagraph questionParagraph = document.createParagraph();
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
 			XWPFRun questionRun = questionParagraph.createRun();
 			
+			if(question.getReference() != null) {
+				DocUtils.insertQuestionReference(questionParagraph, question);
+			}
+			
 			questionRun.setText(numbering + ") " + question.getDescription());
 			questionRun.addBreak();
 			
 			questionRun.setText(String.valueOf(question.getPoints() + " points"));
-			questionRun.addBreak();
+			questionRun.addBreak();			
 			
 			// Get type of question and print answers depending
 			if (question instanceof MultipleChoiceQuestion) {
-				MultipleChoiceQuestion multiChoice = (MultipleChoiceQuestion)question;
-				
-				// Add the question's reference image to document, if there is one
-				if (multiChoice.getReference() != null) {
-					
-					// Load data of reference image
-					BufferedImage reference;
-					
-					try {
-					    reference = ImageIO.read(new File(multiChoice.getReference().getFilepath()));
-					    
-						if (FileNameUtils.getExtension(multiChoice.getReference().getFilepath()).equals("png")) {
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(multiChoice.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, multiChoice.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-						else if (FileNameUtils.getExtension(multiChoice.getReference().getFilepath()).equals("jpeg") || FileNameUtils.getExtension(multiChoice.getReference().getFilepath()).equals("jpg")) {
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(multiChoice.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, multiChoice.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-					    
-					} 
-					catch (IOException e) {
-						
-					}
-					
-				}
-				
-				//if (question.getType().equals(QuestionType.MULTIPLE_CHOICE)) {
-				//	multiChoice.shuffleChoices();
-					
-				//}
-				
+				MultipleChoiceQuestion multiChoice = (MultipleChoiceQuestion)question;				
 				ArrayList<String> choices = multiChoice.getChoices();
-				
-				if (question.getType().equals(QuestionType.TRUE_FALSE)) {
-					if (!choices.get(0).toLowerCase().equals("true")) {
-						choices.set(0, "True");
-						choices.set(1,  "False");
-					}
-				}
-				
+								
 				char choiceLetter = 'a';
 				for (String choice : choices) {
 					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
 					questionRun.setText(choiceLetter + ") " + choice);
 					questionRun.addBreak();
 					choiceLetter++;
-					
 				}
-				
 			}
 			else if (question instanceof MatchingQuestion) {
-				MatchingQuestion matching = (MatchingQuestion)question;
-				
-				// Add the question's reference image to document, if there is one
-				if (matching.getReference() != null) {
-					
-					// Load data of reference image
-					BufferedImage reference;
-					
-					try {
-					    reference = ImageIO.read(new File(matching.getReference().getFilepath()));
-					    
-						if (FileNameUtils.getExtension(matching.getReference().getFilepath()).equals("png"))
-						{
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(matching.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, matching.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-						else if (FileNameUtils.getExtension(matching.getReference().getFilepath()).equals("jpeg") || FileNameUtils.getExtension(matching.getReference().getFilepath()).equals("jpg")) {
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(matching.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, matching.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-					    
-					} 
-					catch (IOException e) {
-						
-					}
-					
-				}
-				
-				//matching.shuffleChoices();
-				
-				ArrayList<String> keys = matching.getLeft();
-				HashMap<String, String> values = new HashMap<String, String>(matching.getRight());
-
-				// Will probably have to toy with this to get it to look decent on paper
-				XWPFTable table = document.createTable(values.size(), 2);
-				table.removeBorders();
-				
-				int row = 0;
-				char lettering = 'A';
-				for (HashMap.Entry<String, String> entry : values.entrySet()) {
-					for (int column = 0; column < 2; column++) {
-						if (column == 0) {
-							table.getRow(row).getCell(column).setText(keys.get(row) + "  ____");
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
-						}
-						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(lettering + ". " + entry.getValue());
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
-						}
-					}
-					row++;
-					lettering ++;
-				}
-								
-			}
-			else if (question instanceof SingleAnswerQuestion) {
-				SingleAnswerQuestion singleanswer = (SingleAnswerQuestion)question;
-				
-				// Add the question's reference image to document, if there is one
-				if (singleanswer.getReference() != null) {
-					
-					// Load data of reference image
-					BufferedImage reference;
-					
-					try {
-					    reference = ImageIO.read(new File(singleanswer.getReference().getFilepath()));
-					    
-						if (FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("png"))
-						{
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(singleanswer.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, singleanswer.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-						else if (FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("jpeg") || FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("jpg")) {
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(singleanswer.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, singleanswer.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-					    
-					} 
-					catch (IOException e) {
-						
-					}
-					
-				}
-				
+				DocUtils.matchingQuestion(document, (MatchingQuestion)question);					
 			}
 			numbering++;
 		}
 		
-		XWPFParagraph referenceParagraph = document.createParagraph();
-		referenceParagraph.setAlignment(ParagraphAlignment.RIGHT);
-		XWPFRun refRun = referenceParagraph.createRun();
-		
+				
 		if (quiz.getReferences() != null) {
 			
-			// Load data of reference image
-			BufferedImage refImg;
-			
-			try {
-				for (ReferenceMaterial reference : quiz.getReferences()) {
-				    refImg = ImageIO.read(new File(reference.getFilepath()));
-				    
-					if (FileNameUtils.getExtension(reference.getFilepath()).equals("png"))
-					{
-						// NOTE: May have to add some sort of size restriction to the width and height parameters
-						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
-						refRun.addBreak(BreakType.PAGE);
-					}
-					else if (FileNameUtils.getExtension(reference.getFilepath()).equals("jpeg") || FileNameUtils.getExtension(reference.getFilepath()).equals("jpg")) {
-						// NOTE: May have to add some sort of size restriction to the width and height parameters
-						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
-						refRun.addBreak(BreakType.PAGE);
-					}
-				}
-			    
-			} 
-			catch (IOException e) {
-				
-			}
+			DocUtils.insertQuizReference(document, quiz);
 			
 		}
 		
 		String key_filepath = filepath + "_ANSWER_KEY.docx";
-		TestKeyBuilder(quiz, key_filepath);
+		TestKeyBuilder(quiz, key_filepath, templatepath, tfList);
 		
 		// Write to file
 		document.write(out);
@@ -270,11 +119,14 @@ public class WordDocx
 		document.close();
 	}
 	
+	//TODO add template file input
+	//TODO use section functions
+	
 	// For use with a built quiz (QuizBuilder)
-	private void TestKeyBuilder(Quiz quiz, String filepath) throws Exception
+	private void TestKeyBuilder(Quiz quiz, String filepath, String templatepath, List<MultipleChoiceQuestion> tfList) throws Exception
 	{
 		// Make an empty document
-		XWPFDocument document = DocUtils.copyCoverPage("C:\\Users\\black\\Downloads\\Test Chapter 1.docx", filepath, quiz);
+		XWPFDocument document = DocUtils.copyCoverPage(templatepath, filepath, quiz);
 	 
 		// Make a file by specifying path of the document
 		// Get filepath from GUI
@@ -287,25 +139,27 @@ public class WordDocx
 		
 		DocUtils.keyHeader(document, quiz);
 		DocUtils.numberedFooter(document);
-
-		// Display Test Points (and also Test Key marker for now)
-		// TODO: Change to full header functionality
-		XWPFParagraph testPoints = document.createParagraph();
-		testPoints.setAlignment(ParagraphAlignment.RIGHT);
-		XWPFRun tpRun = testPoints.createRun();
-		tpRun.setText(String.valueOf(quiz.getPointsPossible() + " points possible"));
-		tpRun.addBreak();
-		tpRun.setText("**TEST KEY**");
 		
 		// Display Question Name, Description, Points, Choices, and Reference Material
 		int numbering = 1;
+		if(!tfList.isEmpty()) {
+			DocUtils.trueFalseSectionKey(document, tfList, numbering);
+			numbering = numbering + tfList.size();
+		}		
+		
 		for (Question question : questionList)
 		{
-			// Question builtQuestion = QuestionFactory.build(question.getId());
+			if(question == null) break;
+			if(question.getType() == QuestionType.TRUE_FALSE) break;
+			
 			
 			XWPFParagraph questionParagraph = document.createParagraph();
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
 			XWPFRun questionRun = questionParagraph.createRun();
+			
+			if(question.getReference() != null) {
+				DocUtils.insertQuestionReference(questionParagraph, question);
+			}
 			
 			if (question.getAbet()) {
 				questionRun.setText(numbering + ") " + question.getDescription() + " - ABET Question");
@@ -317,7 +171,7 @@ public class WordDocx
 			}
 			
 			questionRun.setText(String.valueOf(question.getPoints() + " points"));
-			questionRun.addBreak();
+			questionRun.addBreak();			
 			
 			// Get type of question and print answers depending
 			if (question instanceof MultipleChoiceQuestion) {
@@ -331,6 +185,7 @@ public class WordDocx
 					if (choice.equals(multiChoice.getCorrectAnswer())) {
 						questionRun.setBold(true);
 						questionRun.setText(choiceLetter + ") " + choice + " - **CORRECT ANSWER**");
+						questionRun.setColor("FF0000");
 						questionRun.setBold(false);
 						questionRun.addBreak();
 					}
@@ -345,114 +200,15 @@ public class WordDocx
 				
 			}
 			else if (question instanceof MatchingQuestion) {
-				MatchingQuestion matching = (MatchingQuestion)question;
-				
-				ArrayList<String> leftSide = new ArrayList<String>(matching.getLeft());
-				HashMap<String, String> rightSide = new HashMap<String, String>(matching.getRight());
-				
-		        Collection<String> values = rightSide.values();
-		        ArrayList<String> listOfValues = new ArrayList<>(values);
-				
-				// Will probably have to toy with this to get it to look decent on paper
-				XWPFTable table = document.createTable(rightSide.size(), 2);
-				table.removeBorders();
-				
-				int row = 0;
-				char lettering = 'A';
-				for (HashMap.Entry<String, String> entry : rightSide.entrySet()) {
-					for (int column = 0; column < 2; column++) {
-						if (column == 0) {
-							table.getRow(row).getCell(column).setText(leftSide.get(row) + " _" + Character.toString(listOfValues.indexOf(rightSide.get(leftSide.get(row))) + 65) + "_");
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
-						}
-						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(lettering + ". " + entry.getValue());
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setType(STTblWidth.DXA);
-							table.getRow(row).getCell(column).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(10000));
-						}
-					}
-					row++;
-					lettering++;
-				}
-				
-				/*for (HashMap.Entry<String, String> entry : rightSide.entrySet()) {
-					for (int column = 0; column < 2; column++) {
-						if (column == 0) {
-							table.getRow(row).getCell(column).setText(leftSide.get(row) + " (" + rightSide.indexOf(leftSide.get(row)) + ")");
-						}
-						else if (column == 1) {
-							table.getRow(row).getCell(column).setText(entry.getValue());
-						}
-					}
-					row++;
-				}*/
-								
-			}
-			else if (question instanceof SingleAnswerQuestion) {
-				SingleAnswerQuestion singleanswer = (SingleAnswerQuestion)question;
-				
-				// Add the question's reference image to document, if there is one
-				if (singleanswer.getReference() != null) {
-					
-					// Load data of reference image
-					BufferedImage reference;
-					
-					try {
-					    reference = ImageIO.read(new File(singleanswer.getReference().getFilepath()));
-					    
-						if (FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("png"))
-						{
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(singleanswer.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, singleanswer.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-						else if (FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("jpeg") || FileNameUtils.getExtension(singleanswer.getReference().getFilepath()).equals("jpg")) {
-							// NOTE: May have to add some sort of size restriction to the width and height parameters
-							questionRun.addPicture(new FileInputStream(singleanswer.getReference().getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, singleanswer.getReference().getFilepath(), Units.toEMU(reference.getWidth()), Units.toEMU(reference.getHeight()));
-						}
-					    
-					} 
-					catch (IOException e) {
-						
-					}
-					
-				}
+				DocUtils.matchingQuestionKey(document, (MatchingQuestion)question);
 				
 			}
 			numbering++;
 		}
-		
-		XWPFParagraph referenceParagraph = document.createParagraph();
-		referenceParagraph.setAlignment(ParagraphAlignment.RIGHT);
-		XWPFRun refRun = referenceParagraph.createRun();
-		
+				
 		if (quiz.getReferences() != null) {
 			
-			// Load data of reference image
-			BufferedImage refImg;
-			
-			try {
-				for (ReferenceMaterial reference : quiz.getReferences()) {
-				    refImg = ImageIO.read(new File(reference.getFilepath()));
-				    
-					if (FileNameUtils.getExtension(reference.getFilepath()).equals("png"))
-					{
-						// NOTE: May have to add some sort of size restriction to the width and height parameters
-						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_PNG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
-						refRun.addBreak(BreakType.PAGE);
-					}
-					else if (FileNameUtils.getExtension(reference.getFilepath()).equals("jpeg") || FileNameUtils.getExtension(reference.getFilepath()).equals("jpg")) {
-						// NOTE: May have to add some sort of size restriction to the width and height parameters
-						refRun.addPicture(new FileInputStream(reference.getFilepath()), XWPFDocument.PICTURE_TYPE_JPEG, reference.getFilepath(), Units.toEMU(refImg.getWidth()), Units.toEMU(refImg.getHeight()));
-						refRun.addBreak(BreakType.PAGE);
-					}
-				}
-			    
-			} 
-			catch (IOException e) {
-				
-			}
-			
+			DocUtils.insertQuizReference(document, quiz);			
 		}
 		
 		// Write to file
@@ -463,28 +219,28 @@ public class WordDocx
 		document.close();
 	}
 	
-	public void Shuffler(Quiz quiz, String filepath) throws Exception {
+	public void Shuffler(Quiz quiz, String filepath, String templatepath) throws Exception {
+		
 		quiz.shuffleQuestions();
+		List<MultipleChoiceQuestion> tfList = new ArrayList<MultipleChoiceQuestion>();
+		for(Question q: quiz.getQuestions()) {
+			if(q == null) break;
+			if(q.getType() == QuestionType.TRUE_FALSE) {
+				tfList.add((MultipleChoiceQuestion) q);
+			}
+		}
+		System.out.println(tfList);
 		ArrayList<Question> questionList = quiz.getQuestions();
 		
 		for (Question question : questionList) {
-			
-			// Get type of question and print answers depending
-			if (question instanceof MultipleChoiceQuestion) {
-				
-				if (question.getType().equals(QuestionType.MULTIPLE_CHOICE)) {
-					question.shuffleChoices();
-				}
-				
-			}
-			else if (question instanceof MatchingQuestion) {
-				
-				question.shuffleChoices();
-								
-			}
-			
+			if(question == null) break;
+			question.shuffleChoices();		
 		}
-		DocumentBuilder(quiz, filepath);
+		
+		//TODO sort questions by type
+		//extract true/false questions
+		//add t/f list to
+		DocumentBuilder(quiz, filepath, templatepath, tfList);
 		
 	}
 

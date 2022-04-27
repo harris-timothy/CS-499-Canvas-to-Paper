@@ -17,7 +17,7 @@ import cs499.utils.DataHelper;
 
 public class QuestionGroup {
 	
-	private ArrayList<Question> questions;
+	private ArrayList<Question> questions = new ArrayList<Question>();
 	
 	private int count;
 	
@@ -58,6 +58,9 @@ public class QuestionGroup {
 				setCount(group.getValue(QUESTION_GROUP.PICK_COUNT));
 				setPoints(group.getValue(QUESTION_GROUP.QUESTION_POINTS));
 				bank = new QuestionBank(group.getValue(QUESTION_GROUP.QUESTION_BANK_ID));
+			}
+			else {
+				setCount(1);
 			}
 			
 		} catch (Exception e) {
@@ -134,8 +137,15 @@ public class QuestionGroup {
 		questions.clear();
 		ArrayList<Question> bankQuestions = bank.getQuestions();
 		Collections.shuffle(bankQuestions);
-		for(int i = 0; i < count; i++) {
-			questions.add(bankQuestions.get(i));
+		if(count <= bankQuestions.size()) {
+			for(int i = 0; i < count; i++) {
+				questions.add(bankQuestions.get(i));
+			}
+		}
+		else {
+			for(int i = 0; i < bankQuestions.size(); i++) {
+				questions.add(bankQuestions.get(i));
+			}
 		}
 	}
 

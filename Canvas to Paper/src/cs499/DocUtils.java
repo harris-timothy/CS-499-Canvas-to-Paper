@@ -329,9 +329,94 @@ public class DocUtils {
 		}
 		return doc;
 	}
+	
+	public static XWPFDocument trueFalseSectionKey(XWPFDocument doc, List<MultipleChoiceQuestion> tfList, int startingNumber) {
+		// TODO section description
+				float points = 0;
+				XWPFParagraph par = doc.createParagraph();
+				XWPFRun run = par.createRun();
+				for (MultipleChoiceQuestion mult : tfList) {
+					points += mult.getPoints();
+				}
+				run.setText("Each question is worth " + DataHelper.numToString(points / tfList.size()) + " points.");
+
+				XWPFTable tfTable = doc.createTable(tfList.size(), 4);
+				tfTable.removeBorders();
+				tfTable.setWidth("100%");
+
+				for (int i = 0; i < tfList.size(); i++) {
+					XWPFTableRow row = tfTable.getRow(i);
+					row.getCell(0).setText(Integer.toString(startingNumber));
+					if(tfList.get(i).getCorrectAnswer().equals("True")) {
+						List<XWPFParagraph> pars = row.getCell(1).getParagraphs();
+						if(!pars.isEmpty()) {
+							XWPFRun keyRun = pars.get(0).createRun();
+							keyRun.setColor("FF0000");
+							keyRun.setText("T");
+							keyRun.setBold(true);
+						}
+						else {
+							XWPFParagraph newPar = row.getCell(1).addParagraph();
+							XWPFRun keyRun = newPar.createRun();
+							keyRun.setColor("FF0000");
+							keyRun.setText("T");
+							keyRun.setBold(true);				
+						}
+					}
+					else {
+						row.getCell(1).setText("T");
+					}
+					if(tfList.get(i).getCorrectAnswer().equals("False")) {
+						List<XWPFParagraph> pars = row.getCell(2).getParagraphs();
+						if(!pars.isEmpty()) {
+							XWPFRun keyRun = pars.get(0).createRun();
+							keyRun.setColor("FF0000");
+							keyRun.setText("F");
+							keyRun.setBold(true);
+						}
+						else {
+							XWPFParagraph newPar = row.getCell(2).addParagraph();
+							XWPFRun keyRun = newPar.createRun();
+							keyRun.setColor("FF0000");
+							keyRun.setText("F");
+							keyRun.setBold(true);				
+						}
+					}
+					else {
+						row.getCell(2).setText("F");
+					}
+										
+					row.getCell(3).setText(tfList.get(i).getDescription());
+					startingNumber++;
+				}
+		
+		
+		return doc;
+	}
 
 	public static XWPFDocument matchingQuestion(XWPFDocument doc, MatchingQuestion question) {
+		System.out.println("matching");
+		XWPFTable matchingTable = doc.createTable(question.getLeft().size(), 4);
+		matchingTable.removeBorders();
+		matchingTable.setWidth("100%");
+		char alpha = 'A';
+		List<String> values = new ArrayList<String>(question.getRight().values());
+		System.out.println(values);
+		for (int i = 0; i < question.getLeft().size(); i++) {
+			XWPFTableRow row = matchingTable.getRow(i);
+			row.getCell(0).setText("______");
+			row.getCell(1).setText(question.getLeft().get(i));
+			row.getCell(2).setText(Character.toString(alpha));
+			row.getCell(3).setText(values.get(i));
+			question.getRight().put(values.get(i), Character.toString(alpha));
+			System.out.println(alpha);
+			alpha++;
+		}
 
+		return doc;
+	}
+	
+	public static XWPFDocument matchingQuestionKey(XWPFDocument doc, MatchingQuestion question) {
 		XWPFTable matchingTable = doc.createTable(question.getLeft().size(), 4);
 		matchingTable.removeBorders();
 		matchingTable.setWidth("100%");
@@ -340,7 +425,23 @@ public class DocUtils {
 
 		for (int i = 0; i < question.getLeft().size(); i++) {
 			XWPFTableRow row = matchingTable.getRow(i);
-			row.getCell(0).setText("______");
+			String keyLetter = question.getRight().get(values.get(i));
+			
+			List<XWPFParagraph> pars = row.getCell(0).getParagraphs();
+			if(!pars.isEmpty()) {
+				XWPFRun run = pars.get(0).createRun();
+				run.setColor("FF0000");
+				run.setText(keyLetter);
+				run.setBold(true);
+			}
+			else {
+				XWPFParagraph newPar = row.getCell(1).addParagraph();
+				XWPFRun run = newPar.createRun();
+				run.setColor("FF0000");
+				run.setText(keyLetter);
+				run.setBold(true);				
+			}
+
 			row.getCell(1).setText(question.getLeft().get(i));
 			row.getCell(2).setText(Character.toString(alpha));
 			row.getCell(3).setText(values.get(i));

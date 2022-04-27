@@ -33,31 +33,32 @@ public class QuizBuilder {
 	
 	public Quiz buildQuiz(int id) {
 		Quiz builtQuiz = new Quiz(id);
-		QuestionBank bank;
-		List<Integer> bankQuestionList;
+		
+		builtQuiz.loadQuestionGroups();
+		
+		for(QuestionGroup group:builtQuiz.getQuestionGroups()) {
+			group.pullFromBank();
+			builtQuiz.getQuestions().addAll(group.getQuestions());
+		}
 		
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			// Fetch an array of question IDs from the database that match the given quiz ID
-			Integer[] questionArr = create.selectDistinct(QUIZ_TO_QUESTION.QUESTION_ID)
+			Integer[] questionArr = create.select(QUIZ_TO_QUESTION.QUESTION_ID)
 					.from(QUIZ_TO_QUESTION)
 					.where(QUIZ_TO_QUESTION.QUIZ_ID.eq(id))
 					.fetchArray(QUIZ_TO_QUESTION.QUESTION_ID);
 			
-			// Fetch an array of question group records containing the question bank ID and the pick count
-			// from the database that match the given quiz ID
-			Record[] groupArr = create.selectDistinct(QUESTION_GROUP.QUESTION_BANK_ID, QUESTION_GROUP.PICK_COUNT)
-					.from(QUESTION_GROUP)
-					.where(QUESTION_GROUP.QUIZ_ID.eq(id))
-					.fetchArray();
 	
 			// If the array of question IDs is not empty, build Question objects from each ID
 			// and add them to the quiz
 			if(questionArr != null) { // Maybe change to result.length != 0 if something breaks
 				for (Integer questionID : questionArr)
-				{
-					builtQuiz.addQuestion(QuestionFactory.build(questionID));
+				{	
+					if(questionID != null) {
+						builtQuiz.addQuestion(QuestionFactory.build(questionID));
+					}
 				}
 			}
 			
@@ -65,26 +66,26 @@ public class QuizBuilder {
 			// - Randomize the list of questions from the question bank
 			// - Choose a number of questions from the question bank based off of PICK_COUNT
 			// - Add the chosen questions to the quiz
-			if (groupArr != null) {
-				for (int i = 0; i < groupArr.length; i++) {
-					Integer bankID = groupArr[i].getValue(QUESTION_GROUP.QUESTION_BANK_ID);
-					if (bankID == 0) {
-						continue;
-					}
-					bank = new QuestionBank(bankID);
-					bankQuestionList = bank.getQuestionIds();
-					Collections.shuffle(bankQuestionList);
-					if (groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT) > bankQuestionList.size()) {
-						for (int j = 0; j < bankQuestionList.size(); j++) {
-							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
-						}
-					} else {
-						for (int j = 0; j < groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT); j++) {
-							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
-						}
-					}
-				}
-			}
+//			if (groupArr != null) {
+//				for (int i = 0; i < groupArr.length; i++) {
+//					Integer bankID = groupArr[i].getValue(QUESTION_GROUP.QUESTION_BANK_ID);
+//					if (bankID == 0) {
+//						continue;
+//					}
+//					bank = new QuestionBank(bankID);
+//					bankQuestionList = bank.getQuestionIds();
+//					Collections.shuffle(bankQuestionList);
+//					if (groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT) > bankQuestionList.size()) {
+//						for (int j = 0; j < bankQuestionList.size(); j++) {
+//							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
+//						}
+//					} else {
+//						for (int j = 0; j < groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT); j++) {
+//							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
+//						}
+//					}
+//				}
+//			}
 			
 			return builtQuiz;
 			

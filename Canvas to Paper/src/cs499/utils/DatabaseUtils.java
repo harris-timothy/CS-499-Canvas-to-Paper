@@ -8,6 +8,8 @@ import static cs499.data_classes.Tables.QUESTION_BANK_QUESTION;
 import static cs499.data_classes.Tables.QUESTION_GROUP;
 import static cs499.data_classes.Tables.QUESTION;
 import static cs499.data_classes.Tables.REFERENCE_MATERIAL;
+import static cs499.data_classes.Tables.INSTRUCTOR;
+import static cs499.data_classes.Tables.COURSE;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -41,6 +43,7 @@ public class DatabaseUtils {
 			Result<Record> result = create.select()
 					.from(QUIZ)
 					.fetch();
+			
 			if (result != null) {
 				for(Record r:result) {
 					quizArray.add(builder.buildQuiz(r.getValue(QUIZ.ID)));
@@ -259,6 +262,27 @@ public class DatabaseUtils {
 			
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void clearAllData() {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.truncate(COURSE);
+			create.truncate(QUIZ);
+			create.truncate(INSTRUCTOR);
+			create.truncate(QUESTION);
+			create.truncate(QUIZ_TO_QUESTION);
+			create.truncate(QUESTION_GROUP);
+			create.truncate(QUESTION_BANK);
+			create.truncate(QUESTION_BANK_QUESTION);
+			create.truncate(REFERENCE_MATERIAL);
+			create.truncate(QUIZ_REFERENCE);
+			
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		
