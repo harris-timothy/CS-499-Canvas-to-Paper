@@ -12,11 +12,19 @@ public abstract class Question implements Reference{
 	
 	public abstract String getName();
 	
+	public abstract void setName(String name);
+	
 	public abstract String getDescription();
+	
+	public abstract void setDescription(String description);
 	
 	public abstract String getGradingInstructions();
 	
+	public abstract void setGradingInstructions(String instructions);
+	
 	public abstract boolean getAbet();
+	
+	public abstract void setAbet(boolean abet);
 	
 	public abstract void loadQuestion();
 	
@@ -26,9 +34,13 @@ public abstract class Question implements Reference{
 	
 	public abstract QuestionType getType();
 	
+	public abstract void setType(QuestionType type);
+	
 	public abstract void shuffleChoices();
 	
-  public abstract String getAnswer();
+	public abstract String getAnswer();
+	
+	public abstract void setAnswer(String answer);
 	
 	public abstract ReferenceMaterial getReference();
 

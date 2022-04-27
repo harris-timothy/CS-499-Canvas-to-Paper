@@ -37,6 +37,7 @@ public class SingleAnswerQuestion extends Question {
 	
 	public SingleAnswerQuestion() {
 		newQuestion();
+		setType(QuestionType.TEXT_ONLY);
 	}
 
 	public SingleAnswerQuestion(int id) {
@@ -80,7 +81,7 @@ public class SingleAnswerQuestion extends Question {
 		return this.abet;
 	}
 
-	public void setAbet(Boolean abet) {
+	public void setAbet(boolean abet) {
 		this.abet = abet;
 	}
 
@@ -278,6 +279,18 @@ public class SingleAnswerQuestion extends Question {
 	}
 		
 	public String getAnswer() {
-		return answers.toString();
+		if(answers != null) {
+			return answers.toString();
+		}
+		else return null;
 	}
+
+
+	@Override
+	public void setAnswer(String answer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

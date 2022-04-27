@@ -111,7 +111,7 @@ public class ReferencesScreen {
 			JButton delete_btn = new JButton("Delete");
 			class DeleteQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					DatabaseUtils.deleteReference(reference.getId());
+					DatabaseUtils.deleteReference(curRef);
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 					new SelectQuizScreen();
 				}

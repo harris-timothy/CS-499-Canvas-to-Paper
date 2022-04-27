@@ -6,6 +6,8 @@ import static cs499.data_classes.Tables.QUIZ_TO_QUESTION;
 import static cs499.data_classes.Tables.QUIZ_REFERENCE;
 import static cs499.data_classes.Tables.QUESTION_BANK_QUESTION;
 import static cs499.data_classes.Tables.QUESTION_GROUP;
+import static cs499.data_classes.Tables.QUESTION;
+import static cs499.data_classes.Tables.REFERENCE_MATERIAL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,6 +23,8 @@ import cs499.QuestionBank;
 import cs499.QuestionGroup;
 import cs499.Quiz;
 import cs499.QuizBuilder;
+import cs499.Reference;
+import cs499.ReferenceMaterial;
 import cs499.qti.ParseUtils;
 import cs499.question.Question;
 
@@ -233,6 +237,31 @@ public class DatabaseUtils {
 			e.printStackTrace();
 	}
 		return idList;
+	}
+	
+	public static void deleteReference(ReferenceMaterial reference) {
+		
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.delete(QUIZ_REFERENCE)
+			.where(QUIZ_REFERENCE.REFERENCE_ID.eq(reference.getId()))
+			.execute();
+			
+			create.update(QUESTION)
+			.setNull(QUESTION.REFERENCE_ID)
+			.where(QUESTION.REFERENCE_ID.eq(reference.getId()))
+			.execute();
+			
+			create.delete(REFERENCE_MATERIAL)
+			.where(REFERENCE_MATERIAL.ID.eq(reference.getId()))
+			.execute();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

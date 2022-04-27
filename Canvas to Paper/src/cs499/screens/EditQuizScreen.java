@@ -261,9 +261,9 @@ public class EditQuizScreen {
 		class CreateQuestionAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Question newQuestion = new SingleAnswerQuestion();
-				new EditQuestionScreen(newQuestion);
 				quiz.addQuestion(newQuestion);
-                
+				new EditQuestionScreen(newQuestion);
+				                
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 			}
 		}

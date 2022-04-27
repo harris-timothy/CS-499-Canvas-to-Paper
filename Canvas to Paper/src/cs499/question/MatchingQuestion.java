@@ -82,7 +82,8 @@ public class MatchingQuestion extends Question {
 	public String getName() {
 		return this.name;
 	}
-
+	
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -294,6 +295,12 @@ public class MatchingQuestion extends Question {
 	public String getAnswer() {
 		return right.toString();
 	}
-	
 
+	@Override
+	public void setAnswer(String answer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

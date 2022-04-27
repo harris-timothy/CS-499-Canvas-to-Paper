@@ -7,8 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,7 +20,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import cs499.gui_utils.FrameBuilder;
+import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
+import cs499.question.QuestionType;
+import cs499.question.SingleAnswerQuestion;
 
 public class EditQuestionScreen {
 	
@@ -27,7 +33,7 @@ public class EditQuestionScreen {
 	    private JLabel descriptionLabel;
 	    private JTextArea descriptionField;
 	    private JLabel typeLabel;
-	    private JTextField typeField;
+	    private JComboBox<QuestionType> typeComboBox;
 	    private JLabel instructionLabel;
 	    private JTextField instructionField;
 	    private JLabel answerLabel;
@@ -74,8 +80,20 @@ public class EditQuestionScreen {
         typeLabel.setText("Type");
         typeLabel.setBounds(10, 55, 150, 30);
          
-        this.typeField = new JTextField();
-        typeField.setBounds(10, 85, 125, 20);
+        this.typeComboBox = new JComboBox<QuestionType>();
+        typeComboBox.setModel(new DefaultComboBoxModel<>(QuestionType.values()));
+        typeComboBox.setBounds(10, 85, 125, 20);
+        
+        class TypeComboBox implements ActionListener {
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent e) {
+				JComboBox<QuestionType> cb = (JComboBox<QuestionType>)e.getSource();
+				QuestionType type = (QuestionType) cb.getSelectedItem();
+				question.setType(type);
+			}
+        }
+        
+        typeComboBox.addActionListener(new TypeComboBox());
          
         this.instructionLabel = new JLabel();
         instructionLabel.setText("Grading Instructions");
@@ -83,30 +101,39 @@ public class EditQuestionScreen {
          
         this.instructionField = new JTextField();
         instructionField.setBounds(150,85,200,20);
-         
-        this.answerLabel = new JLabel();
-        answerLabel.setText("Answer");
-        answerLabel.setBounds(350,0,100,30);
         
-        this.answerField = new JTextArea();
-        answerField.setPreferredSize(new Dimension(300,250));
-        answerField.setLineWrap(true);
-        answerField.setWrapStyleWord(true);
-         
-        //Create Back Button
-        JButton save_btn = new JButton("Save Changes");
- 		class SaveAction implements ActionListener {
- 			public void actionPerformed(ActionEvent e) {
- 				question.saveQuestion();
- 				new SelectQuizScreen();
- 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
- 			}
- 		}
- 		save_btn.addActionListener(new SaveAction());
- 		save_btn.setBounds(485, 30, 200, 20);
- 		question_info_panel.add(save_btn);
- 		
- 		//Create ABET checkbox
+        
+        //TODO: change answer fields for different question types
+        if(question instanceof SingleAnswerQuestion) {
+        	this.answerLabel = new JLabel();
+            answerLabel.setText("Answer");
+            answerLabel.setBounds(350,0,100,30);
+            
+            this.answerField = new JTextArea();
+            answerField.setPreferredSize(new Dimension(300,250));
+            answerField.setLineWrap(true);
+            answerField.setWrapStyleWord(true);
+        	
+        }
+        else if (question instanceof MultipleChoiceQuestion) {
+        	this.answerLabel = new JLabel();
+        	answerLabel.setText("Correct Answer");
+        	answerLabel.setBounds(350,0,100,30);
+        	
+        	JTextField correctField = new JTextField();
+        	correctField.setText(((MultipleChoiceQuestion)question).getCorrectAnswer());
+        	
+        	//TODO editable JTable for choices
+        }
+        else {
+        	this.answerLabel = new JLabel();
+        	answerLabel.setText("Choices");
+        	//TODO editable JTable that shows left and right
+        	
+        }
+        
+        
+      //Create ABET checkbox
  		JCheckBox abet_box = new JCheckBox("Mark for ABET");
  		abet_box.setMnemonic(KeyEvent.VK_A);
  		abet_box.setSelected(false);
@@ -119,18 +146,38 @@ public class EditQuestionScreen {
  		
  		question_info_panel.add(abet_box);
  		question_info_panel.add(blacklist_box);
+         
+        //Create Back Button
+        JButton save_btn = new JButton("Save Changes");
+ 		class SaveAction implements ActionListener {
+ 			public void actionPerformed(ActionEvent e) {
+ 				question.setName(nameField.getText());
+ 				question.setDescription(descriptionField.getText());
+ 				question.setGradingInstructions(instructionField.getText());
+ 				question.setType((QuestionType) typeComboBox.getSelectedItem());
+ 				question.setAbet(abet_box.isSelected());
+ 				question.setAnswer(answerField.getText());
+ 				question.saveQuestion();
+ 				new SelectQuizScreen();
+ 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
+ 			}
+ 		}
+ 		save_btn.addActionListener(new SaveAction());
+ 		save_btn.setBounds(485, 30, 200, 20);
+ 		question_info_panel.add(save_btn);
+ 		
+ 		
  		
  		
  		nameField.setText(question.getName());
         descriptionField.setText(question.getDescription());
-        typeField.setText(question.getType().toString());
         if (question.getGradingInstructions() != null) instructionField.setText(question.getGradingInstructions());
-        answerField.setText(question.getAnswer());
+        if (question.getAnswer() != null) answerField.setText(question.getAnswer());
 
         question_info_panel.add(questionLabel);
         question_info_panel.add(nameField);
         question_info_panel.add(typeLabel);
-        question_info_panel.add(typeField);
+        question_info_panel.add(typeComboBox);
         question_info_panel.add(instructionLabel);
         question_info_panel.add(instructionField);
         
