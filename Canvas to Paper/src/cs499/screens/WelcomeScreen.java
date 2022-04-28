@@ -282,6 +282,20 @@ public class WelcomeScreen {
 			}
 		}
 		create_bank_mi.addActionListener(new CreateBankAction());
+		
+		//Reports Menu
+		JMenu reports_menu = menu.buildMenu("Reports", KeyEvent.VK_R);
+		menu_bar.add(reports_menu);
+		
+		//Reports -> View Generation Reports
+		JMenuItem generation_reports_mi = menu.buildMenuItem("View Generation Reports", KeyEvent.VK_V, reports_menu);
+		class ViewReportsAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				new ReportingScreen();
+				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		generation_reports_mi.addActionListener(new ViewReportsAction());
 
 		//Create Import QTI File Button
 		JButton import_btn = new JButton("Import QTI Files");

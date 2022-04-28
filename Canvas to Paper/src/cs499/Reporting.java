@@ -28,8 +28,6 @@ public class Reporting {
 		return metaList;
 	}
 
-
-
 	private ArrayList<HashMap<String,String>> metaList = new ArrayList<HashMap<String,String>>();
 	
 	public Reporting() {
@@ -56,9 +54,17 @@ public class Reporting {
 	}
 	
 	
-	public ArrayList<Question> loadQuestions(ArrayList<Integer> questionList) {
-		
+	private ArrayList<Question> loadQuestions(HashMap<String, String> meta) {
+		ArrayList<Integer> questionList = new ArrayList<Integer>();
 		ArrayList<Question> questionArray = new ArrayList<Question>();
+		
+		for(String string: meta.keySet()) {
+			try{
+				questionList.add(Integer.parseInt(string));
+			}catch(NumberFormatException e) {
+				continue;
+			}
+		}
 		
 		for(int id: questionList) {
 			questionArray.add(QuestionFactory.build(id));
@@ -77,6 +83,10 @@ public class Reporting {
 			}
 		}
 		return usesArray;
+	}
+	
+	public ArrayList<Question> getDetails(HashMap<String,String> meta) {
+		return loadQuestions(meta);
 	}
 	
 	

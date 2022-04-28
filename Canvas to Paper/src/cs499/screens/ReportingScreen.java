@@ -1,145 +1,194 @@
 package cs499.screens;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import cs499.Reporting;
 import cs499.gui_utils.FrameBuilder;
-import cs499.gui_utils.MenuBuilder;
+import cs499.question.Question;
 
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import javax.swing.JTable;
-import java.awt.Insets;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JButton;
-
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
 public class ReportingScreen {
 
-	private JPanel contentPane;
+	private JFrame frame;
+	private JLabel generationsLabel;
 	private JTable generationsTable;
-	private JTable detailsTable;
-	private JLabel generationLabel;
-	private JLabel detailLabel;
-	private JButton backBtn;
-
+	private JLabel questionsLabel;
+	private JTable questionsTable;
+	private JButton backButton;
 	
-	/**
-	 * Create the frame.
-	 */
+	
 	public ReportingScreen() {
-		
 		String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
-		String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
-		
-		MenuBuilder menu = new MenuBuilder();
-		FrameBuilder maker = new FrameBuilder();
-		JMenuBar menu_bar = new JMenuBar();
-		
-		JFrame frame = maker.buildFrame(
-				frame_title, 
-				JFrame.DISPOSE_ON_CLOSE, 
-				1000, 800, 
-				menu_bar, 
-				logo_icon_path
-			);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		frame.setContentPane(contentPane);
-		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{40, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{81, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{1.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		contentPane.setLayout(gbl_contentPane);
-		
-		generationLabel = new JLabel("Generated quizzes");
-		GridBagConstraints gbc_generationLabel = new GridBagConstraints();
-		gbc_generationLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_generationLabel.gridx = 1;
-		gbc_generationLabel.gridy = 0;
-		contentPane.add(generationLabel, gbc_generationLabel);
-		
-		detailLabel = new JLabel();
-		GridBagConstraints gbc_detailLabel = new GridBagConstraints();
-		gbc_detailLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_detailLabel.gridx = 4;
-		gbc_detailLabel.gridy = 0;
-		contentPane.add(detailLabel, gbc_detailLabel);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-		gbc_scrollPane.gridheight = 4;
-		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridx = 1;
-		gbc_scrollPane.gridy = 1;
-		contentPane.add(scrollPane, gbc_scrollPane);
-		
-		Reporting reporting = new Reporting();
-		generationsTable = new JTable();
+        String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
+        
+      //Initialize the frame
+        FrameBuilder maker = new FrameBuilder();
+		frame = maker.buildFrame(
+            frame_title, 
+			JFrame.DISPOSE_ON_CLOSE, 
+			800, 600, 
+			null, 
+			logo_icon_path
+        );
+		GridBagLayout gridbag = new GridBagLayout();
+        frame.setLayout(gridbag);
+        GridBagConstraints constraints = new GridBagConstraints();
+        
+        
+        this.generationsLabel = new JLabel();
+        generationsLabel.setText("Generated Quizzes");
+        generationsLabel.setBounds(10,10,100,50);
+        
+        this.generationsTable = new JTable();
+        generationsTable.setBounds(10,100,200,300);        
+        
+        JScrollPane generations_panel = new JScrollPane(generationsTable);
+        generations_panel.setPreferredSize(new Dimension(100,300));
+        
+        this.questionsLabel = new JLabel();
+        questionsLabel.setText("Questions");
+        questionsLabel.setBounds(0,0,100,50);
+        
+        this.questionsTable = new JTable();
+        questionsTable.setBounds(0,0,300,300);
+        
+        JScrollPane questions_panel = new JScrollPane(questionsTable);
+        questions_panel.setPreferredSize(new Dimension(300,500));
+        
+        Reporting report = new Reporting();
+        
 		Object[] columns = {" "};
-		DefaultTableModel model = new DefaultTableModel(new Object[0][0], columns);
-		for(String title:reporting.getMetaTitles()) {
+		DefaultTableModel generations_model = new DefaultTableModel(new Object[0][0],columns);
+		for(String title: report.getMetaTitles()) {
 			Object[] o = new Object[1];
 			o[0] = title;
-			model.addRow(o);
- 		}
-		generationsTable.setModel(model);
-		generationsTable.addMouseListener(new MouseAdapter() {
+			generations_model.addRow(o);
+		}
+		generationsTable.setModel(generations_model);
+		generationsTable.setRowHeight(80);
+		
+		JButton details_button = new JButton();
+		details_button.setText("Load details");
+		details_button.setPreferredSize(new Dimension(100,30));
+		
+		class DetailButtonAction implements ActionListener {
+
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				int index = generationsTable.getSelectedRow();
-				System.out.println(model.getValueAt(index, 0));
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<Question> questions = report.getDetails(report.getMetaList().get(generationsTable.getSelectedRow()));
+				Object[] columns = {"Name","Type","Description"};
+				DefaultTableModel questions_model = new DefaultTableModel(new Object[0][0],columns);
+				
+				for(Question q: questions) {
+					Object[] o = new Object[3];
+					o[0] = q.getName();
+					o[1] = q.getType();
+					o[2] = q.getDescription();
+					questions_model.addRow(o);
+				}
+				questionsTable.setModel(questions_model);
+				questionsTable.setRowHeight(30);
 			}
-		});
-		generationsTable.setFillsViewportHeight(true);
-		scrollPane.setViewportView(generationsTable);
+			
+		}
+		details_button.addActionListener(new DetailButtonAction());		
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
-		gbc_scrollPane_1.gridheight = 4;
-		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 5);
-		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_1.gridx = 4;
-		gbc_scrollPane_1.gridy = 1;
-		contentPane.add(scrollPane_1, gbc_scrollPane_1);
-		
-		detailsTable = new JTable();
-		detailsTable.setFillsViewportHeight(true);
-		scrollPane_1.setViewportView(detailsTable);
-		
-		backBtn = new JButton("<- Back");
-		GridBagConstraints gbc_backBtn = new GridBagConstraints();
-		gbc_backBtn.gridx = 5;
-		gbc_backBtn.gridy = 5;
-		contentPane.add(backBtn, gbc_backBtn);
-		
-		class BackAction implements ActionListener {
+        
+        this.backButton = new JButton();
+        backButton.setText("<- Back");
+        backButton.setPreferredSize(new Dimension(100,50));
+        
+        class BackButtonAction implements ActionListener {
+
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				new WelcomeScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
+				
 			}
-		}
-		backBtn.addActionListener(new BackAction());
+        }
+        backButton.addActionListener(new BackButtonAction());
+        
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        
+        
+        constraints.gridx = 0;
+		constraints.gridy = 6;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 2;
+		constraints.weightx = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 3;
+		constraints.gridy = 6;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.2;
+		frame.add(new JLabel(), constraints);
+		
+		//Set table weights
+		constraints.weightx = 0.6 / 2;
+		constraints.weighty = 0.7 / 5;
+
+        
+		constraints.gridx = 1;
+		
+       
+        constraints.gridy = 2;
+        frame.add(generationsLabel, constraints);
+        
+       
+        constraints.gridy = 3;
+        constraints.gridheight = 2;
+        frame.add(generations_panel, constraints);
+        
+        
+        constraints.gridy = 5;
+        constraints.gridheight = 1;
+        frame.add(details_button, constraints);
+        
+        constraints.gridx = 3;
+    
+        constraints.gridy = 2;        
+        frame.add(questionsLabel, constraints);
+        
+        
+        constraints.gridy = 3;
+        constraints.gridheight = 2;
+        constraints.gridwidth = 2;        
+        frame.add(questions_panel, constraints);
+        
+        
+        constraints.gridx = 4;
+        constraints.gridy = 4;
+        constraints.gridheight = 1;
+        frame.add(backButton, constraints);        
+		
+        frame.setVisible(true);
 	}
 
 }
