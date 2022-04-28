@@ -1,14 +1,10 @@
 package cs499.screens;
 
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -97,7 +93,6 @@ public class GeneratorScreen {
 				}
 				
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				new WelcomeScreen();
 			}
 		}
 		save_btn.addActionListener(new SaveAction());

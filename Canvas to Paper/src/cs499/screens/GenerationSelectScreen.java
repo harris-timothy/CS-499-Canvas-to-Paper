@@ -132,29 +132,7 @@ public class GenerationSelectScreen {
 			Quiz quiz = quiz_list.get(i);
 			class SelectQuizAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
-					/*doc = new WordDocx();
-					
-					String test_string = quiz.getName();
-					String test_path = "";
-					
-					for (int i = 0; i < test_string.length(); i++) {
-					    test_path += test_string.charAt(i);
-					}
-					test_path = "Generated_Tests\\" + quiz.getName();
-					String test_fullpath = test_path + ".docx";
-					
-					//TODO add get template path from fileexplorer
-					try {
-						doc.Shuffler(quiz, test_fullpath, "C:\\Users\\black\\Downloads\\Test Chapter 1.docx");
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-					
-					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					new WelcomeScreen();*/
-					
 					new GeneratorScreen(quiz);
-					
 				}
 			}
 			gen_btn.addActionListener(new SelectQuizAction());
@@ -196,8 +174,8 @@ public class GenerationSelectScreen {
 		class CreateQuizAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				Quiz new_quiz = new Quiz();
-				new EditQuizScreen(new_quiz);
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+				new EditQuizScreen(new_quiz);
 			}
 		}
 		create_quiz_btn.addActionListener(new CreateQuizAction());
