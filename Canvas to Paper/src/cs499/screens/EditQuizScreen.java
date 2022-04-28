@@ -97,6 +97,9 @@ public class EditQuizScreen {
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				quiz.setName(quizField.getText());
+				//quiz.setCourse(courseField.getText());
+				quiz.setDate(dateField.getText());
+				//quiz.setInstructor(instructorField.getText());
 				quiz.saveQuiz();
 				new WelcomeScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
