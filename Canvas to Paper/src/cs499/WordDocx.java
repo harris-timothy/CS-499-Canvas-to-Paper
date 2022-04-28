@@ -221,9 +221,7 @@ public class WordDocx
 			question.shuffleChoices();		
 		}
 		
-		//TODO sort questions by type
-		//extract true/false questions
-		//add t/f list to
+		quiz.saveMetadata();
 		DocumentBuilder(quiz, filepath, templatepath, tfList);
 		
 	}
