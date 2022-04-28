@@ -17,7 +17,7 @@ import cs499.utils.DataHelper;
 
 public class QuestionGroup {
 	
-	private ArrayList<Question> questions;
+	private ArrayList<Question> questions = new ArrayList<Question>();
 	
 	private int count;
 	
@@ -28,6 +28,8 @@ public class QuestionGroup {
 	private int id;
 	
 	private QuestionBank bank;
+	
+	private String description;
 	
 	public QuestionGroup() {
 		newGroup();
@@ -55,7 +57,10 @@ public class QuestionGroup {
 				setName(group.getValue(QUESTION_GROUP.NAME));
 				setCount(group.getValue(QUESTION_GROUP.PICK_COUNT));
 				setPoints(group.getValue(QUESTION_GROUP.QUESTION_POINTS));
-				setBank(group.getValue(QUESTION_GROUP.QUESTION_BANK_ID));
+				bank = new QuestionBank(group.getValue(QUESTION_GROUP.QUESTION_BANK_ID));
+			}
+			else {
+				setCount(1);
 			}
 			
 		} catch (Exception e) {
@@ -129,10 +134,18 @@ public class QuestionGroup {
 	}
 	
 	public void pullFromBank() {
+		questions.clear();
 		ArrayList<Question> bankQuestions = bank.getQuestions();
 		Collections.shuffle(bankQuestions);
-		for(int i = 0; i < count; i++) {
-			questions.add(bankQuestions.get(i));
+		if(count <= bankQuestions.size()) {
+			for(int i = 0; i < count; i++) {
+				questions.add(bankQuestions.get(i));
+			}
+		}
+		else {
+			for(int i = 0; i < bankQuestions.size(); i++) {
+				questions.add(bankQuestions.get(i));
+			}
 		}
 	}
 
@@ -142,6 +155,14 @@ public class QuestionGroup {
 
 	public void setBank(int bankId) {
 		this.bank = new QuestionBank(bankId);
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

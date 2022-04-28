@@ -162,13 +162,18 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 			String correct = findCorrect(correctResultsList.get(FIRST), responseChoicesList);
 			ArrayList<String> choices = findChoices(responseChoicesList, correct);
 			return AnswerFormatter.answerJSONString(correct, choices);			
-		case CALCULATED:		
-		case MULTIPLE_BLANKS:		
-		case NUMERICAL:		
+		case CALCULATED:
+		case NUMERICAL:
+			for(HashMap<String,String> num: correctResultsList) {
+				if(num.containsKey("floor")) {
+					return AnswerFormatter.answerJSONString(num);
+				}
+			}
+			break;			
+		case MULTIPLE_BLANKS:				
 			ArrayList<String> answers = new ArrayList<String>();
 			for(HashMap<String,String> i: correctResultsList) {
 				answers.add(findCorrect(i, responseChoicesList));
-				findNumRange(i);
 			}
 			return AnswerFormatter.answerJSONString(answers);
 		case ESSAY:
@@ -259,6 +264,23 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		
 	}
 	
+	
+	public static void deleteDirectory(String path) throws IOException{
+		Path directory = Paths.get(path);
+		
+		Files.walk(directory)
+          .sorted(Comparator.reverseOrder())
+          .map(Path::toFile)
+          .forEach(File::delete);
+	}
+	
+	public static void deleteDirectory(Path path) throws IOException{
+		Files.walk(path)
+          .sorted(Comparator.reverseOrder())
+          .map(Path::toFile)
+          .forEach(File::delete);
+	}
+	
 	public static void imsccCleanup(String filepath) {
 
 		try(Stream<Path> walk = Files.walk(Paths.get(filepath))){
@@ -271,29 +293,11 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 				if(p.toString().endsWith(".xml") && !p.toString().contains("imsmanifest.xml")) {
 					Files.deleteIfExists(p);
 				}
-				else if(p.toString().endsWith("course_settings") || p.toString().endsWith("wiki_content")) {
-					deleteDirectory(p);
-				}
 			}
-
-
 		}
 		catch(IOException e) {
 			e.printStackTrace();
 		}
-
-		
-		//go through extracted folder
-		//delete course_settings folder
-		//delete all xml files in root folder other than imsmanifest
-		//delete wiki_content
-	}
-	
-	private static void deleteDirectory(Path directory) throws IOException{
-		  Files.walk(directory)
-          .sorted(Comparator.reverseOrder())
-          .map(Path::toFile)
-          .forEach(File::delete);
 	}
 
 }

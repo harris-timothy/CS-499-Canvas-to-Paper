@@ -26,20 +26,23 @@ public class QuestionFactory {
 					.where(QUESTION.ID.eq(id))
 					.fetchOne();
 			
-			String allAnswers = result.getValue(QUESTION.ANSWERS);
-			JSONArray answerArray = new JSONArray(allAnswers);
-			
-			if(answerArray.getJSONObject(0).has("correct")) {
-				return new MultipleChoiceQuestion(id);
+			if(result != null) {
+				String allAnswers = result.getValue(QUESTION.ANSWERS);
+				JSONArray answerArray = new JSONArray(allAnswers);
+				if(answerArray.isEmpty()) {
+					return new SingleAnswerQuestion(id);
+				}
+				else if(answerArray.getJSONObject(0).has("correct")) {
+					return new MultipleChoiceQuestion(id);
+				}
+				else if(answerArray.getJSONObject(0).has("left")) {
+					return new MatchingQuestion(id);
+				}
+				else {
+					return new SingleAnswerQuestion(id);
+				}
+
 			}
-			else if(answerArray.getJSONObject(0).has("left")) {
-				return new MatchingQuestion(id);
-			}
-			else {
-				return new SingleAnswerQuestion(id);
-			}
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

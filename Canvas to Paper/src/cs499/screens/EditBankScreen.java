@@ -164,6 +164,9 @@ public class EditBankScreen {
 		for (int i = 0; i < question_list.size(); i++){
 			JButton edit_btn = new JButton("Edit");
 			Question question = question_list.get(i);
+			if(question == null) {
+				break;
+			}
 			class EditQuestionAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
 					new EditQuestionScreen(question);

@@ -25,8 +25,8 @@ public class QtiToDB {
 	
 	private static final int FIRST = 0;
 	
-	public static int storeQuiz(HashMap<String, String> data) {
-		int quizId = 0;
+	public static Integer storeQuiz(HashMap<String, String> data) {
+		
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			Record exists = create.select()
@@ -35,7 +35,7 @@ public class QtiToDB {
 					.fetchOne();
 			
 			if(exists == null) {
-				quizId =  create.insertInto(QUIZ,
+				return create.insertInto(QUIZ,
 						QUIZ.QTI_ID,
 						QUIZ.NAME)
 				.values(data.get("quiz_qti_id"),
@@ -45,13 +45,13 @@ public class QtiToDB {
 				.fetchOne(QUIZ.ID);
 			}
 			else {
-				quizId = exists.getValue(QUIZ.ID);
+				return exists.getValue(QUIZ.ID);
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		return quizId;
+		return null;
 		
 	}
 	
@@ -80,11 +80,10 @@ public class QtiToDB {
 			}
 			else {
 				create.update(QUIZ)
-				.set(QUIZ.NAME, data.get("name"))
 				.set(QUIZ.DESCRIPTION, data.get("description"))
 				.set(QUIZ.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
 				.set(QUIZ.DUE_DATE, data.get("due_date"))
-				.where(QUIZ.QTI_ID.eq(data.get("qti_id")))
+				.where(QUIZ.NAME.eq(data.get("name")))
 				.execute();
 			}
 			
@@ -95,8 +94,7 @@ public class QtiToDB {
 		
 	}
 	
-	public static int storeQuestion(HashMap<String, String> data) {
-		int questionId = 0;
+	public static Integer storeQuestion(HashMap<String, String> data) {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
@@ -106,7 +104,7 @@ public class QtiToDB {
 					.fetchOne();
 
 			if(exists == null) {
-				create.insertInto(QUESTION,
+				Record record = create.insertInto(QUESTION,
 						QUESTION.QTI_ID,
 						QUESTION.NAME,
 						QUESTION.DESCRIPTION,
@@ -119,60 +117,66 @@ public class QtiToDB {
 						data.get("question_type"),
 						data.get("answers"),
 						Float.parseFloat(data.get("points_possible")))
-				.execute();
+				.onDuplicateKeyIgnore()
+				.returning(QUESTION.ID)
+				.fetchOne();
+				
+				if(record != null) {
+					
+					return record.getValue(QUESTION.ID);
+				}
 
 			}
 			else {
-				create.update(QUESTION)
+				
+				Record record = create.update(QUESTION)
 				.set(QUESTION.NAME, data.get("name"))
-				.set(QUESTION.QTI_ID, data.get("qti_id"))
 				.set(QUESTION.TYPE, data.get("question_type"))
 				.set(QUESTION.ANSWERS, data.get("answers"))
 				.set(QUESTION.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
 				.where(QUESTION.DESCRIPTION.eq(data.get("description")))
-				.execute();
-			}
-			
-			questionId = create.select(QUESTION.ID)
-			.from(QUESTION)
-			.where(QUESTION.DESCRIPTION.eq(data.get("description")))
-			.fetchOne(QUESTION.ID);			
+				.returning(QUESTION.ID)
+				.fetchOne();
+				
+				if(record != null) {
+					return record.getValue(QUESTION.ID);
+				}
+			}		
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return questionId;
+		return null;
 	}
 	
-	public static int storeQuestionBank(HashMap<String, String> data) {
-		int bankId = 0;
+	public static Integer storeQuestionBank(HashMap<String, String> data) {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			Record exists = create.select()
 					.from(QUESTION_BANK)
-					.where(QUESTION_BANK.QTI_ID.eq(data.get("qti_id")))
+					.where(QUESTION_BANK.NAME.eq(data.get("bank_title")))
 					.fetchOne();
 
 			if(exists == null) {
-				create.insertInto(QUESTION_BANK,
+				return create.insertInto(QUESTION_BANK,
 						QUESTION_BANK.QTI_ID,
 						QUESTION_BANK.NAME)
 				.values(data.get("qti_id"),
 						data.get("bank_title"))
-				.execute();
+				.onDuplicateKeyIgnore()
+				.returning(QUESTION_BANK.ID)
+				.fetchOne(QUESTION_BANK.ID);
 			}
+			else {
 			
-			bankId = create.select(QUESTION_BANK.ID)
-					.from(QUESTION_BANK)
-					.where(QUESTION_BANK.QTI_ID.eq(data.get("qti_id")))
-					.fetchOne(QUESTION_BANK.ID);
-			
+				return exists.getValue(QUESTION_BANK.ID);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return bankId;
+		return null;
 		
 	}
 	
@@ -267,8 +271,7 @@ public class QtiToDB {
 	
 	
 
-	public static int storeCourse(String courseName) {
-		int courseId = 0;
+	public static Integer storeCourse(String courseName) {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
@@ -278,22 +281,21 @@ public class QtiToDB {
 					.fetchOne();
 			
 			if(exists == null) {
-				create.insertInto(COURSE, 
+				return create.insertInto(COURSE, 
 						COURSE.NAME)
 				.values(courseName)
-				.execute();
+				.returning(COURSE.ID)
+				.fetchOne(COURSE.ID);
 			}
-			
-			courseId = create.select(COURSE.ID)
-					.from(COURSE)
-					.where(COURSE.NAME.eq(courseName))
-					.fetchOne(COURSE.ID);
+			else {
+				return exists.getValue(COURSE.ID);
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 		
-		return courseId;
+		return null;
 	}
 	
 	public static void associateCourse(int courseId, ArrayList<String> quizList) {

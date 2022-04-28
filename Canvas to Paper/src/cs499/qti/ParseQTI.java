@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class ParseQTI {
      */
     private static final int BUFFER_SIZE = 4096;
     private static final int FIRST = 0;
+    private static final String QUIZ_DIRECTORY = "//non_cc_assessments";
+    private static final String QTI_PATH = "qti";
     /**
      * Extracts a zip file specified by the zipFilePath to a directory specified by
      * destDirectory (will be created if does not exists)
@@ -42,7 +45,7 @@ public class ParseQTI {
     public void unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
-            destDir.mkdir();
+            destDir.mkdirs();
         }
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
 
@@ -52,11 +55,15 @@ public class ParseQTI {
             String filePath = destDirectory + File.separator + entry.getName();
             if (!entry.isDirectory()) {
                 // if the entry is a file, extracts it
+            	try {
                 extractFile(zipIn, filePath);
+            	} catch(IOException e) {
+            		
+            	}
             } else {
                 // if the entry is a directory, make the directory
                 File dir = new File(filePath);
-                dir.mkdir();
+                dir.mkdirs();
             }
             zipIn.closeEntry();
             entry = zipIn.getNextEntry();
@@ -101,8 +108,7 @@ public class ParseQTI {
         		  int i = fileName.lastIndexOf('.');
         		  if (i >= 0) { 
         			  ext = fileName.substring(i+1); 
-        		  }
-        		  
+        		  }        		  
         		  
         		  if (ext.equals("xml") || ext.equals("qti"))
         		  {
@@ -122,6 +128,42 @@ public class ParseQTI {
     	  }
     }
     
+    public void importQTI(String filepath) throws JAXBException {
+    	try {
+			unzip(filepath, QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	xmlLoop(QTI_PATH);
+    	try {
+			ParseUtils.deleteDirectory(QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
+    public void importIMSCC(String filepath) throws JAXBException {
+    	try {
+			unzip(filepath, QTI_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	imsccLoop(QTI_PATH);
+    	
+    	
+    	
+//    	try {
+//			ParseUtils.deleteDirectory(QTI_PATH);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+    }
+    
     //need to add the following functionality
     //detect when images are referenced
     //move image files into references folder?
@@ -130,8 +172,17 @@ public class ParseQTI {
     //numeric questions - need correct answer as answer, range as grading instructions
     //change feedback parser - needs to set feedback as answer for essay but as grading instructions for everything else
     
-    
-    
+    public void imsccLoop(String filepath) throws JAXBException {
+    	
+    	String quizDirPath = filepath + QUIZ_DIRECTORY;
+    	
+    	File quizDir = new File(quizDirPath);
+    	
+    	for(File qti: quizDir.listFiles()) {
+    		xmlParse(qti.getPath());
+    	}    	
+    }
+     
         
     /**
      * Parses a document that uses the QTI schema
@@ -397,6 +448,25 @@ public class ParseQTI {
 						data.put("response_ident", ((VarequalType)var).getRespident()); //response ident - matches response_lid ident
 						data.put("answer_ident", ((VarequalType)var).getValue()); //answer ident - matches response_label ident
 						list.add(data);	
+					}
+					else if(var instanceof OrType) {
+						for(Object or:((OrType) var).getNotOrAndOrOr()) {
+							if(or instanceof VarequalType) {
+								data.put("answer_ident", ((VarequalType)or).getRespident());
+								data.put("answer_value", ((VarequalType)or).getValue());
+							}
+							else if(or instanceof AndType) {
+								for(Object and: ((AndType)or).getNotOrAndOrOr()) {
+									if(and instanceof VargteType) {
+										data.put("floor", ((VargteType) and).getValue());
+									}
+									else if(and instanceof VarlteType) {
+										data.put("ceiling", ((VarlteType) and).getValue());
+									}
+								}
+							}
+							list.add(data);
+						}
 					}
 					else {
 						List<DisplayfeedbackType> disp = ((RespconditionType) o).getDisplayfeedback();

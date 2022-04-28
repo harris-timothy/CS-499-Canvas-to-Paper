@@ -143,8 +143,9 @@ public class GenerationSelectScreen {
 					test_path = "Generated_Tests\\" + quiz.getName();
 					String test_fullpath = test_path + ".docx";
 					
+					//TODO add get template path from fileexplorer
 					try {
-						doc.Shuffler(quiz, test_fullpath);
+						doc.Shuffler(quiz, test_fullpath, "C:\\Users\\black\\Downloads\\Test Chapter 1.docx");
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}

@@ -23,7 +23,7 @@ public class SingleAnswerQuestion extends Question {
 
 	private String description;
 
-	private ArrayList<String> answers;
+	private ArrayList<String> answers = new ArrayList<String>();
 
 	private boolean abet;
 
@@ -37,6 +37,7 @@ public class SingleAnswerQuestion extends Question {
 	
 	public SingleAnswerQuestion() {
 		newQuestion();
+		setType(QuestionType.TEXT_ONLY);
 	}
 
 	public SingleAnswerQuestion(int id) {
@@ -80,7 +81,7 @@ public class SingleAnswerQuestion extends Question {
 		return this.abet;
 	}
 
-	public void setAbet(Boolean abet) {
+	public void setAbet(boolean abet) {
 		this.abet = abet;
 	}
 
@@ -259,7 +260,12 @@ public class SingleAnswerQuestion extends Question {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
-			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
+			this.id = create.insertInto(QUESTION,
+					QUESTION.NAME,
+					QUESTION.TYPE)
+					.values("", QuestionType.TEXT_ONLY.getType())
+					.returning(QUESTION.ID)
+					.fetchOne(QUESTION.ID);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -273,6 +279,23 @@ public class SingleAnswerQuestion extends Question {
 	}
 		
 	public String getAnswer() {
-		return answers.toString();
+		return AnswerFormatter.answerJSONString(answers);
 	}
+
+
+	@Override
+	public void setAnswer(String answer) {
+		if(answers.toString().equals(answer)){
+			//do nothing
+		}		
+		else if(answers.isEmpty()) {
+			answers.add(answer);
+		}
+		else {
+			answers = AnswerFormatter.answerArray(answer);
+			
+		}
+	}
+
+	
 }

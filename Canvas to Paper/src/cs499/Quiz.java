@@ -306,7 +306,7 @@ public class Quiz implements Reference{
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
-			if(!course.isEmpty()) {
+			if(!(course == null|| course.isEmpty())) {
 				Record result = create.select(COURSE.ID)
 						.from(COURSE)
 						.where(COURSE.NAME.eq(course))

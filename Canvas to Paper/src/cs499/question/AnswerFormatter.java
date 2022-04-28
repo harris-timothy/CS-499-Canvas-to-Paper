@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AnswerFormatter {
@@ -52,6 +53,19 @@ public class AnswerFormatter {
 			answerArray.put(match);
 		}
 		return answerArray.toString();
+	}
+	
+	public static String answerJSONString(HashMap<String,String> answerMap) {
+		JSONArray answerArray = new JSONArray();
+		
+		JSONObject answer = new JSONObject();
+		answer.put("answer", answerMap.get("answer_value"));
+		answer.put("floor", answerMap.get("floor"));
+		answer.put("ceiling", answerMap.get("ceiling"));
+		answerArray.put(answer);
+		
+		return answerArray.toString();
+		
 	}
 	
 	public static ArrayList<String> answerArray(String answerJSONString) {
@@ -111,5 +125,18 @@ public class AnswerFormatter {
 					answerJSON.getJSONObject(i).getString("right"));
 		}
 		return matches;
+	}
+	
+	public static boolean isJSONValid(String test) {
+	    try {
+	        new JSONObject(test);
+	    } catch (JSONException ex) {
+	        try {
+	            new JSONArray(test);
+	        } catch (JSONException ex1) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 }
