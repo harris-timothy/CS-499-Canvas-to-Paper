@@ -53,9 +53,7 @@ public class ReferencesScreen {
 		ArrayList<Quiz> quiz_list = DatabaseUtils.getAllQuizzes();
 		ArrayList<ReferenceMaterial> references = new ArrayList<ReferenceMaterial>();
 		
-		for (Quiz quiz : quiz_list) {
-			// System.out.println("test");
-			
+		for (Quiz quiz : quiz_list) {			
 			if (quiz.getReferences() != null) {
 				references.addAll(quiz.getReferences());
 			}
@@ -109,14 +107,14 @@ public class ReferencesScreen {
 		for (int i = 0; i < references.size(); i++){
 			ReferenceMaterial curRef = references.get(i);
 			JButton delete_btn = new JButton("Delete");
-			class DeleteQuizAction implements ActionListener {
+			class DeleteRefAction implements ActionListener {
 				public void actionPerformed(ActionEvent e) {
 					DatabaseUtils.deleteReference(curRef);
 					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-					new SelectQuizScreen();
+					new ReferencesScreen();
 				}
 			}
-			delete_btn.addActionListener(new DeleteQuizAction());
+			delete_btn.addActionListener(new DeleteRefAction());
 			
 			// Element 1: Reference Material
 			name_panel_constraints.gridx = 0;

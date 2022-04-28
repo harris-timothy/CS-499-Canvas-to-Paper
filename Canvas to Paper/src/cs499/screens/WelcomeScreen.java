@@ -79,26 +79,18 @@ public class WelcomeScreen {
 			public void actionPerformed(ActionEvent e) {
 				//Initialize variables
 				String[] ImportZip;
+				String[] BlankArray = {"Blank"};
 				String[] ErrorArray = {"Error"};
+				String[] formats = {"QTI File Types (.zip or .imscc)", "zip", "imscc"};
 				ParseQTI qti = new ParseQTI();
-				
-				//Loop to ensure proper selection or cancel selection
-				do {
-					//Check for errors and retry if caught
-					do {
-						ImportZip = explorer.FilesSelect();
-					} while (ImportZip == ErrorArray);
-					
-					//Check for cancellations and cancel if caught
-					if (ImportZip == null) return;
-					
-					//Check for non .zip files and retry if caught
-					for (String filepath : ImportZip) {
-						if (!(filepath.contains(".zip") || filepath.contains(".imscc")) ) {
-							ImportZip = new String[0];
-						}
-					}
-				} while (ImportZip.length <= 0); 
+
+				//Loop to handle errors
+				ImportZip = explorer.FilesSelect(formats);
+				while (ImportZip[0] == ErrorArray[0]) {
+					ImportZip = explorer.FilesSelect(formats);
+				}
+				//Check for cancellation
+				if (ImportZip[0] == BlankArray[0]) return;
 				
 				//Handle selection
 				try {
