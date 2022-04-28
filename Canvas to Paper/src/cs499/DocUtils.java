@@ -51,8 +51,6 @@ public class DocUtils {
 
 	private static CTStyles templateStyles;
 
-	private static final int FIRST = 0;
-
 	/**
 	 * Generates header for test document
 	 * 
@@ -395,13 +393,11 @@ public class DocUtils {
 	}
 
 	public static XWPFDocument matchingQuestion(XWPFDocument doc, MatchingQuestion question) {
-		System.out.println("matching");
 		XWPFTable matchingTable = doc.createTable(question.getLeft().size(), 4);
 		matchingTable.removeBorders();
 		matchingTable.setWidth("100%");
 		char alpha = 'A';
 		List<String> values = new ArrayList<String>(question.getRight().values());
-		System.out.println(values);
 		for (int i = 0; i < question.getLeft().size(); i++) {
 			XWPFTableRow row = matchingTable.getRow(i);
 			row.getCell(0).setText("______");
@@ -409,7 +405,6 @@ public class DocUtils {
 			row.getCell(2).setText(Character.toString(alpha));
 			row.getCell(3).setText(values.get(i));
 			question.getRight().put(values.get(i), Character.toString(alpha));
-			System.out.println(alpha);
 			alpha++;
 		}
 

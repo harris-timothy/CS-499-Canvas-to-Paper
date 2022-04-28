@@ -52,24 +52,23 @@ public class ReportingScreen {
         
         this.generationsLabel = new JLabel();
         generationsLabel.setText("Generated Quizzes");
-        generationsLabel.setBounds(0,0,100,50);
+        generationsLabel.setBounds(10,10,100,50);
         
         this.generationsTable = new JTable();
-        generationsTable.setBounds(0,0,200,300);
-        
+        generationsTable.setBounds(10,100,200,300);        
         
         JScrollPane generations_panel = new JScrollPane(generationsTable);
-        generations_panel.setPreferredSize(new Dimension(200,300));
+        generations_panel.setPreferredSize(new Dimension(100,300));
         
         this.questionsLabel = new JLabel();
         questionsLabel.setText("Questions");
         questionsLabel.setBounds(0,0,100,50);
         
         this.questionsTable = new JTable();
-        questionsTable.setBounds(0,0,200,300);
+        questionsTable.setBounds(0,0,300,300);
         
         JScrollPane questions_panel = new JScrollPane(questionsTable);
-        questions_panel.setPreferredSize(new Dimension(200,300));
+        questions_panel.setPreferredSize(new Dimension(300,500));
         
         Reporting report = new Reporting();
         
@@ -102,7 +101,8 @@ public class ReportingScreen {
 					o[2] = q.getDescription();
 					questions_model.addRow(o);
 				}
-				
+				questionsTable.setModel(questions_model);
+				questionsTable.setRowHeight(30);
 			}
 			
 		}
@@ -125,38 +125,68 @@ public class ReportingScreen {
         backButton.addActionListener(new BackButtonAction());
         
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.CENTER;
-              
-        constraints.weightx = 1;
-        constraints.weighty = 1;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
         
-        constraints.gridx = 2;
-        constraints.gridy = 1;
-        frame.add(generationsLabel);
         
-        constraints.gridx = 2;
+        constraints.gridx = 0;
+		constraints.gridy = 6;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 2;
+		constraints.weightx = 0.1;
+		frame.add(new JLabel(), constraints);
+
+		constraints.gridx = 3;
+		constraints.gridy = 6;
+		constraints.weightx = 0.1;
+		constraints.weighty = 0.2;
+		frame.add(new JLabel(), constraints);
+		
+		//Set table weights
+		constraints.weightx = 0.6 / 2;
+		constraints.weighty = 0.7 / 5;
+
+        
+		constraints.gridx = 1;
+		
+       
         constraints.gridy = 2;
-        constraints.gridheight = 3;        
-        frame.add(generations_panel);
+        frame.add(generationsLabel, constraints);
         
-        constraints.gridx = 3;
-        constraints.gridy = 2;
-        constraints.gridheight = 1;
-        frame.add(details_button);
+       
+        constraints.gridy = 3;
+        constraints.gridheight = 2;
+        frame.add(generations_panel, constraints);
         
-        constraints.gridx = 5;
-        constraints.gridy = 2;        
-        frame.add(questionsLabel);
         
-        constraints.gridx = 5;
-        constraints.gridy = 2;
-        constraints.gridheight = 3;
-        frame.add(questions_panel);
-        
-        constraints.gridx = 6;
         constraints.gridy = 5;
         constraints.gridheight = 1;
-        frame.add(backButton);        
+        frame.add(details_button, constraints);
+        
+        constraints.gridx = 3;
+    
+        constraints.gridy = 2;        
+        frame.add(questionsLabel, constraints);
+        
+        
+        constraints.gridy = 3;
+        constraints.gridheight = 2;
+        constraints.gridwidth = 2;        
+        frame.add(questions_panel, constraints);
+        
+        
+        constraints.gridx = 4;
+        constraints.gridy = 4;
+        constraints.gridheight = 1;
+        frame.add(backButton, constraints);        
 		
         frame.setVisible(true);
 	}

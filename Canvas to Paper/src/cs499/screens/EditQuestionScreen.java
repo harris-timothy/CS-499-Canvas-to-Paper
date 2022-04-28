@@ -171,19 +171,19 @@ public class EditQuestionScreen {
         
         body_panel_constraints.gridx=0;
         body_panel_constraints.gridy=0;
-        body_panel.add(descriptionLabel);
+        body_panel.add(descriptionLabel, body_panel_constraints);
         
         body_panel_constraints.gridx=0;
         body_panel_constraints.gridy=1;
-        body_panel.add(descScroll);
+        body_panel.add(descScroll, body_panel_constraints);
+        
+        body_panel_constraints.gridx=1;
+        body_panel_constraints.gridy=0;
+        body_panel.add(answerLabel, body_panel_constraints);
         
         body_panel_constraints.gridx=1;
         body_panel_constraints.gridy=1;
-        body_panel.add(answerLabel);
-        
-        body_panel_constraints.gridx=1;
-        body_panel_constraints.gridy=2;
-        body_panel.add(answer_scroll);
+        body_panel.add(answer_scroll, body_panel_constraints);
         
         //Create Back Button
         final JButton back_btn = new JButton("<- Back");
