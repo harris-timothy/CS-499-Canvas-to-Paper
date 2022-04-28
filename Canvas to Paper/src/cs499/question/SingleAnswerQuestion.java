@@ -23,7 +23,7 @@ public class SingleAnswerQuestion extends Question {
 
 	private String description;
 
-	private ArrayList<String> answers;
+	private ArrayList<String> answers = new ArrayList<String>();
 
 	private boolean abet;
 
@@ -279,17 +279,22 @@ public class SingleAnswerQuestion extends Question {
 	}
 		
 	public String getAnswer() {
-		if(answers != null) {
-			return answers.toString();
-		}
-		else return null;
+		return AnswerFormatter.answerJSONString(answers);
 	}
 
 
 	@Override
 	public void setAnswer(String answer) {
-		// TODO Auto-generated method stub
-		
+		if(answers.toString().equals(answer)){
+			//do nothing
+		}		
+		else if(answers.isEmpty()) {
+			answers.add(answer);
+		}
+		else {
+			answers = AnswerFormatter.answerArray(answer);
+			
+		}
 	}
 
 	

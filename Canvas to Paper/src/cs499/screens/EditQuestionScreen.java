@@ -23,7 +23,6 @@ import cs499.gui_utils.FrameBuilder;
 import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
 import cs499.question.QuestionType;
-import cs499.question.SingleAnswerQuestion;
 
 public class EditQuestionScreen {
 	
@@ -75,6 +74,8 @@ public class EditQuestionScreen {
         descriptionField.setPreferredSize(new Dimension(300,250));
         descriptionField.setLineWrap(true);
         descriptionField.setWrapStyleWord(true);
+        JScrollPane descScroll = new JScrollPane(descriptionField);
+        
          
         this.typeLabel = new JLabel();
         typeLabel.setText("Type");
@@ -83,6 +84,7 @@ public class EditQuestionScreen {
         this.typeComboBox = new JComboBox<QuestionType>();
         typeComboBox.setModel(new DefaultComboBoxModel<>(QuestionType.values()));
         typeComboBox.setBounds(10, 85, 125, 20);
+        typeComboBox.getModel().setSelectedItem(question.getType());
         
         class TypeComboBox implements ActionListener {
 			@SuppressWarnings("unchecked")
@@ -102,41 +104,20 @@ public class EditQuestionScreen {
         this.instructionField = new JTextField();
         instructionField.setBounds(150,85,200,20);
         
+        this.answerLabel = new JLabel();
+        answerLabel.setText("Answer:");
+        answerLabel.setBounds(350,85,150,100);
         
-        //TODO: change answer fields for different question types
-        if(question instanceof SingleAnswerQuestion) {
-        	this.answerLabel = new JLabel();
-            answerLabel.setText("Answer");
-            answerLabel.setBounds(350,0,100,30);
-            
-            this.answerField = new JTextArea();
-            answerField.setPreferredSize(new Dimension(300,250));
-            answerField.setLineWrap(true);
-            answerField.setWrapStyleWord(true);
-        	
-        }
-        else if (question instanceof MultipleChoiceQuestion) {
-        	this.answerLabel = new JLabel();
-        	answerLabel.setText("Correct Answer");
-        	answerLabel.setBounds(350,0,100,30);
-        	
-        	JTextField correctField = new JTextField();
-        	correctField.setText(((MultipleChoiceQuestion)question).getCorrectAnswer());
-        	
-        	//TODO editable JTable for choices
-        }
-        else {
-        	this.answerLabel = new JLabel();
-        	answerLabel.setText("Choices");
-        	//TODO editable JTable that shows left and right
-        	
-        }
-        
+        this.answerField = new JTextArea();
+        answerField.setPreferredSize(new Dimension(300,250));
+        answerField.setLineWrap(true);
+        answerField.setWrapStyleWord(true);
+        JScrollPane answer_scroll = new JScrollPane(answerField);
         
       //Create ABET checkbox
  		JCheckBox abet_box = new JCheckBox("Mark for ABET");
  		abet_box.setMnemonic(KeyEvent.VK_A);
- 		abet_box.setSelected(false);
+ 		abet_box.setSelected(question.getAbet());
  		abet_box.setBounds(350,0,120,80);
  		
  		JCheckBox blacklist_box = new JCheckBox("Blacklist");
@@ -146,6 +127,8 @@ public class EditQuestionScreen {
  		
  		question_info_panel.add(abet_box);
  		question_info_panel.add(blacklist_box);
+ 		
+ 		//TODO fix answer saving - currently duplicates.
          
         //Create Back Button
         JButton save_btn = new JButton("Save Changes");
@@ -156,7 +139,7 @@ public class EditQuestionScreen {
  				question.setGradingInstructions(instructionField.getText());
  				question.setType((QuestionType) typeComboBox.getSelectedItem());
  				question.setAbet(abet_box.isSelected());
- 				question.setAnswer(answerField.getText());
+ 				if(answerField != null) question.setAnswer(answerField.getText());
  				question.saveQuestion();
  				new SelectQuizScreen();
  				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
@@ -172,7 +155,8 @@ public class EditQuestionScreen {
  		nameField.setText(question.getName());
         descriptionField.setText(question.getDescription());
         if (question.getGradingInstructions() != null) instructionField.setText(question.getGradingInstructions());
-        if (question.getAnswer() != null) answerField.setText(question.getAnswer());
+        if (question.getAnswer() != null && answerField != null) answerField.setText(question.getAnswer());
+        
 
         question_info_panel.add(questionLabel);
         question_info_panel.add(nameField);
@@ -191,15 +175,15 @@ public class EditQuestionScreen {
         
         body_panel_constraints.gridx=0;
         body_panel_constraints.gridy=1;
-        body_panel.add(descriptionField);
-        
-        body_panel_constraints.gridx=1;
-        body_panel_constraints.gridy=0;
-        body_panel.add(answerLabel);
+        body_panel.add(descScroll);
         
         body_panel_constraints.gridx=1;
         body_panel_constraints.gridy=1;
-        body_panel.add(answerField);
+        body_panel.add(answerLabel);
+        
+        body_panel_constraints.gridx=1;
+        body_panel_constraints.gridy=2;
+        body_panel.add(answer_scroll);
         
         //Create Back Button
         final JButton back_btn = new JButton("<- Back");

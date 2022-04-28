@@ -96,6 +96,7 @@ public class EditQuizScreen {
         JButton save_btn = new JButton("Save Changes");
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
+				quiz.setName(quizField.getText());
 				quiz.saveQuiz();
 				new WelcomeScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;

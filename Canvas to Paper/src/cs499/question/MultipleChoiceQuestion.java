@@ -52,7 +52,7 @@ public class MultipleChoiceQuestion extends Question {
 		return answer;
 	}
 
-	public void setAnswer(String answer) {
+	public void setCorrectAnswer(String answer) {
 		this.answer = answer;
 	}
 
@@ -200,7 +200,7 @@ public class MultipleChoiceQuestion extends Question {
 				setDescription(result.getValue(QUESTION.DESCRIPTION));
 				setAbet(DataHelper.intToBool(result.getValue(QUESTION.ABET)));
 				setGradingInstructions(result.getValue(QUESTION.GRADING_INSTRUCTIONS));
-				setAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
+				setCorrectAnswer(AnswerFormatter.correctAnswer(result.getValue(QUESTION.ANSWERS)));
 				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
 				setType(QuestionType.valueOfType(result.getValue(QUESTION.TYPE)));
 				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
@@ -292,8 +292,23 @@ public class MultipleChoiceQuestion extends Question {
 		
 	}
 	
+	public void setAnswer(String answer) {
+		if(!this.answer.equals(AnswerFormatter.correctAnswer(answer))){
+			setCorrectAnswer(AnswerFormatter.correctAnswer(answer));
+		}
+		if(choices.isEmpty()) {
+			choices.addAll(AnswerFormatter.choicesArray(answer));
+		}
+		else if(choices.toString().equals(AnswerFormatter.choicesArray(answer).toString())) {
+			//do nothing
+		}
+		else {
+			choices = AnswerFormatter.choicesArray(answer);
+		}
+	}
+	
 	public String getAnswer() {
-		return "Correct: " + answer + " Choices: " + choices.toString();
+		return AnswerFormatter.answerJSONString(answer,choices);
 	}
 
 

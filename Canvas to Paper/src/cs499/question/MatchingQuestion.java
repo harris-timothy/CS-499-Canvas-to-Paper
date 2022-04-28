@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -35,7 +36,7 @@ public class MatchingQuestion extends Question {
 		
 	private ArrayList<String> left;
 
-	private HashMap<String, String> right;
+	private LinkedHashMap<String, String> right = new LinkedHashMap<String,String>();
 	
 	private float points;
 	
@@ -61,12 +62,12 @@ public class MatchingQuestion extends Question {
 		this.left = left;
 	}
 
-	public HashMap<String, String> getRight() {
+	public LinkedHashMap<String, String> getRight() {
 		return this.right;
 	}
 
 	public void setRight(HashMap<String, String> right) {
-		this.right = right;
+		this.right.putAll(right);
 	}	
 
 	@Override
@@ -293,12 +294,33 @@ public class MatchingQuestion extends Question {
 
 	@Override
 	public String getAnswer() {
-		return right.toString();
+		return AnswerFormatter.answerJSONString(left,right);
 	}
 
 	@Override
 	public void setAnswer(String answer) {
-		// TODO Auto-generated method stub
+		AnswerFormatter.answerMap(answer);
+		AnswerFormatter.keyArray(answer);
+		if(left.toString().equals(AnswerFormatter.keyArray(answer).toString())){
+			//do nothing
+		}		
+		else if(left.isEmpty()) {
+			left.addAll(AnswerFormatter.keyArray(answer));
+		}
+		else {
+			left = AnswerFormatter.keyArray(answer);
+		}
+		
+		if(right.toString().equals(AnswerFormatter.answerMap(answer).toString())){
+			//do nothing
+		}
+		else if(right.isEmpty()) {
+			right.putAll(AnswerFormatter.answerMap(answer));
+		}
+		else {
+			right.clear();
+			right.putAll(AnswerFormatter.answerMap(answer));
+		}
 		
 	}
 

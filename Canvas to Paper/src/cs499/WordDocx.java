@@ -1,37 +1,18 @@
 package cs499;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import cs499.question.MatchingQuestion;
 import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
-import cs499.question.QuestionFactory;
 import cs499.question.QuestionType;
-import cs499.question.SingleAnswerQuestion;
-
-import org.apache.commons.compress.utils.FileNameUtils;
-import org.apache.poi.util.Units;
-import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 public class WordDocx
 {
@@ -65,8 +46,8 @@ public class WordDocx
 		
 		for (Question question : questionList)
 		{	
-			if(question == null) break;
-			if(question.getType() == QuestionType.TRUE_FALSE) break;
+			if(question == null) continue;
+			if(question.getType() == QuestionType.TRUE_FALSE) continue;
 			
 			XWPFParagraph questionParagraph = document.createParagraph();
 			questionParagraph.setAlignment(ParagraphAlignment.LEFT);
@@ -149,8 +130,8 @@ public class WordDocx
 		
 		for (Question question : questionList)
 		{
-			if(question == null) break;
-			if(question.getType() == QuestionType.TRUE_FALSE) break;
+			if(question == null) continue;
+			if(question.getType() == QuestionType.TRUE_FALSE) continue;
 			
 			
 			XWPFParagraph questionParagraph = document.createParagraph();
@@ -178,20 +159,23 @@ public class WordDocx
 				MultipleChoiceQuestion multiChoice = (MultipleChoiceQuestion)question;
 				
 				ArrayList<String> choices = multiChoice.getChoices();
-				
+								
 				char choiceLetter = 'a';
 				for (String choice : choices) {
-					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
+					 // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
 					if (choice.equals(multiChoice.getCorrectAnswer())) {
-						questionRun.setBold(true);
-						questionRun.setText(choiceLetter + ") " + choice + " - **CORRECT ANSWER**");
-						questionRun.setColor("FF0000");
-						questionRun.setBold(false);
-						questionRun.addBreak();
+						XWPFRun correctRun = questionParagraph.createRun();
+						correctRun.addTab();
+						correctRun.setBold(true);
+						correctRun.setText(choiceLetter + ") " + choice);
+						correctRun.setColor("FF0000");
+						correctRun.addBreak();
 					}
 					else {
-						questionRun.setText(choiceLetter + ") " + choice);
-						questionRun.addBreak();
+						XWPFRun choiceRun = questionParagraph.createRun();
+						choiceRun.addTab();
+						choiceRun.setText(choiceLetter + ") " + choice);
+						choiceRun.addBreak();
 					}
 					
 					choiceLetter++;
