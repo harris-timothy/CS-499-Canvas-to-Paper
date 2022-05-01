@@ -2,6 +2,7 @@ package cs499.qti;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+
 import org.zeroturnaround.zip.ZipUtil;
 
-import cs499.Quiz;
 import cs499.qti.data_mapping.AssessmentType;
 import cs499.qti.data_mapping.ConditionvarType;
 import cs499.qti.data_mapping.DecvarType;
@@ -51,6 +52,8 @@ import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
 import cs499.question.QuestionType;
 import cs499.question.SingleAnswerQuestion;
+import cs499.Quiz;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -81,12 +84,9 @@ public class CreateQTI {
 		}
 		Collections.shuffle(answerIdSource);
 	}
-
-	//TODO: quiz bank(?)
-	//TODO: add section for question group?
 	
 	public void createPackage(ArrayList<Quiz> quizzes, String filepath) throws JAXBException {
-		
+
 		File packageFolder = new File(filepath);
         if (!packageFolder.exists()) {
             packageFolder.mkdir();
@@ -108,10 +108,8 @@ public class CreateQTI {
 		try {
 			FileUtils.deleteDirectory(packageFolder);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	/**
@@ -124,7 +122,6 @@ public class CreateQTI {
 		JAXBContext jc = JAXBContext.newInstance("cs499.qti.data_mapping");
 		Marshaller marshaller = jc.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		
 
 		ObjectFactory factory = new ObjectFactory();
 		QuestestinteropType qti = factory.createQuestestinteropType();
@@ -171,7 +168,6 @@ public class CreateQTI {
 				case SHORT_ANSWER:
 				case ESSAY:
 					buildResponseStr(factory, answerList, presentationList);
-					//TODO: investigate problem w/essay
 					break;
 				case MULTIPLE_ANSWERS:
 				case MULTIPLE_BLANKS:
@@ -189,19 +185,16 @@ public class CreateQTI {
 				case CALCULATED:
 				default:
 					break;
-
 				}
 			}
 
 			List<ResprocessingType> resultProcessing = item.getResprocessing();
-
 
 			resultProcessing.add(createResprocessing(q, factory, answerList));
 			if(q.getType() == QuestionType.ESSAY) {
 				ItemfeedbackType feedback = createItemFeedback((SingleAnswerQuestion)q,factory);
 				item.getItemfeedback().add(feedback);
 			}
-
 		}
 		File quizFolder = new File(folderPath);
 	        if (!quizFolder.exists()) {
@@ -297,7 +290,6 @@ public class CreateQTI {
 			label.setIdent(map.get("response_ident"));
 
 			renderfib.getMaterialOrMaterialRefOrResponseLabel().add(label);
-
 		}
 	}
 
@@ -323,7 +315,6 @@ public class CreateQTI {
 
 				RenderChoiceType render = factory.createRenderChoiceType();
 				contentlist.add(factory.createRenderChoice(render));
-
 			}
 			else {
 				ResponseLabelType label = factory.createResponseLabelType();
@@ -339,7 +330,6 @@ public class CreateQTI {
 				label.getContent().add(factory.createMaterial(mat));
 
 				responses.add(label);
-
 			}
 		}
 
@@ -351,7 +341,6 @@ public class CreateQTI {
 			}
 		}
 	}
-
 
 	/**
 	 * Creates the metadata elements for an item
@@ -393,7 +382,6 @@ public class CreateQTI {
 		fieldList.add(answerIdsField);		
 
 		return meta;
-
 	}
 
 	/**
@@ -458,8 +446,7 @@ public class CreateQTI {
 					setvar.setValue("100");
 					respcondition.getSetvar().add(setvar);
 				}
-				}
-				
+			}	
 		}
 		else if (q instanceof MatchingQuestion) {
 			Float pointsPerAnswer = (float) (100.0 / (answerList.size() / 2));
@@ -544,7 +531,6 @@ public class CreateQTI {
 		
 		resprocessing.getRespconditionOrItemprocExtension().add(respcondition1);
 		resprocessing.getRespconditionOrItemprocExtension().add(respcondition2);
-		
 	}
 	
 	private ItemfeedbackType createItemFeedback(SingleAnswerQuestion question, ObjectFactory factory) {
@@ -628,7 +614,6 @@ public class CreateQTI {
 		}
 
 		return list;
-
 	}
 
 	public void createManifestXML(ArrayList<HashMap<String,String>> quizIds, String filepath) throws JAXBException {
@@ -686,8 +671,6 @@ public class CreateQTI {
 		}
 		
 		marshaller.marshal(factory.createManifest(manifest), new File(filepath + "/imsmanifest.xml"));
-
-
 	}
 
 	public String createMetadataXML(Quiz quiz, String quizId, String filepath) throws JAXBException {
@@ -712,9 +695,7 @@ public class CreateQTI {
         }
         marshaller.marshal(docquiz, new File(folderPath + "//" + "assessment_meta.xml"));
 
-		
 		return generateIdString();
-
 	}
 
 	private String generateIdString() {

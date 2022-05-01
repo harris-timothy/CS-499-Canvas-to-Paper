@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.utils.DataHelper;
 
@@ -72,7 +72,6 @@ public class ReferenceMaterial {
             setName(result.getValue(REFERENCE_MATERIAL.NAME));
             setDescription(result.getValue(REFERENCE_MATERIAL.DESCRIPTION));
             setFilepath(result.getValue(REFERENCE_MATERIAL.CONTENT));
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -105,11 +104,8 @@ public class ReferenceMaterial {
             	.where(REFERENCE_MATERIAL.ID.eq(id))
             	.execute();
             }
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-		
+		} catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
-        
 }

@@ -83,16 +83,5 @@ public class RecentItems {
 		while(recentQuizzes.size() > MAX_NUMBER) {
 			removeOldest();
 		}
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

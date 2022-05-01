@@ -5,12 +5,13 @@ import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.ReferenceMaterial;
 import cs499.utils.DataHelper;
@@ -119,8 +120,6 @@ public class SingleAnswerQuestion extends Question {
 			.set(QUESTION.REFERENCE_ID, reference.getId())
 			.where(QUESTION.ID.eq(this.id))
 			.execute();
-			
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -136,13 +135,11 @@ public class SingleAnswerQuestion extends Question {
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
-			.execute();			
-
+			.execute();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Override
@@ -155,13 +152,11 @@ public class SingleAnswerQuestion extends Question {
 			.where(QUESTION.ID.eq(id))
 			.fetchOne(QUESTION.REFERENCE_ID);
 			
-			this.reference = new ReferenceMaterial(reference_id);			
-
+			this.reference = new ReferenceMaterial(reference_id);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 
@@ -187,9 +182,7 @@ public class SingleAnswerQuestion extends Question {
 				setAnswers(AnswerFormatter.answerArray(result.getValue(QUESTION.ANSWERS)));
 				setType(valueOfType(result.getValue(QUESTION.TYPE)));
 				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -226,7 +219,6 @@ public class SingleAnswerQuestion extends Question {
 						DataHelper.boolToInt(abet),
 						points)
 				.execute();
-
 			}
 			else {
 				create.update(QUESTION)
@@ -240,11 +232,9 @@ public class SingleAnswerQuestion extends Question {
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -266,17 +256,13 @@ public class SingleAnswerQuestion extends Question {
 					.values("", QuestionType.TEXT_ONLY.getType())
 					.returning(QUESTION.ID)
 					.fetchOne(QUESTION.ID);
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
-	public void shuffleChoices() {
-		// TODO Auto-generated method stub
-	}
+	public void shuffleChoices() {}
 		
 	public String getAnswer() {
 		return AnswerFormatter.answerJSONString(answers);
@@ -293,9 +279,6 @@ public class SingleAnswerQuestion extends Question {
 		}
 		else {
 			answers = AnswerFormatter.answerArray(answer);
-			
 		}
 	}
-
-	
 }

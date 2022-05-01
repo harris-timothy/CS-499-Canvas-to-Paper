@@ -1,17 +1,19 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.ReferenceMaterial;
 import cs499.utils.DataHelper;
@@ -45,7 +47,6 @@ public class MatchingQuestion extends Question {
 	public MatchingQuestion(int id) {
 		this.id = id;
 		loadQuestion();
-		
 	}
 	
 	public void shuffleChoices() {
@@ -112,7 +113,6 @@ public class MatchingQuestion extends Question {
 	
 	public void setAbet(boolean abet) {
 		this.abet = abet;
-		
 	}
 	
 	public QuestionType getType() {
@@ -154,13 +154,10 @@ public class MatchingQuestion extends Question {
 				setRight(AnswerFormatter.answerMap(answer));
 				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
 				setType(QuestionType.valueOfType(result.getValue(QUESTION.TYPE)));
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}	
 
 	@Override
@@ -192,7 +189,6 @@ public class MatchingQuestion extends Question {
 						DataHelper.boolToInt(abet),
 						points)
 				.execute();
-
 			}
 			else {
 				create.update(QUESTION)
@@ -206,11 +202,9 @@ public class MatchingQuestion extends Question {
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Override
@@ -223,8 +217,6 @@ public class MatchingQuestion extends Question {
 			.set(QUESTION.REFERENCE_ID, reference.getId())
 			.where(QUESTION.ID.eq(this.id))
 			.execute();
-			
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -240,13 +232,11 @@ public class MatchingQuestion extends Question {
 			create.update(QUESTION)
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
-			.execute();			
-
+			.execute();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 
@@ -260,13 +250,11 @@ public class MatchingQuestion extends Question {
 			.where(QUESTION.ID.eq(id))
 			.fetchOne(QUESTION.REFERENCE_ID);
 			
-			this.reference = new ReferenceMaterial(reference_id);			
-
+			this.reference = new ReferenceMaterial(reference_id);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -283,11 +271,9 @@ public class MatchingQuestion extends Question {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
 			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -319,8 +305,5 @@ public class MatchingQuestion extends Question {
 			right.clear();
 			right.putAll(AnswerFormatter.answerMap(answer));
 		}
-		
 	}
-
-	
 }

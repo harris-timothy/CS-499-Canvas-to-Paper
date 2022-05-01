@@ -2,9 +2,11 @@ package cs499.qti;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,8 +17,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
@@ -26,8 +29,8 @@ import cs499.question.QuestionType;
 public class ParseUtils {
 	
 	private static final int FIRST = 0;
-	private static final String REFERENCE_DIRECTORY = "D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\references";
 
+	private static final String REFERENCE_DIRECTORY = "D:\\black\\Documents\\GitHub\\CS-499-Canvas-to-Paper\\Canvas to Paper\\references";
 
 	public static ArrayList<String> getReferenceTitles(String text){
 		ArrayList<String> array = new ArrayList<String>();
@@ -100,9 +103,8 @@ public class ParseUtils {
 			FileUtils.writeStringToFile(file, content, "UTF-8");
 			
 		}catch (IOException e) {
-			
+			e.printStackTrace();
 		}
-		
 	}
 	
 	public static List<String> findReference(String directory, String filename) {
@@ -118,18 +120,14 @@ public class ParseUtils {
 					.map(x->x.toString())
 					.collect(Collectors.toList());
 			
-			
-			
 			for(String f: folders) {
 				fileResults.addAll(filteredResult(f,filterName));
-			}
-						
+			}	
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return removeNull(fileResults);
-		
 	}
 	
 	private static List<String> filteredResult(String directory, String filename){
@@ -207,7 +205,6 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		return range;
 	}
 	
-	
 	private static String findCorrect(HashMap<String,String> correct, ArrayList<HashMap<String, String>> allChoices) {
 		//find correct answer
 		String ident = correct.get("answer_ident");
@@ -226,11 +223,9 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 			if(!o.get("answer_value").equals(correct)) {
 				choices.add(o.get("answer_value"));
 			}
-				
 		}
 		return choices;		
 	}
-	
 	
 	private static String findMatches(ArrayList<HashMap<String, String>> allChoices, ArrayList<HashMap<String,String>> correctAnswers) {
 		HashMap<String,String> matches = new HashMap<String,String>();
@@ -261,9 +256,7 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		Files.copy(currentPath,newFile);
 		
 		return newFile.toString();
-		
 	}
-	
 	
 	public static void deleteDirectory(String path) throws IOException{
 		Path directory = Paths.get(path);
@@ -299,5 +292,4 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 			e.printStackTrace();
 		}
 	}
-
 }

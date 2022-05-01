@@ -6,15 +6,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.utils.DataHelper;
 
 public class Instructor {
 	
-	//TODO populate instructor info from gui
 	//instructor info screen
 	
 	private String fname;
@@ -94,9 +93,9 @@ public class Instructor {
             	setTitle(result.getValue(INSTRUCTOR.TITLE));
             	setEmail(result.getValue(INSTRUCTOR.EMAIL));
             }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public void saveInstructor() {
@@ -118,7 +117,6 @@ public class Instructor {
             			INSTRUCTOR.EMAIL)
             		.values(id, fname, lname, title, email)
             		.execute();
-            
             }
             else {
             	create.update(INSTRUCTOR)
@@ -129,9 +127,8 @@ public class Instructor {
             	.where(INSTRUCTOR.ID.eq(id))
             	.execute();
             }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
-
 }

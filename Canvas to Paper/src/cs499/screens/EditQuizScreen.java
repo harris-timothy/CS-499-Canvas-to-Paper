@@ -1,32 +1,34 @@
 package cs499.screens;
 
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
-import javax.swing.JFormattedTextField;
+import java.util.ArrayList;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-
-import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
 import cs499.question.SingleAnswerQuestion;
+import cs499.Quiz;
 import cs499.RecentItems;
 
 public class EditQuizScreen {
+
     private JFrame frame;
     private JLabel quizLabel;
     private JTextField quizField;
@@ -165,7 +167,6 @@ public class EditQuizScreen {
 		del_panel.setLayout(new GridBagLayout());
 		GridBagConstraints del_panel_constraints = new GridBagConstraints();
 		del_panel_constraints.anchor = GridBagConstraints.WEST;
-        
 		
 		// Element 1: Edit Button
 		edit_panel_constraints.gridx = 0;

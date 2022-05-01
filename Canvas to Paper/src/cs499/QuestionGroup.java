@@ -4,12 +4,13 @@ import static cs499.data_classes.Tables.QUESTION_GROUP;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.jooq.SQLDialect;
 import org.jooq.Record;
 
 import cs499.question.Question;
@@ -62,7 +63,6 @@ public class QuestionGroup {
 			else {
 				setCount(1);
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,7 +80,6 @@ public class QuestionGroup {
 					count,
 					points)
 			.execute();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,7 +94,6 @@ public class QuestionGroup {
 			.values("")
 			.returning(QUESTION_GROUP.ID)
 			.fetchOne(QUESTION_GROUP.ID);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -164,5 +162,4 @@ public class QuestionGroup {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 }

@@ -1,10 +1,10 @@
 package cs499.gui_utils;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-
 import java.awt.Image;
 import java.awt.Toolkit;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 public class FrameBuilder {
     public JFrame buildFrame(String title, int close_behavior, int width, int height, JMenuBar menu_bar, String icon_path) {

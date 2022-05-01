@@ -40,5 +40,4 @@ public abstract class Question implements Reference{
 	public abstract void setAnswer(String answer);
 	
 	public abstract ReferenceMaterial getReference();
-
 }

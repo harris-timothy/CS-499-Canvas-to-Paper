@@ -5,13 +5,14 @@ import static cs499.data_classes.Tables.QUESTION_BANK_QUESTION;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.question.Question;
 import cs499.question.QuestionFactory;
@@ -95,11 +96,9 @@ public class QuestionBank {
 				.where(QUESTION_BANK.ID.eq(id))
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void loadBank() {
@@ -114,11 +113,9 @@ public class QuestionBank {
 			if(result != null) {
 				setName(result.getValue(QUESTION_BANK.NAME));				
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void loadQuestions() {
@@ -139,16 +136,13 @@ public class QuestionBank {
 					.where(QUESTION_BANK_QUESTION.QUESTION_BANK_ID.eq(id))
 					.fetch()
 					.getValues(QUESTION_BANK_QUESTION.QUESTION_ID);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return questionIds;		
-		
+		return questionIds;
 	}
 	
 	public void associateQuestion(int questionId) {
-		
 
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -158,7 +152,6 @@ public class QuestionBank {
 					QUESTION_BANK_QUESTION.QUESTION_ID)
 			.values(id, questionId)
 			.execute();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -172,7 +165,6 @@ public class QuestionBank {
 			.where(QUESTION_BANK_QUESTION.QUESTION_BANK_ID.eq(id))
 			.and(QUESTION_BANK_QUESTION.QUESTION_ID.eq(questionId))
 			.execute();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -187,15 +179,12 @@ public class QuestionBank {
 					.values("")
 					.returning(QUESTION_BANK.ID)
 					.fetchOne(QUESTION_BANK.ID);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public ArrayList<Question> getQuestions(){
 		return questions;
 	}
-
 }

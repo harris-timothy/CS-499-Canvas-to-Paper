@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.w3c.dom.Element;
 
 import cs499.qti.data_mapping.*;
@@ -21,19 +23,25 @@ import cs499.qti.metadata_mapping.*;
 import cs499.qti.package_mapping.*;
 import cs499.qti.package_mapping.ResourceType;
 import cs499.qti.package_mapping.imsmd.*;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 public class ParseQTI {
+
     /**
      * Size of the buffer to read/write data
      */
     private static final int BUFFER_SIZE = 4096;
+
     private static final int FIRST = 0;
+
     private static final String QUIZ_DIRECTORY = "//non_cc_assessments";
+
     private static final String QTI_PATH = "qti";
+
     /**
      * Extracts a zip file specified by the zipFilePath to a directory specified by
      * destDirectory (will be created if does not exists)
@@ -69,6 +77,7 @@ public class ParseQTI {
         }
         zipIn.close();
     }
+
     /**
      * Extracts a zip entry (file entry)
      * @param zipIn
@@ -93,83 +102,62 @@ public class ParseQTI {
      */
     public void xmlLoop(String filePath) throws JAXBException
     {
-    	  File dir = new File(filePath);
-    	  File[] directoryListing = dir.listFiles();
-    	  for (File child : directoryListing) {
-    		  if(child.isDirectory())
-    		  {
-    			  xmlLoop(child.getPath());
-    		  }
-    		  else
-    		  {
-    			  String ext = "";
-        		  String fileName = child.getName();
-        		  int i = fileName.lastIndexOf('.');
-        		  if (i >= 0) { 
-        			  ext = fileName.substring(i+1); 
-        		  }        		  
+    	File dir = new File(filePath);
+    	File[] directoryListing = dir.listFiles();
+    	for (File child : directoryListing) {
+    		if(child.isDirectory())
+    		{
+    			xmlLoop(child.getPath());
+			}
+    		else
+    		{
+    			String ext = "";
+        		String fileName = child.getName();
+        		int i = fileName.lastIndexOf('.');
+        		if (i >= 0) { 
+        			ext = fileName.substring(i+1); 
+				}        		  
         		  
-        		  if (ext.equals("xml") || ext.equals("qti"))
-        		  {
-        			  if(fileName.equals("imsmanifest.xml")) {
+        		if (ext.equals("xml") || ext.equals("qti"))
+        		{
+        			if(fileName.equals("imsmanifest.xml")) {
         				  			  
-        				  ParseUtils.fixManifest(child.getPath());
-        				  parseManifest(child.getPath());
-        			  }
-        			  else if(fileName.equals("assessment_meta.xml")) {
-        				  parseMeta(child.getPath());
-        			  }
-        			  else { 
-      						xmlParse(child.getPath());        				  
-        			  }       			  
-        		  }
-    		  }
-    	  }
+        				ParseUtils.fixManifest(child.getPath());
+        				parseManifest(child.getPath());
+        			}
+        			else if(fileName.equals("assessment_meta.xml")) {
+        				parseMeta(child.getPath());
+        			}
+        			else { 
+      					xmlParse(child.getPath());        				  
+        			}       			  
+				}
+    		}
+    	}
     }
     
     public void importQTI(String filepath) throws JAXBException {
     	try {
 			unzip(filepath, QTI_PATH);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	xmlLoop(QTI_PATH);
     	try {
 			ParseUtils.deleteDirectory(QTI_PATH);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
     }
     
     public void importIMSCC(String filepath) throws JAXBException {
     	try {
 			unzip(filepath, QTI_PATH);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	imsccLoop(QTI_PATH);
-    	
-    	
-    	
-//    	try {
-//			ParseUtils.deleteDirectory(QTI_PATH);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
     }
-    
-    //need to add the following functionality
-    //detect when images are referenced
-    //move image files into references folder?
-    //possibly just use them from the folder that they're in currently
-    //correctly deal with the other answer types
-    //numeric questions - need correct answer as answer, range as grading instructions
-    //change feedback parser - needs to set feedback as answer for essay but as grading instructions for everything else
     
     public void imsccLoop(String filepath) throws JAXBException {
     	
@@ -181,7 +169,6 @@ public class ParseQTI {
     		xmlParse(qti.getPath());
     	}    	
     }
-     
         
     /**
      * Parses a document that uses the QTI schema
@@ -207,9 +194,8 @@ public class ParseQTI {
     	}
     	else if(qti.getObjectbank() != null) {
     		parseBank(qti.getObjectbank());
-    	}    	    			
-    		
-       }
+    	}
+    }
     
     /**
      * Parses a quiz (assessment) from the document
@@ -283,7 +269,6 @@ public class ParseQTI {
     	}    	
     }
     
-    
     /**
      * Parses the item section of the document and returns the question id as an integer
      * @param item
@@ -346,8 +331,6 @@ public class ParseQTI {
 		//use hashmap to store question
 		//get id from stored question
 		return questionId;
-		
-    	
     }
     
     /**
@@ -410,7 +393,6 @@ public class ParseQTI {
 			}
 		}
 		return ParseUtils.removeDuplicates(data);
-    	
     }
 	
 	/**
@@ -532,20 +514,6 @@ public class ParseQTI {
 		}
 		
 		QtiToDB.associateCourse(courseId, courseQuizzes);
-		return courseId;
-				
-		
+		return courseId;	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

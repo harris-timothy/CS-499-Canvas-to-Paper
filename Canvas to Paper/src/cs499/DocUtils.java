@@ -1,11 +1,15 @@
 package cs499;
 
+import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -13,7 +17,6 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 import java.awt.image.BufferedImage;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.Units;
@@ -27,6 +30,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
+
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
@@ -89,7 +93,6 @@ public class DocUtils {
 		row.getCell(2).setText(Float.toString(quiz.getPointsPossible()) + " Point Exam");
 
 		return doc;
-
 	}
 
 	/**
@@ -141,7 +144,6 @@ public class DocUtils {
 		row.getCell(2).setText(DataHelper.numToString(quiz.getPointsPossible()) + " Point Exam");
 
 		return doc;
-
 	}
 
 	/**
@@ -267,12 +269,10 @@ public class DocUtils {
 			source.close();
 			dest.write(outstream);
 			return dest;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 
 	/**
@@ -403,7 +403,6 @@ public class DocUtils {
 					startingNumber++;
 				}
 		
-		
 		return doc;
 	}
 
@@ -517,7 +516,5 @@ public class DocUtils {
 				Units.toEMU(refImg.getHeight()));
 		run.addCarriageReturn();
 		return par;
-
 	}
-
 }

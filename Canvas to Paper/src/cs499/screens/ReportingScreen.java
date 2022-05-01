@@ -1,10 +1,5 @@
 package cs499.screens;
 
-import javax.swing.JScrollPane;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
 import cs499.Reporting;
 import cs499.gui_utils.FrameBuilder;
 import cs499.question.Question;
@@ -15,9 +10,20 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+
 import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import cs499.Reporting;
+import cs499.gui_utils.FrameBuilder;
+import cs499.question.Question;
+
 
 public class ReportingScreen {
 
@@ -28,12 +34,11 @@ public class ReportingScreen {
 	private JTable questionsTable;
 	private JButton backButton;
 	
-	
 	public ReportingScreen() {
 		String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
         
-      //Initialize the frame
+      	//Initialize the frame
         FrameBuilder maker = new FrameBuilder();
 		frame = maker.buildFrame(
             frame_title, 
@@ -101,7 +106,6 @@ public class ReportingScreen {
 				questionsTable.setModel(questions_model);
 				questionsTable.setRowHeight(30);
 			}
-			
 		}
 		details_button.addActionListener(new DetailButtonAction());		
 		
@@ -116,7 +120,6 @@ public class ReportingScreen {
 			public void actionPerformed(ActionEvent e) {
 				new WelcomeScreen();
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));;
-				
 			}
         }
         backButton.addActionListener(new BackButtonAction());
@@ -150,35 +153,27 @@ public class ReportingScreen {
 		//Set table weights
 		constraints.weightx = 0.6 / 2;
 		constraints.weighty = 0.7 / 5;
-
         
 		constraints.gridx = 1;
-		
-       
         constraints.gridy = 2;
         frame.add(generationsLabel, constraints);
-        
        
         constraints.gridy = 3;
         constraints.gridheight = 2;
         frame.add(generations_panel, constraints);
-        
         
         constraints.gridy = 5;
         constraints.gridheight = 1;
         frame.add(details_button, constraints);
         
         constraints.gridx = 3;
-    
         constraints.gridy = 2;        
         frame.add(questionsLabel, constraints);
-        
         
         constraints.gridy = 3;
         constraints.gridheight = 2;
         constraints.gridwidth = 2;        
         frame.add(questions_panel, constraints);
-        
         
         constraints.gridx = 4;
         constraints.gridy = 4;
@@ -187,5 +182,4 @@ public class ReportingScreen {
 		
         frame.setVisible(true);
 	}
-
 }

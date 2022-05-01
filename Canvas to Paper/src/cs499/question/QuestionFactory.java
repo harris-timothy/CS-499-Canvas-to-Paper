@@ -7,12 +7,12 @@ import java.sql.DriverManager;
 
 import org.json.JSONArray;
 
-import cs499.utils.DataHelper;
-
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+
+import cs499.utils.DataHelper;
 
 public class QuestionFactory {
 
@@ -41,14 +41,10 @@ public class QuestionFactory {
 				else {
 					return new SingleAnswerQuestion(id);
 				}
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
-
-
 }
