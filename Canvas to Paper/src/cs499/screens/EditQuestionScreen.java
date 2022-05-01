@@ -1,12 +1,12 @@
 package cs499.screens;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -20,23 +20,22 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import cs499.gui_utils.FrameBuilder;
-import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
 import cs499.question.QuestionType;
 
 public class EditQuestionScreen {
 	
-	 	private JFrame frame;
-	    private JLabel questionLabel;
-	    private JTextField nameField;
-	    private JLabel descriptionLabel;
-	    private JTextArea descriptionField;
-	    private JLabel typeLabel;
-	    private JComboBox<QuestionType> typeComboBox;
-	    private JLabel instructionLabel;
-	    private JTextField instructionField;
-	    private JLabel answerLabel;
-	    private JTextArea answerField;
+	private JFrame frame;
+	private JLabel questionLabel;
+	private JTextField nameField;
+	private JLabel descriptionLabel;
+	private JTextArea descriptionField;
+	private JLabel typeLabel;
+	private JComboBox<QuestionType> typeComboBox;
+	private JLabel instructionLabel;
+	private JTextField instructionField;
+	private JLabel answerLabel;
+	private JTextArea answerField;
 	    
     public EditQuestionScreen(Question question){
     	
@@ -75,7 +74,6 @@ public class EditQuestionScreen {
         descriptionField.setLineWrap(true);
         descriptionField.setWrapStyleWord(true);
         JScrollPane descScroll = new JScrollPane(descriptionField);
-        
          
         this.typeLabel = new JLabel();
         typeLabel.setText("Type");
@@ -114,7 +112,7 @@ public class EditQuestionScreen {
         answerField.setWrapStyleWord(true);
         JScrollPane answer_scroll = new JScrollPane(answerField);
         
-      //Create ABET checkbox
+        //Create ABET checkbox
  		JCheckBox abet_box = new JCheckBox("Mark for ABET");
  		abet_box.setMnemonic(KeyEvent.VK_A);
  		abet_box.setSelected(question.getAbet());
@@ -127,8 +125,6 @@ public class EditQuestionScreen {
  		
  		question_info_panel.add(abet_box);
  		question_info_panel.add(blacklist_box);
- 		
- 		//TODO fix answer saving - currently duplicates.
          
         //Create Back Button
         JButton save_btn = new JButton("Save Changes");
@@ -149,14 +145,10 @@ public class EditQuestionScreen {
  		save_btn.setBounds(485, 30, 200, 20);
  		question_info_panel.add(save_btn);
  		
- 		
- 		
- 		
  		nameField.setText(question.getName());
         descriptionField.setText(question.getDescription());
         if (question.getGradingInstructions() != null) instructionField.setText(question.getGradingInstructions());
         if (question.getAnswer() != null && answerField != null) answerField.setText(question.getAnswer());
-        
 
         question_info_panel.add(questionLabel);
         question_info_panel.add(nameField);
@@ -218,6 +210,5 @@ public class EditQuestionScreen {
 		frame.add(questions_scroller, constraints);
 		
         frame.setVisible(true);
-        
     }
 }

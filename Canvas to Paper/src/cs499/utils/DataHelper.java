@@ -20,5 +20,4 @@ public class DataHelper {
 		else
 		    return String.format("%.0f", num);
 	}
-
 }

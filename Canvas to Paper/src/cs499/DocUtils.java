@@ -1,19 +1,19 @@
 package cs499;
 
+import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-
-import static java.lang.Math.*;
-
-import java.awt.image.BufferedImage;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -23,14 +23,12 @@ import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
-import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFStyle;
-import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
+
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
@@ -82,7 +80,6 @@ public class DocUtils {
 		row.getCell(2).setText(Float.toString(quiz.getPointsPossible()) + " Point Exam");
 
 		return doc;
-
 	}
 
 	/**
@@ -129,7 +126,6 @@ public class DocUtils {
 		row.getCell(2).setText(DataHelper.numToString(quiz.getPointsPossible()) + " Point Exam");
 
 		return doc;
-
 	}
 
 	/**
@@ -255,12 +251,10 @@ public class DocUtils {
 			source.close();
 			dest.write(outstream);
 			return dest;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 
 	/**
@@ -280,7 +274,6 @@ public class DocUtils {
 	public static XWPFDocument trueFalseSection(XWPFDocument doc, List<MultipleChoiceQuestion> tfList,
 			int startingNumber) {
 
-		// TODO section description
 		float points = 0;
 		XWPFParagraph par = doc.createParagraph();
 		XWPFRun run = par.createRun();
@@ -329,7 +322,6 @@ public class DocUtils {
 	}
 	
 	public static XWPFDocument trueFalseSectionKey(XWPFDocument doc, List<MultipleChoiceQuestion> tfList, int startingNumber) {
-		// TODO section description
 				float points = 0;
 				XWPFParagraph par = doc.createParagraph();
 				XWPFRun run = par.createRun();
@@ -387,7 +379,6 @@ public class DocUtils {
 					row.getCell(3).setText(tfList.get(i).getDescription());
 					startingNumber++;
 				}
-		
 		
 		return doc;
 	}
@@ -502,7 +493,5 @@ public class DocUtils {
 				Units.toEMU(refImg.getHeight()));
 		run.addCarriageReturn();
 		return par;
-
 	}
-
 }

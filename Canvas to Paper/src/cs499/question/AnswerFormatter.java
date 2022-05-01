@@ -20,7 +20,6 @@ public class AnswerFormatter {
 		}
 		
 		return answerArray.toString();
-		
 	}
 	
 	public static String answerJSONString(String answer, ArrayList<String> choices) {
@@ -65,7 +64,6 @@ public class AnswerFormatter {
 		answerArray.put(answer);
 		
 		return answerArray.toString();
-		
 	}
 	
 	public static ArrayList<String> answerArray(String answerJSONString) {

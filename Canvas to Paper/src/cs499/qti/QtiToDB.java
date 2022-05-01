@@ -11,22 +11,22 @@ import static cs499.data_classes.Tables.REFERENCE_MATERIAL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.utils.DataHelper;
 
 public class QtiToDB {
 	
-	private static final int FIRST = 0;
+	// private static final int FIRST = 0;
 	
 	public static Integer storeQuiz(HashMap<String, String> data) {
-		
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			Record exists = create.select()
@@ -52,7 +52,6 @@ public class QtiToDB {
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
 	
 	public static void storeQuizMeta(HashMap<String,String> data) {
@@ -86,12 +85,10 @@ public class QtiToDB {
 				.where(QUIZ.NAME.eq(data.get("name")))
 				.execute();
 			}
-			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public static Integer storeQuestion(HashMap<String, String> data) {
@@ -125,7 +122,6 @@ public class QtiToDB {
 					
 					return record.getValue(QUESTION.ID);
 				}
-
 			}
 			else {
 				
@@ -142,7 +138,6 @@ public class QtiToDB {
 					return record.getValue(QUESTION.ID);
 				}
 			}		
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -172,12 +167,10 @@ public class QtiToDB {
 			
 				return exists.getValue(QUESTION_BANK.ID);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
 	
 	public static void storeQuizQuestion(int quizId, int questionId) {
@@ -198,7 +191,6 @@ public class QtiToDB {
 						questionId)
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -222,11 +214,9 @@ public class QtiToDB {
 						questionId)
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public static void storeQuestionGroup(HashMap<String, String> data) {
@@ -263,13 +253,10 @@ public class QtiToDB {
 						data.get("group_name"))
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
 	}
-	
-	
 
 	public static Integer storeCourse(String courseName) {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
@@ -290,7 +277,6 @@ public class QtiToDB {
 			else {
 				return exists.getValue(COURSE.ID);
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -315,11 +301,9 @@ public class QtiToDB {
 					.execute();
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	public static void storeReference(String filename, String filepath, int questionId) {
@@ -339,11 +323,8 @@ public class QtiToDB {
 			.set(QUESTION.REFERENCE_ID, referenceId)
 			.where(QUESTION.ID.eq(questionId))
 			.execute();
-
-
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 }

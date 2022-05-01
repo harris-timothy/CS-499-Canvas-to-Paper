@@ -1,17 +1,20 @@
 package cs499;
 
 import static cs499.data_classes.Tables.METADATA;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
+import org.jooq.SQLDialect;
 import org.jooq.Record;
 import org.jooq.Result;
+
+import org.json.JSONArray;
 
 import cs499.utils.DataHelper;
 import cs499.question.*;
@@ -45,12 +48,10 @@ public class Reporting {
             
             for(Record r: result) {
             	parseMetaJSON(r.getValue(METADATA.DATA));
-            }
-                        
+            }           
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	
@@ -89,8 +90,6 @@ public class Reporting {
 		return loadQuestions(meta);
 	}
 	
-	
-	
 	private void parseMetaJSON(String metaJSON) {
 		HashMap<String,String> map = new HashMap<String,String>();
 		JSONArray metaJSONArray = new JSONArray(metaJSON);
@@ -109,9 +108,5 @@ public class Reporting {
 			}
 		}
 		metaList.add(map);
-		
 	}
-	
-	
-
 }

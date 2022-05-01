@@ -1,17 +1,17 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
-import static cs499.question.QuestionType.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
 import cs499.ReferenceMaterial;
 import cs499.utils.DataHelper;
@@ -45,7 +45,6 @@ public class MultipleChoiceQuestion extends Question {
 	public MultipleChoiceQuestion(int id) {
 		this.id = id;
 		loadQuestion();
-		
 	}
 
 	public String getCorrectAnswer() {
@@ -158,7 +157,6 @@ public class MultipleChoiceQuestion extends Question {
 						DataHelper.boolToInt(abet),
 						points)
 				.execute();
-
 			}
 			else {
 				create.update(QUESTION)
@@ -172,12 +170,9 @@ public class MultipleChoiceQuestion extends Question {
 				.where(QUESTION.ID.eq(id))
 				.execute();
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		
 	}
 	
 	@Override
@@ -204,11 +199,7 @@ public class MultipleChoiceQuestion extends Question {
 				setChoices(AnswerFormatter.choicesArray(result.getValue(QUESTION.ANSWERS)));
 				setType(QuestionType.valueOfType(result.getValue(QUESTION.TYPE)));
 				setPoints(result.getValue(QUESTION.POINTS_POSSIBLE));
-
 			}
-
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -224,13 +215,10 @@ public class MultipleChoiceQuestion extends Question {
 			.set(QUESTION.REFERENCE_ID, reference.getId())
 			.where(QUESTION.ID.eq(this.id))
 			.execute();
-			
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -243,13 +231,10 @@ public class MultipleChoiceQuestion extends Question {
 			.set(QUESTION.REFERENCE_ID, id)
 			.where(QUESTION.ID.eq(this.id))
 			.execute();
-			
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -262,13 +247,11 @@ public class MultipleChoiceQuestion extends Question {
 			.where(QUESTION.ID.eq(id))
 			.fetchOne(QUESTION.REFERENCE_ID);
 			
-			this.reference = new ReferenceMaterial(reference_id);			
-
+			this.reference = new ReferenceMaterial(reference_id);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -285,11 +268,9 @@ public class MultipleChoiceQuestion extends Question {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 			
 			this.id = create.insertInto(QUESTION, QUESTION.NAME).values("").returning(QUESTION.ID).fetchOne(QUESTION.ID);
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void setAnswer(String answer) {
@@ -310,7 +291,4 @@ public class MultipleChoiceQuestion extends Question {
 	public String getAnswer() {
 		return AnswerFormatter.answerJSONString(answer,choices);
 	}
-
-
-
 }
