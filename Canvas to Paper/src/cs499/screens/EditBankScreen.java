@@ -1,5 +1,15 @@
 package cs499.screens;
 
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -7,21 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-
-import java.util.ArrayList;
-
-import cs499.QuestionBank;
 import cs499.gui_utils.FrameBuilder;
+import cs499.QuestionBank;
 import cs499.question.Question;
+import cs499.question.SingleAnswerQuestion;
 
 public class EditBankScreen {
+	
     private JFrame frame;
     private JLabel bankLabel;
     private JTextField bankField;
@@ -211,13 +213,11 @@ public class EditBankScreen {
 		JButton create_question_btn = new JButton("Create Question");
 		class CreateQuestionAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-                //TODO: Deal with Question Factories to make a new Question of some default type (likely just choose multiple choice as default)
-                //TODO: Pass the new question to EditQuestionScreen(new_question);
-                //TODO: Add the new question to the quiz
+                Question newQuestion = new SingleAnswerQuestion();
+				bank.addQuestion(newQuestion);
+				new EditQuestionScreen(newQuestion);
                 
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				//TODO: Once new question is passed to EditQuestionScreen(), remove the following line:
-                new EditBankScreen(bank);
 			}
 		}
 		create_question_btn.addActionListener(new CreateQuestionAction());

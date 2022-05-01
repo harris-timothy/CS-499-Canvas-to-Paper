@@ -1,26 +1,28 @@
 package cs499.screens;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import java.util.ArrayList;
-
-import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
+import cs499.Quiz;
 import cs499.utils.DatabaseUtils;
 
 public class SelectQuizScreen {
+
     private JFrame frame;
+
     public SelectQuizScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";
@@ -203,7 +205,6 @@ public class SelectQuizScreen {
 		del_panel_constraints.gridy = quiz_list.size() + 1;
 		del_panel_constraints.insets = new Insets(inset_size, 0, inset_size, 0);
 		del_panel.add(new JLabel(" "), del_panel_constraints);
-
 		
 		//Create Constraints Guide
 		GridBagConstraints constraints = new GridBagConstraints();

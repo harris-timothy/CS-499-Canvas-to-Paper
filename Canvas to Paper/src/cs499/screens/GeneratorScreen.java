@@ -10,17 +10,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import cs499.Quiz;
-import cs499.WordDocx;
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
+import cs499.Quiz;
+import cs499.WordDocx;
 
 public class GeneratorScreen {
+	
 	private JFrame frame;
 	private JLabel courseLabel;
 	private JTextField courseField;
 	private JLabel dateLabel;
-	//private JFormattedTextField dateField;
 	private JTextField dateField;
 	private JLabel instructorLabel;
 	private JTextField instructorField;
@@ -138,9 +138,7 @@ public class GeneratorScreen {
         JButton save_btn = new JButton("Generate Quiz");
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
-				//quiz.setCourse(courseField.getText());
 				quiz.setDate(dateField.getText());
-				//quiz.setInstructor();
 				quiz.saveQuiz();
 				doc = new WordDocx();
 				
@@ -173,5 +171,4 @@ public class GeneratorScreen {
         frame.add(genPanel);
         frame.setVisible(true);
 	}
-	
 }

@@ -60,14 +60,13 @@ public class RecentItems {
 		}
 	}
 	
-	private void removeAll() {
-		try {
-			preferences.clear();
-		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	// private void removeAll() {
+	// 	try {
+	// 		preferences.clear();
+	// 	} catch (BackingStoreException e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 	
 	private void load() {
 		
@@ -84,16 +83,5 @@ public class RecentItems {
 		while(recentQuizzes.size() > MAX_NUMBER) {
 			removeOldest();
 		}
-		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

@@ -1,27 +1,28 @@
 package cs499.screens;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.GridBagConstraints;
-
-import cs499.Quiz;
-import cs499.WordDocx;
 import cs499.gui_utils.FrameBuilder;
+import cs499.Quiz;
 import cs499.utils.DatabaseUtils;
 
 public class GenerationSelectScreen {
-    JFrame frame;
-    private WordDocx doc;
+
+    private JFrame frame;
+	
     public GenerationSelectScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";

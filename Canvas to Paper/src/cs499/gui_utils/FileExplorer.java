@@ -2,14 +2,14 @@ package cs499.gui_utils;
 
 import java.io.File;
 
-import javax.swing.JFrame;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.swing.JFileChooser;
-
 public class FileExplorer {
+	
     /**
 	 * Opens a file explorer frame to cause the user to select a file
 	 * @param accepted_formats A string array which begins with first element "Title of format types accepted" and 
@@ -35,6 +35,7 @@ public class FileExplorer {
 				return "Blank";
 		}
 	}
+
 	/**
 	 * Opens a file explorer frame to cause the user to select a directory
 	 * @return The directory path that the user selected; "Blank" if no selection; "Error" if error;
@@ -55,6 +56,7 @@ public class FileExplorer {
 				return "Blank";
 		}
 	}
+
 	/**
 	 * Opens a file explorer frame to cause the user to select multiple files
 	 * @param accepted_formats A string array which begins with first element "Title of format types accepted" and 

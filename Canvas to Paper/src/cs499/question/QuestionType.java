@@ -39,7 +39,4 @@ public enum QuestionType {
 	public static QuestionType valueOfType(String type) {
 		return BY_TYPE.get(type);
 	}
-	
-	
-
 }

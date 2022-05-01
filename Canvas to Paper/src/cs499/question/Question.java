@@ -1,8 +1,5 @@
 package cs499.question;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import cs499.Reference;
 import cs499.ReferenceMaterial;
 
@@ -43,5 +40,4 @@ public abstract class Question implements Reference{
 	public abstract void setAnswer(String answer);
 	
 	public abstract ReferenceMaterial getReference();
-
 }

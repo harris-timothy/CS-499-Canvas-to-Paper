@@ -2,17 +2,19 @@ package cs499;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import cs499.question.MatchingQuestion;
 import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
 import cs499.question.QuestionType;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 public class WordDocx
 {
@@ -35,7 +37,6 @@ public class WordDocx
 		
 		DocUtils.header(document, quiz);
 		DocUtils.numberedFooter(document);
-		
 				
 		// Display Description, Points, Choices, and Reference Material
 		int numbering = 1;
@@ -70,7 +71,7 @@ public class WordDocx
 								
 				char choiceLetter = 'a';
 				for (String choice : choices) {
-					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after. Unsure how it will behave.
+					questionRun.addTab(); // NOTE: This may need to go outside of the for loop, with a removeTab() after.
 					questionRun.setText(choiceLetter + ") " + choice);
 					questionRun.addBreak();
 					choiceLetter++;
@@ -99,9 +100,6 @@ public class WordDocx
 		out.close();
 		document.close();
 	}
-	
-	//TODO add template file input
-	//TODO use section functions
 	
 	// For use with a built quiz (QuizBuilder)
 	private void TestKeyBuilder(Quiz quiz, String filepath, String templatepath, List<MultipleChoiceQuestion> tfList) throws Exception
@@ -179,19 +177,15 @@ public class WordDocx
 					}
 					
 					choiceLetter++;
-					
 				}
-				
 			}
 			else if (question instanceof MatchingQuestion) {
 				DocUtils.matchingQuestionKey(document, (MatchingQuestion)question);
-				
 			}
 			numbering++;
 		}
 				
 		if (quiz.getReferences() != null) {
-			
 			DocUtils.insertQuizReference(document, quiz);			
 		}
 		
@@ -223,7 +217,5 @@ public class WordDocx
 		
 		quiz.saveMetadata();
 		DocumentBuilder(quiz, filepath, templatepath, tfList);
-		
 	}
-
 }

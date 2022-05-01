@@ -1,5 +1,17 @@
 package cs499.screens;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,18 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import cs499.gui_utils.FileExplorer;
 import cs499.gui_utils.FrameBuilder;
@@ -326,8 +326,6 @@ public class WelcomeScreen {
 		//Add elements to frame
 		constraints.fill = GridBagConstraints.BOTH;
 		
-		//Use a 5x2 content area, divider between, with padding around it for a 7x5
-		
 		//Add padding around of 10% top, 10% left, 20% bottom, 10% right, and a middle divider of 10%
 		constraints.gridx = 0;
 		constraints.gridy = 6;
@@ -380,8 +378,6 @@ public class WelcomeScreen {
 
 		//Column 2:
 		constraints.gridx = 3;
-
-		//TODO: Add document information
 		constraints.gridy = 2;
 		frame.add(new JLabel("Recent Tests:"), constraints);
 		

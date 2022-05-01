@@ -4,29 +4,19 @@ import static cs499.data_classes.Tables.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 
-import cs499.question.Question;
 import cs499.question.QuestionFactory;
 import cs499.utils.DataHelper;
 
 public class QuizBuilder {
-	// TODO:
-	// Take Quiz ID - DONE
-	// Make quiz with Quiz ID - DONE
-	// Go to database, find questions that match Quiz ID - QuizToQuestion - DONE
-	// It will give list of Question IDs -> may be fucky due to question banks - DONE?
-	// Make question objects for all IDs given - QuestionFactory - DONE
-	// Quiz object addQuestion method to add question objects to quiz - DONE
-	// Add blacklist
-	// Add whitelist
 	
 	// NOTE: May want to change this to one function that deals with key/value pairs in the future.
 	// For now, this will work.
@@ -62,33 +52,7 @@ public class QuizBuilder {
 				}
 			}
 			
-			// If the array of question group records is not empty:
-			// - Randomize the list of questions from the question bank
-			// - Choose a number of questions from the question bank based off of PICK_COUNT
-			// - Add the chosen questions to the quiz
-//			if (groupArr != null) {
-//				for (int i = 0; i < groupArr.length; i++) {
-//					Integer bankID = groupArr[i].getValue(QUESTION_GROUP.QUESTION_BANK_ID);
-//					if (bankID == 0) {
-//						continue;
-//					}
-//					bank = new QuestionBank(bankID);
-//					bankQuestionList = bank.getQuestionIds();
-//					Collections.shuffle(bankQuestionList);
-//					if (groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT) > bankQuestionList.size()) {
-//						for (int j = 0; j < bankQuestionList.size(); j++) {
-//							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
-//						}
-//					} else {
-//						for (int j = 0; j < groupArr[i].getValue(QUESTION_GROUP.PICK_COUNT); j++) {
-//							builtQuiz.addQuestion(QuestionFactory.build(bankQuestionList.get(j)));
-//						}
-//					}
-//				}
-//			}
-			
 			return builtQuiz;
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -164,7 +128,6 @@ public class QuizBuilder {
 			}
 			
 			return builtQuiz;
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -208,7 +171,6 @@ public class QuizBuilder {
 							continue; // Unsure if necessary
 						}
 					}
-					
 				}
 			}
 			
@@ -241,7 +203,6 @@ public class QuizBuilder {
 			}
 			
 			return builtQuiz;
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -320,11 +281,9 @@ public class QuizBuilder {
 			}
 			
 			return builtQuiz;
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
 }

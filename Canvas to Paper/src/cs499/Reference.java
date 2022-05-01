@@ -7,5 +7,4 @@ public interface Reference {
 	public void createReference(int id);
 	
 	public void loadReference();
-
 }

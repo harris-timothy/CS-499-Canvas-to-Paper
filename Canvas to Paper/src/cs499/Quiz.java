@@ -4,18 +4,22 @@ import static cs499.data_classes.Tables.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -154,7 +158,6 @@ public class Quiz implements Reference{
 		}
 		
 		return metadataArray.toString();
-		
 	}
 	
 	public void saveMetadata() {
@@ -169,7 +172,6 @@ public class Quiz implements Reference{
             .values(this.getId(), 
             		this.metaJSON())
             .execute();
-            
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -187,14 +189,12 @@ public class Quiz implements Reference{
 					QUIZ_REFERENCE.REFERENCE_ID)
 			.values(this.getId(),
 					reference.getId())
-			.execute();		
-
+			.execute();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		this.references.add(reference);
-		
 	}
 
 	@Override
@@ -209,14 +209,12 @@ public class Quiz implements Reference{
 					QUIZ_REFERENCE.REFERENCE_ID)
 			.values(this.getId(),
 					reference.getId())
-			.execute();		
-
+			.execute();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		this.references.add(reference);
-		
 	}
 
 	@Override
@@ -234,12 +232,10 @@ public class Quiz implements Reference{
 				ReferenceMaterial reference = new ReferenceMaterial(i);
 				this.references.add(reference);
 			}
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void loadQuiz() {
@@ -276,18 +272,13 @@ public class Quiz implements Reference{
 				if(result.getValue(QUIZ.POINTS_POSSIBLE) != null) {
 					setPointsPossible(result.getValue(QUIZ.POINTS_POSSIBLE));
 				}
-				
-
 			}			
 			
 			setCourse(courseName);
 			setShortCourse();
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void newQuiz() {
@@ -295,11 +286,9 @@ public class Quiz implements Reference{
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);     
 
 			this.id = create.insertInto(QUIZ, QUIZ.NAME).values("").returning(QUIZ.ID).fetchOne(QUIZ.ID);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void saveQuiz() {
@@ -325,12 +314,9 @@ public class Quiz implements Reference{
 			.set(QUIZ.DUE_DATE, date)
 			.where(QUIZ.ID.eq(id))
 			.execute();
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
 	private void setShortCourse() {
@@ -353,11 +339,9 @@ public class Quiz implements Reference{
 			for(Record r: result) {
 				groups.add(new QuestionGroup(r.getValue(QUESTION_GROUP.ID)));
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public ArrayList<QuestionGroup> getQuestionGroups(){
@@ -377,10 +361,8 @@ public class Quiz implements Reference{
 					.fetchOne(QUESTION_GROUP.ID);
 			
 			groups.add(new QuestionGroup(groupId));
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 }
