@@ -16,7 +16,6 @@ import java.awt.Insets;
 import java.util.ArrayList;
 
 import cs499.QuestionBank;
-import cs499.Quiz;
 import cs499.gui_utils.FrameBuilder;
 import cs499.utils.DatabaseUtils;
 

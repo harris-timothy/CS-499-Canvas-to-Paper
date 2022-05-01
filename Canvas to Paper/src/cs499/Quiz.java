@@ -48,6 +48,7 @@ public class Quiz implements Reference{
 	
 	public Quiz() {
 		newQuiz();
+		this.instructor = new Instructor();
 	}
 	
 	public Quiz(int id) {
@@ -377,6 +378,21 @@ public class Quiz implements Reference{
 					.fetchOne(QUESTION_GROUP.ID);
 			
 			groups.add(new QuestionGroup(groupId));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void addAssociation(Question question) {
+		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
+			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+			
+			create.insertInto(QUIZ_TO_QUESTION,
+					QUIZ_TO_QUESTION.QUESTION_ID,
+					QUIZ_TO_QUESTION.QUIZ_ID)
+			.values(question.getId(), id)
+			.execute();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

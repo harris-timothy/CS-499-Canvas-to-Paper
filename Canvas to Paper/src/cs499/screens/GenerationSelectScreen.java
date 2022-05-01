@@ -15,13 +15,11 @@ import java.awt.Insets;
 import java.awt.GridBagConstraints;
 
 import cs499.Quiz;
-import cs499.WordDocx;
 import cs499.gui_utils.FrameBuilder;
 import cs499.utils.DatabaseUtils;
 
 public class GenerationSelectScreen {
     JFrame frame;
-    private WordDocx doc;
     public GenerationSelectScreen(){
         String frame_title = "CS 499-01 Spring 2022 CtPP Project Prototype-01";
         String logo_icon_path = "Canvas to Paper/lib/images/logo_icon.png";

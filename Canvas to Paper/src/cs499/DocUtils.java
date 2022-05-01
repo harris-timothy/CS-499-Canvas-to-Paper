@@ -8,10 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
-
-import static java.lang.Math.*;
 
 import java.awt.image.BufferedImage;
 
@@ -23,11 +22,8 @@ import org.apache.poi.xwpf.usermodel.BreakType;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
-import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFStyle;
-import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute;
@@ -58,8 +54,9 @@ public class DocUtils {
 	 * @param quiz
 	 * @return
 	 */
-	public static XWPFDocument header(XWPFDocument doc, Quiz quiz) {
-
+	public static XWPFDocument header(XWPFDocument doc, Quiz quiz, HashMap<String,String> headervalues) {
+		
+		
 		XWPFHeaderFooterPolicy hfPolicy = doc.getHeaderFooterPolicy();
 		if (hfPolicy == null) {
 			hfPolicy = doc.createHeaderFooterPolicy();
@@ -72,12 +69,22 @@ public class DocUtils {
 		table.setWidth("100%");
 
 		XWPFTableRow row = table.getRow(0);
-		row.getCell(0).setText(quiz.getShortCourse());
+		if(quiz.getShortCourse() == null || quiz.getShortCourse().isEmpty()) {
+			row.getCell(0).setText(headervalues.get("course"));
+		}
+		else {
+			row.getCell(0).setText(quiz.getShortCourse());
+		}
 		row.getCell(1).setText(quiz.getName());
 		row.getCell(2).setText(dateString(quiz.getDate()));
-
+		
 		row = table.getRow(1);
-		row.getCell(0).setText(quiz.getInstructor().getName());
+		if(quiz.getInstructor() == null) {
+			row.getCell(0).setText(headervalues.get("instructor"));
+		}
+		else {
+			row.getCell(0).setText(quiz.getInstructor().getName());
+		}		
 		row.getCell(1).setText(" ");
 		row.getCell(2).setText(Float.toString(quiz.getPointsPossible()) + " Point Exam");
 
@@ -111,7 +118,12 @@ public class DocUtils {
 		row.getCell(2).setText(dateString(quiz.getDate()));
 
 		row = table.getRow(1);
-		row.getCell(0).setText(quiz.getInstructor().getName());
+		if(quiz.getInstructor() == null) {
+			row.getCell(0).setText(" ");
+		}
+		else {
+			row.getCell(0).setText(quiz.getInstructor().getName());
+		}
 		List<XWPFParagraph> par = row.getCell(1).getParagraphs();
 		if (!par.isEmpty()) {
 			XWPFRun run = par.get(0).createRun();
@@ -273,14 +285,18 @@ public class DocUtils {
 		if (date == null || date.isEmpty() || date.isBlank()) {
 			return LocalDate.now().toString();
 		} else {
-			return LocalDateTime.parse(date).toLocalDate().toString();
+			try {
+				return LocalDateTime.parse(date).toLocalDate().toString();
+			} catch(Exception e) {
+				return date;
+			}
+			
 		}
 	}
 
 	public static XWPFDocument trueFalseSection(XWPFDocument doc, List<MultipleChoiceQuestion> tfList,
 			int startingNumber) {
 
-		// TODO section description
 		float points = 0;
 		XWPFParagraph par = doc.createParagraph();
 		XWPFRun run = par.createRun();
@@ -329,7 +345,6 @@ public class DocUtils {
 	}
 	
 	public static XWPFDocument trueFalseSectionKey(XWPFDocument doc, List<MultipleChoiceQuestion> tfList, int startingNumber) {
-		// TODO section description
 				float points = 0;
 				XWPFParagraph par = doc.createParagraph();
 				XWPFRun run = par.createRun();

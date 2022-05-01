@@ -296,6 +296,23 @@ public class WelcomeScreen {
 			}
 		}
 		generation_reports_mi.addActionListener(new ViewReportsAction());
+		
+		JMenu clear_menu = menu.buildMenu("Clear Data", KeyEvent.VK_D);
+		menu_bar.add(clear_menu);
+		
+		RecentItems recent = new RecentItems();
+		
+		//Clear Data -> Clear All Data
+		JMenuItem clear_data_mi = menu.buildMenuItem("Clear All Data", KeyEvent.VK_A, clear_menu);
+		class ClearDataAction implements ActionListener {
+			public void actionPerformed(ActionEvent e) {
+				DatabaseUtils.clearAllData();
+				recent.removeAll();				
+			}			
+		}
+		clear_data_mi.addActionListener(new ClearDataAction());
+		
+		
 
 		//Create Import QTI File Button
 		JButton import_btn = new JButton("Import QTI Files");
@@ -309,7 +326,7 @@ public class WelcomeScreen {
 		JButton create_quiz_btn = new JButton("Create New Test");
 		create_quiz_btn.addActionListener(new CreateQuizAction());
 		
-		RecentItems recent = new RecentItems();
+		
 		JTable recent_table = new JTable();
 		Object[] columns = {" "};
 		DefaultTableModel model = new DefaultTableModel(new Object[0][0],columns);
@@ -381,7 +398,6 @@ public class WelcomeScreen {
 		//Column 2:
 		constraints.gridx = 3;
 
-		//TODO: Add document information
 		constraints.gridy = 2;
 		frame.add(new JLabel("Recent Tests:"), constraints);
 		

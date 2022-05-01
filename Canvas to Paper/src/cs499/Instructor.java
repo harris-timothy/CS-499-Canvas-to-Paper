@@ -32,6 +32,10 @@ public class Instructor {
 		loadInstructor();
 	}
 	
+	public Instructor() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getName() {
 		return title + " " + lname;
 	}

@@ -60,11 +60,10 @@ public class RecentItems {
 		}
 	}
 	
-	private void removeAll() {
+	public void removeAll() {
 		try {
 			preferences.clear();
 		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

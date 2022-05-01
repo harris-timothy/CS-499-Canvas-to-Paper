@@ -20,7 +20,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import cs499.gui_utils.FrameBuilder;
-import cs499.question.MultipleChoiceQuestion;
 import cs499.question.Question;
 import cs499.question.QuestionType;
 
@@ -127,8 +126,6 @@ public class EditQuestionScreen {
  		
  		question_info_panel.add(abet_box);
  		question_info_panel.add(blacklist_box);
- 		
- 		//TODO fix answer saving - currently duplicates.
          
         //Create Back Button
         JButton save_btn = new JButton("Save Changes");

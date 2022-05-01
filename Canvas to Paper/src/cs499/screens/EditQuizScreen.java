@@ -266,6 +266,7 @@ public class EditQuizScreen {
 			public void actionPerformed(ActionEvent e) {
 				Question newQuestion = new SingleAnswerQuestion();
 				quiz.addQuestion(newQuestion);
+				quiz.addAssociation(newQuestion);
 				new EditQuestionScreen(newQuestion);
 				                
 				frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));

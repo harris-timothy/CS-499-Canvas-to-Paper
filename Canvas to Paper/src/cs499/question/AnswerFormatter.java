@@ -33,6 +33,9 @@ public class AnswerFormatter {
 		answerArray.put(correct);
 		
 		for(String s : choices) {
+			if(s.equals(answer)) {
+				continue;
+			}
 			JSONObject wrongAnswer = new JSONObject();
 			wrongAnswer.put("answer", s);
 			wrongAnswer.put("correct", false);

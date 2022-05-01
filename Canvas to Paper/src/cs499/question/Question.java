@@ -1,8 +1,5 @@
 package cs499.question;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import cs499.Reference;
 import cs499.ReferenceMaterial;
 

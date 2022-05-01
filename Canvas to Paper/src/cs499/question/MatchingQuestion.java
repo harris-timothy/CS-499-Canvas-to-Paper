@@ -1,8 +1,6 @@
 package cs499.question;
 
 import static cs499.data_classes.Tables.QUESTION;
-import static cs499.question.QuestionType.MATCHING;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;

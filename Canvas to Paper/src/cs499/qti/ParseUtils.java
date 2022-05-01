@@ -200,7 +200,7 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		return null;
 	}
 
-	private static String findNumRange(HashMap<String,String> correct) {
+	public static String findNumRange(HashMap<String,String> correct) {
 		
 		String range = "Greater than " + correct.get("floor") + ", less than " + correct.get("ceiling");
 		
