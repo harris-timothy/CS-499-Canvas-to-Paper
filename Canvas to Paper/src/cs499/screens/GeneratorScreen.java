@@ -3,6 +3,7 @@ package cs499.screens;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -138,14 +139,20 @@ public class GeneratorScreen {
         JButton save_btn = new JButton("Generate Quiz");
 		class SaveAction implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
+				HashMap<String,String> headervalues = new HashMap<String,String>();
+				headervalues.put("course", courseField.getText());
+				//quiz.setCourse(courseField.getText());
 				quiz.setDate(dateField.getText());
+				headervalues.put("date", dateField.getText());
+				//quiz.setInstructor();
+				headervalues.put("instructor", instructorField.getText());
 				quiz.saveQuiz();
 				doc = new WordDocx();
 				
 				String test_path = locationGenField.getText() + "\\" + quiz.getName() + ".docx";
 				
 				try {
-					doc.Shuffler(quiz, test_path, locationTemplateField.getText());
+					doc.Shuffler(quiz, test_path, locationTemplateField.getText(), headervalues);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

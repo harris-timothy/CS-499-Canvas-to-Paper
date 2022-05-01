@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -20,7 +21,7 @@ public class WordDocx
 {
 	// For use with a built quiz (QuizBuilder)
 	
-	private void DocumentBuilder(Quiz quiz, String filepath, String templatepath, List<MultipleChoiceQuestion> tfList) throws Exception
+	private void DocumentBuilder(Quiz quiz, String filepath, String templatepath, List<MultipleChoiceQuestion> tfList, HashMap<String,String> headervalues) throws Exception
 	{
 		// Make an empty document
 		XWPFDocument document = DocUtils.copyCoverPage(templatepath, filepath, quiz);
@@ -35,7 +36,7 @@ public class WordDocx
 		// quiz.shuffleQuestions();
 		ArrayList<Question> questionList = quiz.getQuestions();
 		
-		DocUtils.header(document, quiz);
+		DocUtils.header(document, quiz, headervalues);
 		DocUtils.numberedFooter(document);
 				
 		// Display Description, Points, Choices, and Reference Material
@@ -197,7 +198,7 @@ public class WordDocx
 		document.close();
 	}
 	
-	public void Shuffler(Quiz quiz, String filepath, String templatepath) throws Exception {
+	public void Shuffler(Quiz quiz, String filepath, String templatepath, HashMap<String,String> headervalues) throws Exception {
 		
 		quiz.shuffleQuestions();
 		List<MultipleChoiceQuestion> tfList = new ArrayList<MultipleChoiceQuestion>();
@@ -216,6 +217,7 @@ public class WordDocx
 		}
 		
 		quiz.saveMetadata();
-		DocumentBuilder(quiz, filepath, templatepath, tfList);
+		DocumentBuilder(quiz, filepath, templatepath, tfList, headervalues);
+		
 	}
 }

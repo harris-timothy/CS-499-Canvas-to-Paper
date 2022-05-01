@@ -1,5 +1,9 @@
 package cs499.screens;
 
+import cs499.Reporting;
+import cs499.gui_utils.FrameBuilder;
+import cs499.question.Question;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

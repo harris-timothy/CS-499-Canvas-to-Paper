@@ -4,7 +4,6 @@ import static cs499.data_classes.Tables.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -18,8 +17,6 @@ import cs499.utils.DataHelper;
 
 public class QuizBuilder {
 	
-	// NOTE: May want to change this to one function that deals with key/value pairs in the future.
-	// For now, this will work.
 	
 	public Quiz buildQuiz(int id) {
 		Quiz builtQuiz = new Quiz(id);
@@ -43,7 +40,7 @@ public class QuizBuilder {
 	
 			// If the array of question IDs is not empty, build Question objects from each ID
 			// and add them to the quiz
-			if(questionArr != null) { // Maybe change to result.length != 0 if something breaks
+			if(questionArr != null) { 
 				for (Integer questionID : questionArr)
 				{	
 					if(questionID != null) {
@@ -51,7 +48,7 @@ public class QuizBuilder {
 					}
 				}
 			}
-			
+
 			return builtQuiz;
 		} catch (Exception e) {
 			e.printStackTrace();

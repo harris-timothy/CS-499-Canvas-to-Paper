@@ -24,8 +24,6 @@ import cs499.utils.DataHelper;
 
 public class QtiToDB {
 	
-	// private static final int FIRST = 0;
-	
 	public static Integer storeQuiz(HashMap<String, String> data) {
 		try (Connection conn = DriverManager.getConnection(DataHelper.ENV.get("DB_URL"))) {
 			DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -101,7 +99,7 @@ public class QtiToDB {
 					.fetchOne();
 
 			if(exists == null) {
-				Record record = create.insertInto(QUESTION,
+				return create.insertInto(QUESTION,
 						QUESTION.QTI_ID,
 						QUESTION.NAME,
 						QUESTION.DESCRIPTION,
@@ -116,27 +114,20 @@ public class QtiToDB {
 						Float.parseFloat(data.get("points_possible")))
 				.onDuplicateKeyIgnore()
 				.returning(QUESTION.ID)
-				.fetchOne();
-				
-				if(record != null) {
-					
-					return record.getValue(QUESTION.ID);
-				}
+				.fetchOne(QUESTION.ID);
 			}
 			else {
-				
-				Record record = create.update(QUESTION)
+				int id = exists.getValue(QUESTION.ID);
+				create.update(QUESTION)
 				.set(QUESTION.NAME, data.get("name"))
 				.set(QUESTION.TYPE, data.get("question_type"))
 				.set(QUESTION.ANSWERS, data.get("answers"))
 				.set(QUESTION.POINTS_POSSIBLE, Float.parseFloat(data.get("points_possible")))
-				.where(QUESTION.DESCRIPTION.eq(data.get("description")))
-				.returning(QUESTION.ID)
-				.fetchOne();
+				.where(QUESTION.ID.eq(id))
+				.execute();
 				
-				if(record != null) {
-					return record.getValue(QUESTION.ID);
-				}
+				return id;
+				
 			}		
 		} catch (Exception e) {
 			e.printStackTrace();

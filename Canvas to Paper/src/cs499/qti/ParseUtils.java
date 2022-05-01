@@ -197,6 +197,13 @@ public static String parseAnswers(ArrayList<HashMap<String,String>> correctResul
 		}		
 		return null;
 	}
+
+	public static String findNumRange(HashMap<String,String> correct) {
+		
+		String range = "Greater than " + correct.get("floor") + ", less than " + correct.get("ceiling");
+		
+		return range;
+	}
 	
 	private static String findCorrect(HashMap<String,String> correct, ArrayList<HashMap<String, String>> allChoices) {
 		//find correct answer

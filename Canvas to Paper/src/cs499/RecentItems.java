@@ -60,13 +60,13 @@ public class RecentItems {
 		}
 	}
 	
-	// private void removeAll() {
-	// 	try {
-	// 		preferences.clear();
-	// 	} catch (BackingStoreException e) {
-	// 		e.printStackTrace();
-	// 	}
-	// }
+	public void removeAll() {
+		try {
+			preferences.clear();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private void load() {
 		
